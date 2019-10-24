@@ -41,4 +41,7 @@ print(full_dataset.classes)
 model = CNNNet(len(full_dataset.classes))
 model = model.to(device)
 
-train_model(model, criterion, dataloaders, dataset_sizes, device)
+model = train_model(model, criterion, dataloaders, dataset_sizes, device, num_epochs = 5)
+
+dummy_input = torch.randn(4, 3, 224, 224, device='cuda')
+torch.onnx.export(model, dummy_input, "hwms_cnn.onnx", verbose=True)
