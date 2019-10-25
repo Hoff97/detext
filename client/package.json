@@ -7,7 +7,8 @@
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "pwa": "ng build --prod && serve ./dist/client"
   },
   "private": true,
   "dependencies": {
@@ -18,8 +19,11 @@
     "@angular/forms": "~8.2.0",
     "@angular/platform-browser": "~8.2.0",
     "@angular/platform-browser-dynamic": "~8.2.0",
+    "@angular/pwa": "^0.803.14",
     "@angular/router": "~8.2.0",
+    "@angular/service-worker": "~8.2.0",
     "rxjs": "~6.4.0",
+    "serve": "^11.2.0",
     "tslib": "^1.10.0",
     "zone.js": "~0.9.1"
   },
