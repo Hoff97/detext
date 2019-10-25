@@ -43,10 +43,9 @@ print(dataset_sizes)
 print(full_dataset.classes)
 
 model = mm.MobileNet(features=len(full_dataset.classes), pretrained=False)
-model = cm.CNNNet(len(full_dataset.classes))
 model = model.to(device)
 
-model = train_model(model, criterion, dataloaders, dataset_sizes, device, num_epochs = 20)
+model = train_model(model, criterion, dataloaders, dataset_sizes, device, num_epochs = 5)
 
 dummy_input = torch.randn(4, 3, 224, 224, device='cuda')
 torch.onnx.export(model, dummy_input, "res/mobile_cnn.onnx", verbose=True)
