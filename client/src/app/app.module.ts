@@ -5,10 +5,16 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
+import { StartComponent } from './components/start/start.component';
+import { SettingsComponent } from './components/settings/settings.component';
+import { NotFoundComponent } from './components/not-found/not-found.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    StartComponent,
+    SettingsComponent,
+    NotFoundComponent
   ],
   imports: [
     BrowserModule,
