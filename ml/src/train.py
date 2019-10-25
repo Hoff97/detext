@@ -47,5 +47,6 @@ model = model.to(device)
 
 model = train_model(model, criterion, dataloaders, dataset_sizes, device, num_epochs = 5)
 
-dummy_input = torch.randn(4, 3, 224, 224, device='cuda')
-torch.onnx.export(model, dummy_input, "res/mobile_cnn.onnx", verbose=True)
+model = model.eval()
+dummy_input = torch.randn(1, 3, 224, 224, device='cuda')
+torch.onnx.export(model, dummy_input, "res/mobile_cnn.onnx")
