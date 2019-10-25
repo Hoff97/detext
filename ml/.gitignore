@@ -1,2 +1,3 @@
-res/
+res/datasets/math_symbols
 __pycache__
+.vscode/
