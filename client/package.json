@@ -23,6 +23,7 @@
     "@angular/router": "~8.2.0",
     "@angular/service-worker": "~8.2.0",
     "ndarray": "^1.0.18",
+    "ndarray-ops": "^1.2.2",
     "onnxjs": "^0.1.7",
     "rxjs": "~6.4.0",
     "serve": "^11.2.0",

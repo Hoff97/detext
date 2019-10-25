@@ -36,6 +36,8 @@ export class CanvasComponent implements AfterViewInit {
 
     // we'll implement this method to start capturing mouse events
     this.captureEvents(canvasEl);
+
+    this.clear();
   }
 
   public clear() {
