@@ -6,7 +6,6 @@ from torch.optim import lr_scheduler
 from torchvision import transforms
 
 preprocess = transforms.Compose([
-    transforms.Resize(256),
     transforms.CenterCrop(224),
     transforms.ToTensor(),
 ])

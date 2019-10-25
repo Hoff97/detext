@@ -20,6 +20,7 @@ export class CanvasComponent implements AfterViewInit {
   // setting a width and height for the canvas
   @Input() public width = 400;
   @Input() public height = 400;
+  @Input() public strokeSize = 3;
 
   @Output() imageChange = new EventEmitter<ImageData>();
 
@@ -89,7 +90,7 @@ export class CanvasComponent implements AfterViewInit {
     if (!this.cx) { return; }
 
     // set some default properties about the line
-    this.cx.lineWidth = 3;
+    this.cx.lineWidth = this.strokeSize;
     this.cx.lineCap = 'round';
     this.cx.strokeStyle = '#000';
 
