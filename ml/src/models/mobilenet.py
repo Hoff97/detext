@@ -7,12 +7,12 @@ from torchvision import transforms
 
 
 class MobileNet(nn.Module):
-    def __init__(self, features = 2):
+    def __init__(self, features = 2, pretrained = True):
         super(MobileNet, self).__init__()
 
         self.features = features
 
-        self.mobilenet = models.mobilenet_v2(pretrained=True)
+        self.mobilenet = models.mobilenet_v2(pretrained=pretrained)
         self.classifier = nn.Sequential(
             nn.Dropout(p=0.2, inplace=False),
             nn.Linear(in_features=self.mobilenet.classifier[1].in_features, out_features=self.features, bias=True)
@@ -31,9 +31,6 @@ class MobileNet(nn.Module):
     def unfreeze(self):
         for p in self.mobilenet.parameters():
             p.requires_grad = True
-
-    def preprocess(self, x):
-        return preprocess(x)
 
 preprocess = transforms.Compose([
     transforms.Resize(256),

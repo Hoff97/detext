@@ -16,7 +16,7 @@ class CNNNet(nn.Module):
         super(CNNNet, self).__init__()
 
         self.features = features
-        self.cnn_features = 53*53*10
+        self.cnn_features = 24*24*10
 
         self.cnn1 = nn.Sequential(
             nn.Conv2d(3, 5, 5, 1),
@@ -28,12 +28,24 @@ class CNNNet(nn.Module):
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=2)
         )
-        self.fc1 = nn.Linear(self.cnn_features, 500)
-        self.fc2 = nn.Linear(500, features)
+        self.cnn3 = nn.Sequential(
+            nn.Conv2d(10, 10, 5, 1),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2)
+        )
+        self.fc1 = nn.Sequential(
+            nn.Linear(self.cnn_features, 100),
+            nn.ReLU()
+        )
+        self.fc2 = nn.Sequential(
+            nn.Linear(100, features),
+            nn.ReLU()
+        )
 
     def forward(self, x):
         x = self.cnn1(x)
         x = self.cnn2(x)
+        x = self.cnn3(x)
         x = x.view(-1, self.cnn_features)
         x = self.fc1(x)
         x = self.fc2(x)

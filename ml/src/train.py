@@ -8,15 +8,19 @@ import torch.optim as optim
 from torch.optim import lr_scheduler
 from torchvision import datasets
 
-from models.cnn import CNNNet, preprocess
+import models.cnn as cm
+import models.mobilenet as mm
 from training.train import train_model
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 criterion = nn.CrossEntropyLoss()
 
+def valid_func(x):
+    return random.random() < 2
+
 data_dir = 'res/datasets/math_symbols_small'
-full_dataset = datasets.ImageFolder(data_dir, preprocess)
+full_dataset = datasets.ImageFolder(data_dir, mm.preprocess, is_valid_file=valid_func)
 test_train_split = 0.9
 train_size = int(test_train_split * len(full_dataset))
 test_size = len(full_dataset) - train_size
@@ -38,10 +42,11 @@ print(dataset_sizes)
 
 print(full_dataset.classes)
 
-model = CNNNet(len(full_dataset.classes))
+model = mm.MobileNet(features=len(full_dataset.classes), pretrained=False)
+model = cm.CNNNet(len(full_dataset.classes))
 model = model.to(device)
 
-model = train_model(model, criterion, dataloaders, dataset_sizes, device, num_epochs = 5)
+model = train_model(model, criterion, dataloaders, dataset_sizes, device, num_epochs = 20)
 
 dummy_input = torch.randn(4, 3, 224, 224, device='cuda')
-torch.onnx.export(model, dummy_input, "hwms_cnn.onnx", verbose=True)
+torch.onnx.export(model, dummy_input, "res/mobile_cnn.onnx", verbose=True)
