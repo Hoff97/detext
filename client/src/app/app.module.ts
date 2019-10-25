@@ -8,13 +8,15 @@ import { environment } from '../environments/environment';
 import { StartComponent } from './components/start/start.component';
 import { SettingsComponent } from './components/settings/settings.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
+import { CanvasComponent } from './components/canvas/canvas.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     StartComponent,
     SettingsComponent,
-    NotFoundComponent
+    NotFoundComponent,
+    CanvasComponent
   ],
   imports: [
     BrowserModule,

@@ -22,6 +22,8 @@
     "@angular/pwa": "^0.803.14",
     "@angular/router": "~8.2.0",
     "@angular/service-worker": "~8.2.0",
+    "ndarray": "^1.0.18",
+    "onnxjs": "^0.1.7",
     "rxjs": "~6.4.0",
     "serve": "^11.2.0",
     "tslib": "^1.10.0",
