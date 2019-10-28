@@ -1,5 +1,10 @@
-<app-canvas (imageChange)="predictClass($event)"
-  [width]="224" [height]="224"></app-canvas>
-
-<app-classification [classes]="classes" [predictions]="predictions"
-  [loading]="loading"></app-classification>
+<div class="row">
+  <div class="col-md-auto">
+    <app-canvas (imageChange)="predictClass($event)"
+      [width]="224" [height]="224"></app-canvas>
+  </div>
+  <div class="col">
+    <app-classification [classes]="classes" [predictions]="predictions"
+      [loading]="loading"></app-classification>
+  </div>
+</div>

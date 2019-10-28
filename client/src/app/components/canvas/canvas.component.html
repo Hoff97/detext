@@ -1,3 +1,6 @@
-<canvas #canvas [width]="width" [height]="height"></canvas>
-
-<button type="button" (click)="clear()">Clear</button>
+<div class="card" style="width: 18rem;">
+  <canvas #canvas [width]="width" [height]="height"></canvas>
+  <div class="card-body">
+    <button type="button" (click)="clear()" class="btn btn-primary">Clear</button>
+  </div>
+</div>

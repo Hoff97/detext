@@ -1,15 +1,16 @@
-import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-
+import { BrowserModule } from '@angular/platform-browser';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { ServiceWorkerModule } from '@angular/service-worker';
-import { environment } from '../environments/environment';
-import { StartComponent } from './components/start/start.component';
-import { SettingsComponent } from './components/settings/settings.component';
-import { NotFoundComponent } from './components/not-found/not-found.component';
 import { CanvasComponent } from './components/canvas/canvas.component';
 import { ClassificationComponent } from './components/classification/classification.component';
+import { NotFoundComponent } from './components/not-found/not-found.component';
+import { SettingsComponent } from './components/settings/settings.component';
+import { StartComponent } from './components/start/start.component';
+
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { ClassificationComponent } from './components/classification/classificat
   imports: [
     BrowserModule,
     AppRoutingModule,
-    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
+    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
+    NgbModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,7 +1,13 @@
 <p *ngIf="loading">Loading</p>
-<table *ngIf="!loading">
+<table *ngIf="!loading" class="predictions">
   <tr *ngFor="let pred of predSorted">
-    <td>{{pred.name}}</td>
-    <td>{{pred.prop}}</td>
+    <td style="width: 100%;">
+      {{pred.name}}
+      <div class="progress" style="height: 20px;">
+        <div class="progress-bar" role="progressbar" [style.width]="(pred.prop*100) +'%'">
+           {{pred.prop*100 | number:'2.0-0'}}%
+        </div>
+      </div>
+    </td>
   </tr>
 </table>

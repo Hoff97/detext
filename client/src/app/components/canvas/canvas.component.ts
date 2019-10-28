@@ -65,6 +65,7 @@ export class CanvasComponent implements AfterViewInit {
         })
       )
       .subscribe((res: [MouseEvent, MouseEvent]) => {
+        //TODO: Fix drawing position
         const rect = canvasEl.getBoundingClientRect();
 
         const prevPos = {
