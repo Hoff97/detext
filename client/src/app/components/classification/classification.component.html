@@ -1,0 +1,7 @@
+<p *ngIf="loading">Loading</p>
+<table *ngIf="!loading">
+  <tr *ngFor="let pred of predSorted">
+    <td>{{pred.name}}</td>
+    <td>{{pred.prop}}</td>
+  </tr>
+</table>

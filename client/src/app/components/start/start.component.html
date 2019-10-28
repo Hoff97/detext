@@ -1,2 +1,5 @@
 <app-canvas (imageChange)="predictClass($event)"
   [width]="224" [height]="224"></app-canvas>
+
+<app-classification [classes]="classes" [predictions]="predictions"
+  [loading]="loading"></app-classification>

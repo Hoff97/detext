@@ -8,7 +8,8 @@ import { InferenceSession, Tensor } from 'onnxjs';
 })
 export class InferenceService {
 
-  private session = new InferenceSession();
+  // GPU Backend seems to be broken right now, so CPU will be used
+  private session = new InferenceSession({ backendHint: 'cpu' });
 
   constructor() {
     this.setupModel();
@@ -17,8 +18,24 @@ export class InferenceService {
   public async infer(image: ImageData) {
     const inputs = this.preprocess(image.data, image.width, image.height);
     const outputMap = await this.session.run([inputs]);
-    const outputTensor = outputMap.values().next().value;
-    console.log(outputTensor);
+    const outputTensor: Tensor = outputMap.values().next().value;
+    return this.softMax(outputTensor.data as Float32Array);
+  }
+
+  public getClasses() {
+    return ['Delta', 'alpha', 'beta', 'gamma', 'lambda', 'mu', 'phi', 'pi', 'sigma', 'theta'];
+  }
+
+  private softMax(array: Float32Array) {
+    let sum = 0;
+    for (let i = 0; i < array.length; i++) {
+      array[i] = Math.exp(array[i]);
+      sum += array[i];
+    }
+    for (let i = 0; i < array.length; i++) {
+      array[i] = array[i] / sum;
+    }
+    return array;
   }
 
   private async setupModel() {
@@ -43,18 +60,5 @@ export class InferenceService {
     const tensor = new Tensor(new Float32Array(3 * width * height), 'float32', [1, 3, width, height]);
     (tensor.data as Float32Array).set(dataProcessed.data);
     return tensor;
-  }
-
-  private test(data) {
-    let c = 0;
-    for (let i = 0; i < data.data.length; i++) {
-      if (data.data[i] === 1.0) {
-        console.log(i, data.data[i]);
-        c++;
-      }
-      if (c > 10) {
-        break;
-      }
-    }
   }
 }

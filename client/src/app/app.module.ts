@@ -9,6 +9,7 @@ import { StartComponent } from './components/start/start.component';
 import { SettingsComponent } from './components/settings/settings.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { CanvasComponent } from './components/canvas/canvas.component';
+import { ClassificationComponent } from './components/classification/classification.component';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { CanvasComponent } from './components/canvas/canvas.component';
     StartComponent,
     SettingsComponent,
     NotFoundComponent,
-    CanvasComponent
+    CanvasComponent,
+    ClassificationComponent
   ],
   imports: [
     BrowserModule,
