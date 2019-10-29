@@ -8,6 +8,7 @@ def load_dataset(apps, schema_editor):
     MathSymbol = apps.get_model("server", "MathSymbol")
     ClassificationModel = apps.get_model("server", "ClassificationModel")
     print(MathSymbol, ClassificationModel)
+    #TODO: Load dataset (from res/ folder and save MathSymbols and Pictures)
 
 def drop_dataset(apps, schema_editor):
     pass
