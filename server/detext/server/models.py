@@ -14,6 +14,7 @@ class TrainImage(models.Model):
     image = models.BinaryField(editable=True)
     timestamp = models.DateTimeField()
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    locked = models.BooleanField(default=True)
 
     def __str__(self):
         return f"{self.symbol}"

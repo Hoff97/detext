@@ -1,5 +1,5 @@
 from django.contrib.auth.models import Group, User
-from rest_framework import viewsets
+from rest_framework import mixins, permissions, viewsets
 
 from detext.server.models import ClassificationModel, MathSymbol, TrainImage
 from detext.server.serializers import (ClassificationModelSerializer,
@@ -7,7 +7,7 @@ from detext.server.serializers import (ClassificationModelSerializer,
                                        TrainImageSerializer)
 
 
-class MathSymbolView(viewsets.ReadOnlyModelViewSet):
+class MathSymbolView(viewsets.ModelViewSet):
     queryset = MathSymbol.objects.all()
     serializer_class = MathSymbolSerializer
     ordering = ['timestamp']
