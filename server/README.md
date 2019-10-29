@@ -13,3 +13,9 @@ $ source activate detext
 (detext) $ python manage.py createsuperuser --email adn@example.com --username admin
 (detext) $ python manage.py runserver
 ```
+
+## ML
+
+```
+(detext) $ python src/train.py
+```
