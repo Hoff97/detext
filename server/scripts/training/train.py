@@ -7,7 +7,7 @@ import torch.optim as optim
 from torch.optim import lr_scheduler
 from torchvision import datasets
 
-from models.cnn import CNNNet, preprocess
+from scripts.models.cnn import CNNNet, preprocess
 
 
 def train_model(model, criterion, dataloaders, dataset_sizes, device='cpu', num_epochs=25):
