@@ -10,12 +10,16 @@ from torchvision import datasets
 
 import scripts.models.cnn as cm
 import scripts.models.mobilenet as mm
+from detext.server.models import TrainImage
+from scripts.training.dataloader import DBDataset
 from scripts.training.train import train_model
 
 # TODO: Change dataloader so images and classes come from DB, save best model to DB
 
 def run():
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    db_loader = DBDataset(TrainImage)
+    db_loader[1]
+    """device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
     criterion = nn.CrossEntropyLoss()
 
@@ -55,4 +59,4 @@ def run():
     dummy_input = torch.randn(1, 3, 224, 224, device='cuda')
     print(model(dummy_input))
     torch.onnx.export(model, dummy_input, "res/mobile_cnn.onnx")
-    torch.save(model, "res/mobile_cnn.pth")
+    torch.save(model, "res/mobile_cnn.pth")"""
