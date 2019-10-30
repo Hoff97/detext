@@ -6,13 +6,14 @@ import time
 import torch
 import torch.nn as nn
 import torch.optim as optim
+from django.utils import timezone
 from PIL import Image
 from torch.optim import lr_scheduler
 from torchvision import datasets
 
 import scripts.models.cnn as cm
 import scripts.models.mobilenet as mm
-from detext.server.models import MathSymbol, TrainImage
+from detext.server.models import ClassificationModel, MathSymbol, TrainImage
 from scripts.training.dataloader import DBDataset
 from scripts.training.train import train_model
 
@@ -61,6 +62,13 @@ def run():
     model = model.to(device)
 
     model = train_model(model, criterion, dataloaders, dataset_sizes, device, num_epochs = 5)
+
+    byteArr = io.BytesIO()
+    dummy_input = torch.randn(1, 3, 224, 224, device='cuda')
+    torch.onnx.export(model, dummy_input, byteArr)
+    print(byteArr)
+    model_entity = ClassificationModel(None, model=byteArr.getvalue(), timestamp=timezone.now())
+    model_entity.save()
 
 def test():
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
