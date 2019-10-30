@@ -14,9 +14,9 @@ def valid_func(x):
 def save_instance(instance):
     try:
         with transaction.atomic():
-            cls_instance.save()
+            instance.save()
     except IntegrityError:
-            cls_instance.delete()
+            instance.delete()
 
 def load_dataset(apps, schema_editor):
     MathSymbol = apps.get_model("server", "MathSymbol")
@@ -47,11 +47,7 @@ def load_dataset(apps, schema_editor):
         img.save(byteArr, format='png')
         byteArr = byteArr.getvalue()
         imgInstance = TrainImage(None, symbol=cls_instance, image=byteArr, timestamp=timezone.now(), user=None, locked=False)
-        try:
-            with transaction.atomic():
-                imgInstance.save()
-        except IntegrityError:
-            imgInstance.delete()
+        save_instance(imgInstance)
 
 def drop_dataset(apps, schema_editor):
     pass
