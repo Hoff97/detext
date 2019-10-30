@@ -23,5 +23,7 @@ class ClassificationModel(models.Model):
     model = models.BinaryField(editable=True)
     timestamp = models.DateTimeField()
 
+    # TODO: Add train/test accuracy, other infos?
+
     def __str__(self):
-        return f"{self.name}"
+        return f"{self.timestamp}"
