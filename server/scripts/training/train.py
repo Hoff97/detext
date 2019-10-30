@@ -37,6 +37,8 @@ def train_model(model, criterion, dataloaders, dataset_sizes, device='cpu', num_
 
             # Iterate over data.
             for i, data in enumerate(dataloaders[phase]):
+                if i%100 == 0:
+                    print(f"  {i}/{len(dataloaders[phase])}")
                 inputs, labels = data
                 inputs = inputs.to(device)
                 labels = labels.to(device)
