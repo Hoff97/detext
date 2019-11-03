@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
-import { fromEvent } from 'rxjs';
 import { pairwise, switchMap, takeUntil } from 'rxjs/operators';
+import { fromEvents } from 'src/app/util/event';
 
 
 type Point = {
@@ -55,34 +55,55 @@ export class CanvasComponent implements AfterViewInit {
   }
 
   private captureEvents(canvasEl: HTMLCanvasElement) {
-    fromEvent(canvasEl, 'mousedown')
+    const mousedown = fromEvents(canvasEl, 'mousedown', 'touchstart');
+    const mousemove = fromEvents(canvasEl, 'mousemove', 'touchmove');
+    const mouseup = fromEvents(canvasEl, 'mouseup', 'touchend');
+    const mouseleave = fromEvents(canvasEl, 'mouseleave', 'touchcancel');
+
+    mousedown
       .pipe(
         switchMap((e) => {
-          return fromEvent(canvasEl, 'mousemove')
+          return mousemove
             .pipe(
-              takeUntil(fromEvent(canvasEl, 'mouseup')),
-              takeUntil(fromEvent(canvasEl, 'mouseleave')),
+              takeUntil(mouseup),
+              takeUntil(mouseleave),
               pairwise()
             );
         })
       )
-      .subscribe((res: [MouseEvent, MouseEvent]) => {
+      .subscribe((res: [MouseEvent | TouchEvent, MouseEvent | TouchEvent]) => {
         const rect = canvasEl.getBoundingClientRect();
 
+        let [startX, startY, endX, endY] = [0, 0, 0, 0];
+        if (res[0] instanceof MouseEvent) {
+          startX = res[0].clientX;
+          startY = res[0].clientY;
+        } else {
+          startX = res[0].touches[0].clientX;
+          startY = res[0].touches[0].clientY;
+        }
+        if (res[1] instanceof MouseEvent) {
+          endX = res[1].clientX;
+          endY = res[1].clientY;
+        } else {
+          endX = res[1].touches[0].clientX;
+          endY = res[1].touches[0].clientY;
+        }
+
         const prevPos = {
-          x: res[0].clientX - rect.left,
-          y: res[0].clientY - rect.top
+          x: startX - rect.left,
+          y: startY - rect.top
         };
 
         const currentPos = {
-          x: res[1].clientX - rect.left,
-          y: res[1].clientY - rect.top
+          x: endX - rect.left,
+          y: endY - rect.top
         };
 
         this.drawOnCanvas(prevPos, currentPos);
       });
 
-    fromEvent(canvasEl, 'mouseup').subscribe((ev: MouseEvent) => {
+    mouseup.subscribe((ev: MouseEvent) => {
       if (this.autoemit) {
         this.emitContent();
       }
