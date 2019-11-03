@@ -1,5 +1,6 @@
 import io
 import random
+from pathlib import Path
 
 from django.db import IntegrityError, migrations, transaction
 from django.utils import timezone
@@ -48,6 +49,10 @@ def load_dataset(apps, schema_editor):
         byteArr = byteArr.getvalue()
         imgInstance = TrainImage(None, symbol=cls_instance, image=byteArr, timestamp=timezone.now(), user=None, locked=False)
         save_instance(imgInstance)
+
+    content = Path('res/mobile_cnn.onnx').read_bytes()
+    modelInstance = ClassificationModel(None, model=content, timestamp=timezone.now())
+    save_instance(modelInstance)
 
 def drop_dataset(apps, schema_editor):
     pass
