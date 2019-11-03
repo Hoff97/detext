@@ -6,9 +6,9 @@ from rest_framework import routers
 from detext.server import views
 from detext.server.models import ClassificationModel, MathSymbol, TrainImage
 
-admin.site.register(MathSymbol)
-admin.site.register(ClassificationModel)
-admin.site.register(TrainImage)
+#admin.site.register(MathSymbol)
+#admin.site.register(ClassificationModel)
+#admin.site.register(TrainImage)
 
 router = routers.DefaultRouter()
 router.register(r'symbols', views.MathSymbolView)
