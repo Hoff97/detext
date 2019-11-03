@@ -3,6 +3,7 @@ import ndarray from 'ndarray';
 import ops from 'ndarray-ops';
 import { InferenceSession, Tensor } from 'onnxjs';
 import { ModelService } from './model.service';
+import { SymbolService } from './symbol.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,8 +13,14 @@ export class InferenceService {
   // GPU Backend seems to be broken right now, so CPU will be used
   private session = new InferenceSession({ backendHint: 'cpu' });
 
-  constructor(private modelService: ModelService) {
+  private classes: string[];
+
+  constructor(private modelService: ModelService, private symbolService: SymbolService) {
     this.setupModel();
+
+    this.symbolService.getSymbols().subscribe((symbols) => {
+      this.classes = symbols.map(symbol => symbol.name);
+    });
   }
 
   public async infer(image: ImageData) {
@@ -24,7 +31,7 @@ export class InferenceService {
   }
 
   public getClasses() {
-    return ['Delta', 'alpha', 'beta', 'gamma', 'lambda', 'mu', 'phi', 'pi', 'sigma', 'theta'];
+    return this.classes;
   }
 
   private softMax(array: Float32Array) {

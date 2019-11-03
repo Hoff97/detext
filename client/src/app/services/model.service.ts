@@ -3,13 +3,8 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/internal/operators/catchError';
 import { map } from 'rxjs/internal/operators/map';
+import { Model } from '../data/types';
 import { DbService } from './db.service';
-
-export interface Model {
-  timestamp: string;
-  model: string;
-  id?: number;
-}
 
 @Injectable({
   providedIn: 'root'
@@ -30,9 +25,5 @@ export class ModelService {
         return this.dbService.getModel();
       })
     );
-  }
-
-  private loadModel(): Model {
-    return JSON.parse(localStorage.getItem(this.key));
   }
 }
