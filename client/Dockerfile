@@ -4,8 +4,10 @@ FROM node:10.16
 # Set work directory
 WORKDIR /code
 
-COPY package.json /code/
-COPY package-lock.json /code/
+ENV PATH /code/node_modules/.bin:$PATH
+
+# Copy dependencies
+COPY package.json package-lock.json /code/
 
 # Install dependencies
 RUN npm install
