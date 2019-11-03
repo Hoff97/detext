@@ -1,0 +1,23 @@
+# Pull base image
+FROM node:10.16
+
+# Set work directory
+WORKDIR /code
+
+COPY package.json /code/
+COPY package-lock.json /code/
+
+# Install dependencies
+RUN npm install
+
+# Copy project
+COPY . /code/
+
+# Build
+RUN npm run build
+
+# Test
+RUN ls ./dist/client
+
+# Copy build
+#RUN cp -r ./dist/client /usr/src/app/public
