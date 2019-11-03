@@ -15,6 +15,6 @@ export class ModelService {
   constructor(private http: HttpClient) { }
 
   getRecent(): Observable<Model> {
-    return this.http.get<Model>('model/latest/?format=json');
+    return this.http.get<Model>('api/model/latest/?format=json');
   }
 }

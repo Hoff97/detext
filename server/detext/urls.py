@@ -11,7 +11,7 @@ from detext.server.models import ClassificationModel, MathSymbol, TrainImage
 #admin.site.register(TrainImage)
 
 router = routers.DefaultRouter()
-router.register(r'symbols', views.MathSymbolView)
+router.register(r'symbol', views.MathSymbolView)
 router.register(r'model', views.ClassificationModelView)
 router.register(r'image', views.TrainImageView)
 
@@ -20,6 +20,6 @@ router.register(r'image', views.TrainImageView)
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include(router.urls)),
+    path('api/', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
