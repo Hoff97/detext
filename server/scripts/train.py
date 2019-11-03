@@ -17,10 +17,9 @@ from detext.server.models import ClassificationModel, MathSymbol, TrainImage
 from scripts.training.dataloader import DBDataset
 from scripts.training.train import train_model
 
-# TODO: Change dataloader so images and classes come from DB, save best model to DB
 
 def valid_func(x):
-    return random.random() < 0.01
+    return random.random() < 2
 
 def get_data(item):
     image = Image.open(io.BytesIO(item.image))
