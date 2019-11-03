@@ -1,0 +1,9 @@
+.canvas-box {
+  border: 1px solid #AAA;
+  border-radius: 5px;
+  padding-top: 5px;
+}
+
+.right {
+  float: right;
+}

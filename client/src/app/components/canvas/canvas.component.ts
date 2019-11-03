@@ -24,6 +24,8 @@ export class CanvasComponent implements AfterViewInit {
 
   @Output() imageChange = new EventEmitter<ImageData>();
 
+  public autoemit = true;
+
   private cx: CanvasRenderingContext2D;
 
   public ngAfterViewInit() {
@@ -65,7 +67,6 @@ export class CanvasComponent implements AfterViewInit {
         })
       )
       .subscribe((res: [MouseEvent, MouseEvent]) => {
-        //TODO: Fix drawing position
         const rect = canvasEl.getBoundingClientRect();
 
         const prevPos = {
@@ -82,8 +83,14 @@ export class CanvasComponent implements AfterViewInit {
       });
 
     fromEvent(canvasEl, 'mouseup').subscribe((ev: MouseEvent) => {
-      this.imageChange.emit(this.getImageContent());
+      if (this.autoemit) {
+        this.emitContent();
+      }
     });
+  }
+
+  public emitContent() {
+    this.imageChange.emit(this.getImageContent());
   }
 
   private drawOnCanvas(prevPos: Point, currentPos: Point) {
