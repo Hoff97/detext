@@ -14,10 +14,11 @@ RUN npm install
 COPY . /code/
 
 # Build
-RUN npm run build
+RUN npm run build-prod
 
 # Test
 RUN ls ./dist/client
 
 # Copy build
-#RUN cp -r ./dist/client /usr/src/app/public
+RUN mkdir -p  /usr/src/app/public
+RUN cp -r ./dist/client/ /usr/src/app/public
