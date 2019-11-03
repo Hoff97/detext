@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import ndarray from 'ndarray';
 import ops from 'ndarray-ops';
 import { InferenceSession, Tensor } from 'onnxjs';
+import { ModelService } from './model.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +12,7 @@ export class InferenceService {
   // GPU Backend seems to be broken right now, so CPU will be used
   private session = new InferenceSession({ backendHint: 'cpu' });
 
-  constructor() {
+  constructor(private modelService: ModelService) {
     this.setupModel();
   }
 
@@ -39,8 +40,19 @@ export class InferenceService {
   }
 
   private async setupModel() {
-    const url = 'assets/models/mobile_cnn.onnx';
-    await this.session.loadModel(url);
+    const model = await this.modelService.getRecent().toPromise();
+    const decoded = this.convertDataURIToBinary(model.model);
+    await this.session.loadModel(decoded);
+  }
+
+  private convertDataURIToBinary(data: string) {
+    const raw = atob(data);
+    const rawLength = raw.length;
+    const array = new Uint8Array(new ArrayBuffer(rawLength));
+    for (let i = 0; i < rawLength; i++) {
+      array[i] = raw.charCodeAt(i);
+    }
+    return array;
   }
 
   private preprocess(data, width, height) {
