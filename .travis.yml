@@ -17,4 +17,5 @@ before_install:
 - eval "$(ssh-agent)"
 - openssl aes-256-cbc -K $encrypted_b25e5455c7d9_key -iv $encrypted_b25e5455c7d9_iv
   -in id_rsa_detext.enc -out ./ci/id_rsa_detext -d
+- chmod 600 ./ci/id_rsa_detext
 - ssh-add ./ci/id_rsa_detext
