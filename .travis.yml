@@ -11,6 +11,7 @@ after_script:
 - "./ci/rm_docker.sh"
 
 deploy:
+- provider: script
   script: ./ci/deploy.sh
   on:
     branch: master
