@@ -4,8 +4,8 @@
   "theme_color": "#8E44AD",
   "background_color": "#fafafa",
   "display": "standalone",
-  "scope": "/",
-  "start_url": "/",
+  "scope": "/client/",
+  "start_url": "/client/",
   "icons": [
     {
       "src": "assets/icons/icon-72x72.png",
