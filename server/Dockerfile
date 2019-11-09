@@ -17,3 +17,5 @@ COPY . /code/
 
 # Collect static files
 RUN python manage.py collectstatic --settings=detext.settings_prod
+
+CMD ["bash", "run.sh"]

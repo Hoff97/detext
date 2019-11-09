@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 import { ClassSymbol } from '../data/types';
 import { DbService } from './db.service';
 
@@ -10,10 +11,12 @@ import { DbService } from './db.service';
 })
 export class SymbolService {
 
+  private urlPrefix = environment.urlPrefix;
+
   constructor(private http: HttpClient, private dbService: DbService) { }
 
   getSymbols(): Observable<ClassSymbol[]> {
-    return this.http.get<ClassSymbol[]>('api/symbol/?format=json').pipe(
+    return this.http.get<ClassSymbol[]>(this.urlPrefix + 'api/symbol/?format=json').pipe(
       map((symbols: ClassSymbol[]) => {
         this.dbService.saveSymbols(symbols);
         return symbols;
