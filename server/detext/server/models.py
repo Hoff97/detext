@@ -6,6 +6,10 @@ class MathSymbol(models.Model):
     name = models.CharField(max_length=200)
     timestamp = models.DateTimeField()
 
+    description = models.CharField(max_length=1000)
+    latex = models.CharField(max_length=200)
+    image = models.BinaryField(editable=True, blank=True)
+
     def __str__(self):
         return f"{self.name}"
 

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import ndarray from 'ndarray';
 import ops from 'ndarray-ops';
 import { InferenceSession, Tensor } from 'onnxjs';
+import { ClassSymbol } from '../data/types';
 import { ModelService } from './model.service';
 import { SymbolService } from './symbol.service';
 
@@ -13,13 +14,13 @@ export class InferenceService {
   // GPU Backend seems to be broken right now, so CPU will be used
   private session = new InferenceSession({ backendHint: 'cpu' });
 
-  private classes: string[];
+  private classes: ClassSymbol[];
 
   constructor(private modelService: ModelService, private symbolService: SymbolService) {
     this.setupModel();
 
     this.symbolService.getSymbols().subscribe((symbols) => {
-      this.classes = symbols.map(symbol => symbol.name);
+      this.classes = symbols.map(symbol => symbol);
     });
   }
 

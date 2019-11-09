@@ -1,8 +1,9 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { ClassSymbol } from 'src/app/data/types';
 
 interface Prediction {
   prop: number;
-  name: string;
+  class: ClassSymbol;
 }
 
 @Component({
@@ -13,7 +14,7 @@ interface Prediction {
 export class ClassificationComponent implements OnInit, OnChanges {
 
   @Input() public predictions: number[];
-  @Input() public classes: string[];
+  @Input() public classes: ClassSymbol[];
   @Input() public loading: boolean;
 
   public predSorted: Prediction[];
@@ -27,7 +28,7 @@ export class ClassificationComponent implements OnInit, OnChanges {
     this.predSorted = this.predictions.map((pred, ix) => {
       return {
         prop: pred,
-        name: this.classes[ix]
+        class: this.classes[ix]
       };
     }).sort((a, b) => a.prop > b.prop ? -1 : 1);
   }

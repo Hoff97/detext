@@ -12,6 +12,7 @@ import { ClassificationComponent } from './components/classification/classificat
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { SettingsComponent } from './components/settings/settings.component';
 import { StartComponent } from './components/start/start.component';
+import { ClassSymbolComponent } from './components/class-symbol/class-symbol.component';
 
 
 @NgModule({
@@ -21,7 +22,8 @@ import { StartComponent } from './components/start/start.component';
     SettingsComponent,
     NotFoundComponent,
     CanvasComponent,
-    ClassificationComponent
+    ClassificationComponent,
+    ClassSymbolComponent
   ],
   imports: [
     BrowserModule,

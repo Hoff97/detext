@@ -1,0 +1,6 @@
+{{class.name}}
+<div class="progress" style="height: 20px;">
+  <div class="progress-bar" role="progressbar" [style.width]="(prop*100) +'%'">
+    {{prop*100 | number:'1.0-0'}}%
+  </div>
+</div>
