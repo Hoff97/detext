@@ -16,7 +16,7 @@ class MathSymbol(models.Model):
 class TrainImage(models.Model):
     symbol = models.ForeignKey(MathSymbol, on_delete=models.CASCADE)
     image = models.BinaryField(editable=True)
-    timestamp = models.DateTimeField()
+    timestamp = models.DateTimeField(auto_now_add = True)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     locked = models.BooleanField(default=True)
 
