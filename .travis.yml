@@ -7,8 +7,6 @@ before_script:
 - "./ci/add_docker.sh"
 script:
 - "./ci/build.sh"
-after_script:
-- "./ci/rm_docker.sh"
 
 deploy:
 - provider: script
