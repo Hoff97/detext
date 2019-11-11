@@ -7,7 +7,7 @@ from detext.server.models import ClassificationModel, MathSymbol, TrainImage
 class MathSymbolSerializer(serializers.ModelSerializer):
     class Meta:
         model = MathSymbol
-        fields = ['name', 'timestamp']
+        fields = ['name', 'timestamp', 'description', 'latex', 'image']
 
 class ClassificationModelSerializer(serializers.ModelSerializer):
     class Meta:
