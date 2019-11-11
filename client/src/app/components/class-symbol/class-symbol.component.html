@@ -1,4 +1,17 @@
 <div class="class-card">
+  <button type="button"
+      class="btn btn-sm btn-primary top-right"
+      (click)="markCorrect()"
+      *ngIf="correctEnabled">
+    <i class="fa fa-check"></i>
+  </button>
+
+  <button type="button"
+      class="btn btn-sm btn-success top-right"
+      *ngIf="!correctEnabled && correctClass">
+    <i class="fa fa-check"></i>
+  </button>
+
   <h4>{{class.name}}</h4>
 
   <img src="https://icatcare.org/app/uploads/2018/07/Thinking-of-getting-a-cat.png"

@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { ClassSymbol } from 'src/app/data/types';
 import { InferenceService } from 'src/app/services/inference.service';
+import { TrainImageService } from 'src/app/services/train-image.service';
+import { binaryToBase64 } from 'src/app/util/data';
 
 @Component({
   selector: 'app-start',
@@ -13,14 +16,32 @@ export class StartComponent implements OnInit {
   public predictions = [];
   public classes = [];
 
-  constructor(private inferenceService: InferenceService) { }
+  private img?: ImageData;
+
+  constructor(private inferenceService: InferenceService,
+              private trainImageService: TrainImageService) { }
 
   ngOnInit() {}
 
   async predictClass(image: ImageData) {
     this.loading = true;
+    this.img = image;
     this.predictions = Array.prototype.slice.call(await this.inferenceService.infer(image));
     this.classes = this.inferenceService.getClasses();
     this.loading = false;
+  }
+
+  correctSelected(cls: ClassSymbol) {
+    const b64 = binaryToBase64(this.img.data);
+
+    const trainImg = {
+      symbol: cls.id,
+      image: b64,
+      width: this.img.width,
+      height: this.img.height
+    };
+    this.trainImageService.create(trainImg).subscribe(resp => {
+      console.log(resp);
+    });
   }
 }

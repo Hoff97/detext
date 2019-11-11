@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ClassSymbol } from 'src/app/data/types';
 
 @Component({
@@ -10,10 +10,19 @@ export class ClassSymbolComponent implements OnInit {
 
   @Input() public class: ClassSymbol;
   @Input() public prop: number;
+  @Input() public correctEnabled: boolean;
+
+  public correctClass = false;
+
+  @Output() correct = new EventEmitter<ClassSymbol>();
 
   constructor() { }
 
   ngOnInit() {
   }
 
+  markCorrect() {
+    this.correct.emit(this.class);
+    this.correctClass = true;
+  }
 }

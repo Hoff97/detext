@@ -3,7 +3,11 @@
   <table *ngIf="!loading" class="predictions">
     <tr *ngFor="let pred of predSorted">
       <td style="width: 100%;">
-        <app-class-symbol [class]="pred.class" [prop]="pred.prop"></app-class-symbol>
+        <app-class-symbol [class]="pred.class"
+          [prop]="pred.prop"
+          (correct)="selectCorrect($event)"
+          [correctEnabled]="!correctSelected">
+        </app-class-symbol>
       </td>
     </tr>
   </table>
