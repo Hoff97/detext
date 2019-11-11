@@ -29,6 +29,7 @@
     "jquery": "^3.4.1",
     "ndarray": "^1.0.18",
     "ndarray-ops": "^1.2.2",
+    "ngx-cookie-service": "^2.2.0",
     "onnxjs": "^0.1.7",
     "popper": "^1.0.1",
     "rxjs": "~6.4.0",
