@@ -14,3 +14,12 @@ export interface Model extends HasId {
   timestamp: string;
   model: string;
 }
+
+export interface TrainImage extends HasId {
+  symbol: number;
+  image: string;
+  timestamp?: string;
+  user?: number;
+  width: number;
+  height: number;
+}
