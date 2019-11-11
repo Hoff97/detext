@@ -6,4 +6,4 @@ docker-machine ls
 
 eval $(docker-machine env detext)
 docker-compose -f ci/docker-compose-deploy.yml down
-docker-compose -f ci/docker-compose-deploy.yml up -d
+docker-compose -f ci/docker-compose-deploy.yml up
