@@ -1,18 +1,20 @@
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { CookieService } from 'ngx-cookie-service';
 import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { CanvasComponent } from './components/canvas/canvas.component';
+import { ClassSymbolComponent } from './components/class-symbol/class-symbol.component';
 import { ClassificationComponent } from './components/classification/classification.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { SettingsComponent } from './components/settings/settings.component';
 import { StartComponent } from './components/start/start.component';
-import { ClassSymbolComponent } from './components/class-symbol/class-symbol.component';
+import { Interceptor } from './util/http';
 
 
 @NgModule({
@@ -33,7 +35,14 @@ import { ClassSymbolComponent } from './components/class-symbol/class-symbol.com
     HttpClientModule,
     FormsModule
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: Interceptor,
+      multi: true
+    },
+    CookieService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
