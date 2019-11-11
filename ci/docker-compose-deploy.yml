@@ -7,7 +7,6 @@ services:
       - postgres_data:/var/lib/postgresql/data/
   server:
     image: hoff97/detext-server
-    command: bash -c "python /code/manage.py migrate --settings=detext.settings_prod && python /code/manage.py runserver --settings=detext.settings_prod 0.0.0.0:8000"
     volumes:
       - static-django:/usr/src/app/django
     depends_on:

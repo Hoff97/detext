@@ -22,5 +22,9 @@ RUN npm run build-prod
 RUN ls ./dist/client
 
 # Copy build
-RUN mkdir -p  /usr/src/app/public
-RUN cp -r ./dist/client/ /usr/src/app/public
+RUN mkdir -p  /usr/src/app/client
+RUN cp -r ./dist/client/ /usr/src/app/
+
+RUN ls /usr/src/app/client
+
+CMD ["bash", "copy_build.sh"]

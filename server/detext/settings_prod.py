@@ -114,4 +114,4 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-STATIC_ROOT = '/usr/src/app/django/'
+STATIC_ROOT = '/usr/src/app/django-static/'

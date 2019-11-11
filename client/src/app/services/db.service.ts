@@ -24,20 +24,16 @@ export class DbService extends Dexie {
   }
 
   async getModel(): Promise<Model> {
-    return await this.models.get(1);
+    return (await this.models.toArray())[0];
   }
 
   async saveModel(model: Model) {
-    await this.models.delete(1);
-    model.id = 1;
+    await this.models.clear();
     await this.models.add(model);
   }
 
   async saveSymbols(symbols: ClassSymbol[]) {
     await this.symbols.clear();
-    for (let i = 0; i < symbols.length; i++) {
-      symbols[i].id = i;
-    }
     await this.symbols.bulkAdd(symbols);
   }
 

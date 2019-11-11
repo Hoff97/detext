@@ -1,8 +1,9 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { ClassSymbol } from 'src/app/data/types';
 
 interface Prediction {
   prop: number;
-  name: string;
+  class: ClassSymbol;
 }
 
 @Component({
@@ -13,10 +14,13 @@ interface Prediction {
 export class ClassificationComponent implements OnInit, OnChanges {
 
   @Input() public predictions: number[];
-  @Input() public classes: string[];
+  @Input() public classes: ClassSymbol[];
   @Input() public loading: boolean;
 
+  @Output() public correct = new EventEmitter<ClassSymbol>();
+
   public predSorted: Prediction[];
+  public correctSelected = false;
 
   constructor() { }
 
@@ -24,12 +28,17 @@ export class ClassificationComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    this.correctSelected = false;
     this.predSorted = this.predictions.map((pred, ix) => {
       return {
         prop: pred,
-        name: this.classes[ix]
+        class: this.classes[ix]
       };
     }).sort((a, b) => a.prop > b.prop ? -1 : 1);
   }
 
+  selectCorrect(cls: ClassSymbol) {
+    this.correctSelected = true;
+    this.correct.emit(cls);
+  }
 }
