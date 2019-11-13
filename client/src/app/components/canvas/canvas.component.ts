@@ -23,6 +23,7 @@ export class CanvasComponent implements AfterViewInit {
   @Input() public strokeSize = 3;
 
   @Output() imageChange = new EventEmitter<ImageData>();
+  @Output() cleared = new EventEmitter<void>();
 
   public autoemit = true;
 
@@ -48,6 +49,8 @@ export class CanvasComponent implements AfterViewInit {
     this.cx.beginPath();
     this.cx.rect(0, 0, 500, 500);
     this.cx.fill();
+
+    this.cleared.emit();
   }
 
   private getImageContent(): ImageData {

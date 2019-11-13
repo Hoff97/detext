@@ -44,4 +44,8 @@ export class StartComponent implements OnInit {
       console.log(resp);
     });
   }
+
+  cleared() {
+    this.predictions = [];
+  }
 }
