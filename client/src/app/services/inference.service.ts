@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import ndarray from 'ndarray';
 import ops from 'ndarray-ops';
-import { InferenceSession, Tensor } from 'onnxjs';
+import { Tensor } from 'onnxjs';
 import { ClassSymbol } from '../data/types';
 import { base64ToBinary } from '../util/data';
+import { Inference, MainThreadInference } from './inference/inference';
 import { ModelService } from './model.service';
 import { SymbolService } from './symbol.service';
 
@@ -11,14 +12,14 @@ import { SymbolService } from './symbol.service';
   providedIn: 'root'
 })
 export class InferenceService {
-
-  // GPU Backend seems to be broken right now, so CPU will be used
-  private session = new InferenceSession({ backendHint: 'cpu' });
+  private inference: Inference;
 
   private classes: ClassSymbol[];
 
   constructor(private modelService: ModelService, private symbolService: SymbolService) {
     this.setupModel();
+
+    // this.setupWorker();
 
     this.symbolService.getSymbols().subscribe((symbols) => {
       this.classes = symbols.map(symbol => symbol);
@@ -27,9 +28,8 @@ export class InferenceService {
 
   public async infer(image: ImageData) {
     const inputs = this.preprocess(image.data, image.width, image.height);
-    const outputMap = await this.session.run([inputs]);
-    const outputTensor: Tensor = outputMap.values().next().value;
-    return this.softMax(outputTensor.data as Float32Array);
+    const output = await this.inference.infer(inputs);
+    return this.softMax(output.data as Float32Array);
   }
 
   public getClasses() {
@@ -51,7 +51,15 @@ export class InferenceService {
   private async setupModel() {
     const model = await this.modelService.getRecent().toPromise();
     const decoded = base64ToBinary(model.model);
-    await this.session.loadModel(decoded);
+
+    /*if (typeof Worker !== 'undefined') {
+      console.log('Hello!');
+      const ThreadInference: any = Comlink.wrap(new Worker('./inference/inference.worker', { type: 'module' }));
+      this.inference = await new ThreadInference(decoded);
+    } else {
+      this.inference = new MainThreadInference(decoded);
+    }*/
+    this.inference = new MainThreadInference(decoded);
   }
 
   private preprocess(data, width, height) {
