@@ -1,0 +1,17 @@
+version: '3.7'
+
+services:
+  server:
+    build: ./server
+    command: bash -c "python /code/manage.py migrate && python /code/manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - ./server:/code
+    ports:
+      - "8000:8000"
+  client:
+    build: ./client
+    command: npm run dev
+    volumes:
+      - ./client:/code
+    ports:
+      - "4200:4200"
