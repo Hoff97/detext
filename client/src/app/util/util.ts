@@ -1,6 +1,6 @@
 let _wasmSupport;
 
-export function wasmSupport() {
+export function wasmSupport(): boolean {
   if (_wasmSupport) {
     return _wasmSupport;
   }

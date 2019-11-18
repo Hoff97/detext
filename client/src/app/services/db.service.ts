@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import Dexie from 'dexie';
 import { ClassSymbol, Model } from '../data/types';
+import { Settings, SettingsService } from './settings.service';
 
 
 @Injectable({
@@ -11,7 +12,9 @@ export class DbService extends Dexie {
   models: Dexie.Table<Model, number>;
   symbols: Dexie.Table<ClassSymbol, number>;
 
-  constructor() {
+  private store: boolean;
+
+  constructor(private settingsService: SettingsService) {
     super('detext');
 
     this.version(1).stores({
@@ -21,6 +24,14 @@ export class DbService extends Dexie {
 
     this.models = this.table('model');
     this.symbols = this.table('symbol');
+
+    this.store = settingsService.getData().download;
+    this.settingsService.dataChange.subscribe((data: Settings) => {
+      this.store = data.download;
+      if (!this.store) {
+        this.clearAll();
+      }
+    });
   }
 
   async getModel(): Promise<Model> {
@@ -39,5 +50,10 @@ export class DbService extends Dexie {
 
   async getSymbols(): Promise<ClassSymbol[]> {
     return this.symbols.orderBy('id').toArray();
+  }
+
+  async clearAll() {
+    await this.models.clear();
+    await this.symbols.clear();
   }
 }

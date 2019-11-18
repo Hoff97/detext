@@ -6,6 +6,7 @@ import { ClassSymbol } from '../data/types';
 import { base64ToBinary } from '../util/data';
 import { Inference, MainThreadInference } from './inference/inference';
 import { ModelService } from './model.service';
+import { SettingsService } from './settings.service';
 import { SymbolService } from './symbol.service';
 
 @Injectable({
@@ -16,10 +17,10 @@ export class InferenceService {
 
   private classes: ClassSymbol[];
 
-  constructor(private modelService: ModelService, private symbolService: SymbolService) {
+  constructor(private modelService: ModelService,
+              private symbolService: SymbolService,
+              private settingsService: SettingsService) {
     this.setupModel();
-
-    // this.setupWorker();
 
     this.symbolService.getSymbols().subscribe((symbols) => {
       this.classes = symbols.map(symbol => symbol);
