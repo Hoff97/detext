@@ -27,7 +27,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'detext.server.apps.ServerConfig',
-    'django_extensions'
+    'django_extensions',
+    'rest_framework.authtoken'
 ]
 
 MIDDLEWARE = [
