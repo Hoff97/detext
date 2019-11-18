@@ -1,25 +1,31 @@
 .class-card {
   position: relative;
-  width: 250px;
-  height: 250px;
   border: 1px solid #777;
   border-radius: 5px;
   padding: 5px;
   margin-bottom: 10px;
   overflow: hidden;
-}
-
-font.code-label {
-  font-weight: bold;
-  font-size: 25px;
-}
-
-font.code {
-  font-size: 25px;
+  min-width: 250px;
+  text-align: left;
 }
 
 .top-right {
   position: absolute;
   top: 0px;
   right: 0px;
+}
+
+.expand-btn {
+  position: absolute;
+  bottom: 5px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.center {
+  text-align: center;
+}
+
+.full-width {
+  width: 100%;
 }

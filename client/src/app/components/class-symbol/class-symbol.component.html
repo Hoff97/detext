@@ -1,4 +1,24 @@
 <div class="class-card">
+  <div class="row">
+    <div class="column">
+      <img src="https://icatcare.org/app/uploads/2018/07/Thinking-of-getting-a-cat.png"
+        width="100px" height="100px"/><br/>
+    </div>
+    <div class="column ml-2">
+        Score: {{(prop*100) | number:'1.0-2'}}%<br/>
+        <font class="code">{{class.latex}}</font>
+    </div>
+  </div>
+  <div class="row center" *ngIf="!expanded">
+    <div class="column full-width">
+        <font><i class="fa fa-chevron-down expand-btn" (click)="toggleExpand()"></i></font>
+    </div>
+  </div>
+  <div class="row center mt-3" *ngIf="expanded">
+    <div class="column full-width">
+        <i class="fa fa-chevron-up expand-btn" (click)="toggleExpand()"></i>
+    </div>
+  </div>
   <button type="button"
       class="btn btn-sm btn-primary top-right"
       (click)="markCorrect()"
@@ -11,11 +31,4 @@
       *ngIf="!correctEnabled && correctClass">
     <i class="fa fa-check"></i>
   </button>
-
-  <h4>{{class.name}}</h4>
-
-  <img src="https://icatcare.org/app/uploads/2018/07/Thinking-of-getting-a-cat.png"
-    width="150px" height="150px"/><br/>
-
-  <font class="code-label">Code:</font>&nbsp;<font class="code">{{class.latex}}</font>
 </div>
