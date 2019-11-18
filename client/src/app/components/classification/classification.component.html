@@ -1,5 +1,7 @@
 <div class="classification-wrapper">
-  <p *ngIf="loading">Loading</p>
+  <p *ngIf="loading">
+    <i class="fa fa-spinner large fa-spin center"></i>
+  </p>
   <table *ngIf="!loading" class="predictions">
     <tr *ngFor="let pred of predSorted">
       <td style="width: 100%;">

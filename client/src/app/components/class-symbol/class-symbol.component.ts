@@ -12,6 +12,8 @@ export class ClassSymbolComponent implements OnInit {
   @Input() public prop: number;
   @Input() public correctEnabled: boolean;
 
+  public expanded = false;
+
   public correctClass = false;
 
   @Output() correct = new EventEmitter<ClassSymbol>();
@@ -24,5 +26,9 @@ export class ClassSymbolComponent implements OnInit {
   markCorrect() {
     this.correct.emit(this.class);
     this.correctClass = true;
+  }
+
+  toggleExpand() {
+    this.expanded = !this.expanded;
   }
 }

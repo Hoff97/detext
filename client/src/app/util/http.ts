@@ -3,11 +3,13 @@ import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/c
 import { Injectable } from '@angular/core';
 import { CookieService } from 'ngx-cookie-service';
 import { Observable } from 'rxjs';
+import { LoginService } from '../services/login.service';
 
 @Injectable()
 export class Interceptor implements HttpInterceptor {
 
-  constructor(private cookieService: CookieService) {}
+  constructor(private cookieService: CookieService,
+              private loginService: LoginService) {}
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const csrfToken = this.cookieService.get('csrftoken');
@@ -18,6 +20,15 @@ export class Interceptor implements HttpInterceptor {
       }
     });
 
+    const token = this.loginService.getToken();
+    if (token !== undefined && token !== null) {
+      request = request.clone({
+        setHeaders: {
+          Authorization: `Token ${token}`
+        }
+      });
+      return next.handle(request);
+    }
     return next.handle(request);
   }
 }

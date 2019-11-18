@@ -22,7 +22,22 @@
             "assets": [
               "src/favicon.ico",
               "src/assets",
-              "src/manifest.webmanifest"
+              "src/manifest.webmanifest",
+              {
+                "glob": "onnx-worker.js",
+                "input": "node_modules/onnxjs/dist/",
+                "output": "./"
+              },
+              {
+                "glob": "onnx-wasm.js",
+                "input": "node_modules/onnxjs/dist/",
+                "output": "./"
+              },
+              {
+                "glob": "onnx-wasm.wasm",
+                "input": "node_modules/onnxjs/dist/",
+                "output": "./"
+              }
             ],
             "styles": [
               "src/styles.css",
@@ -91,7 +106,22 @@
             "assets": [
               "src/favicon.ico",
               "src/assets",
-              "src/manifest.webmanifest"
+              "src/manifest.webmanifest",
+              {
+                "glob": "onnx-worker.js",
+                "input": "node_modules/onnxjs/dist/",
+                "output": "./"
+              },
+              {
+                "glob": "onnx-wasm.js",
+                "input": "node_modules/onnxjs/dist/",
+                "output": "./"
+              },
+              {
+                "glob": "onnx-wasm.wasm",
+                "input": "node_modules/onnxjs/dist/",
+                "output": "./"
+              }
             ],
             "styles": [
               "src/styles.css",

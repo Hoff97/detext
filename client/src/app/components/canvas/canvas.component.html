@@ -1,11 +1,10 @@
 <div class="canvas-box">
   <canvas #canvas [width]="width" [height]="height"></canvas>
-  <div>
-    <button type="button" (click)="clear()" class="btn btn-primary">Clear</button>
-    <button type="button" (click)="emitContent()" class="btn btn-success right" *ngIf="!autoemit">Classify</button>
-    <div class="form-check">
-      <input type="checkbox" class="form-check-input" id="auto-send" [(ngModel)]="autoemit">
-      <label class="form-check-label" for="auto-send">Classify automatically</label>
-    </div>
+  <i class="fa fa-times clear-btn" (click)="clear()"></i>
+  <i class="fa fa-cog settings-btn"  routerLink="/settings"></i>
+  <div class="form-check full-width">
+    <input type="checkbox" class="form-check-input" id="auto-send" [(ngModel)]="autoemit">
+    <label class="form-check-label" for="auto-send">Auto</label>
+    <button type="button" (click)="emitContent()" class="btn btn-success classify-btn" *ngIf="!autoemit">Classify</button>
   </div>
 </div>

@@ -1,1 +1,31 @@
-<p>settings works!</p>
+<h1>Settings</h1>
+
+<div class="form-check">
+  <input type="checkbox"
+    class="form-check-input"
+    id="auto-select"
+    [ngModel]="data.backendAuto"
+    (ngModelChange)="changeBackendAuto($event)">
+  <label class="form-check-label" for="auto-select">Automatically select execution method</label>
+</div>
+
+<div class="form-group">
+  <label for="backendSelection">Backend</label>
+  <select class="form-control" id="backendSelection"
+      [ngModel]="data.backend"
+      (ngModelChange)="changeBackend($event)"
+      [disabled]="data.backendAuto">
+    <option *ngFor="let backend of backends" [ngValue]="backend.value">{{backend.name}}</option>
+  </select>
+</div>
+
+<div class="form-check">
+  <input type="checkbox"
+    class="form-check-input"
+    id="auto-select"
+    [ngModel]="data.download"
+    (ngModelChange)="changeDownload($event)">
+  <label class="form-check-label" for="auto-select">Download model and classes</label>
+</div>
+
+<app-login></app-login>

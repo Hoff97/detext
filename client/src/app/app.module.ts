@@ -15,6 +15,7 @@ import { NotFoundComponent } from './components/not-found/not-found.component';
 import { SettingsComponent } from './components/settings/settings.component';
 import { StartComponent } from './components/start/start.component';
 import { Interceptor } from './util/http';
+import { LoginComponent } from './components/login/login.component';
 
 
 @NgModule({
@@ -25,7 +26,8 @@ import { Interceptor } from './util/http';
     NotFoundComponent,
     CanvasComponent,
     ClassificationComponent,
-    ClassSymbolComponent
+    ClassSymbolComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,
