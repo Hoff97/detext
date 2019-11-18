@@ -17,6 +17,10 @@ export class InferenceService {
 
   private classes: ClassSymbol[];
 
+  private backend: string;
+
+  private decodedModel: Uint8Array;
+
   constructor(private modelService: ModelService,
               private symbolService: SymbolService,
               private settingsService: SettingsService) {
@@ -24,6 +28,15 @@ export class InferenceService {
 
     this.symbolService.getSymbols().subscribe((symbols) => {
       this.classes = symbols.map(symbol => symbol);
+    });
+
+    this.backend = this.settingsService.getData().backend;
+
+    this.settingsService.dataChange.subscribe(data => {
+      if (this.backend !== data.backend) {
+        this.backend = data.backend;
+        this.inference = new MainThreadInference(this.decodedModel, this.backend);
+      }
     });
   }
 
@@ -51,16 +64,9 @@ export class InferenceService {
 
   private async setupModel() {
     const model = await this.modelService.getRecent().toPromise();
-    const decoded = base64ToBinary(model.model);
+    this.decodedModel = base64ToBinary(model.model);
 
-    /*if (typeof Worker !== 'undefined') {
-      console.log('Hello!');
-      const ThreadInference: any = Comlink.wrap(new Worker('./inference/inference.worker', { type: 'module' }));
-      this.inference = await new ThreadInference(decoded);
-    } else {
-      this.inference = new MainThreadInference(decoded);
-    }*/
-    this.inference = new MainThreadInference(decoded);
+    this.inference = new MainThreadInference(this.decodedModel, this.backend);
   }
 
   private preprocess(data, width, height) {

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { SettingsService } from 'src/app/services/settings.service';
+import { Settings, SettingsService } from 'src/app/services/settings.service';
 
 @Component({
   selector: 'app-settings',
@@ -8,8 +8,35 @@ import { SettingsService } from 'src/app/services/settings.service';
 })
 export class SettingsComponent implements OnInit {
 
-  constructor(private settingsService: SettingsService) { }
+  public data: Settings;
+
+  public backends = [
+    { value: 'wasm', name: 'Web Assembly' },
+    { value: 'cpu', name: 'Javascript'}
+  ];
+
+  constructor(private settingsService: SettingsService) {
+    this.data = settingsService.getData();
+    this.settingsService.dataChange.subscribe(data => {
+      this.data = data;
+    });
+  }
 
   ngOnInit() {
+  }
+
+  changeBackendAuto(value: boolean) {
+    this.data.backendAuto = value;
+    this.settingsService.setData(this.data);
+  }
+
+  changeBackend(value: 'wasm' | 'cpu') {
+    this.data.backend = value;
+    this.settingsService.setData(this.data);
+  }
+
+  changeDownload(value: boolean) {
+    this.data.download = value;
+    this.settingsService.setData(this.data);
   }
 }

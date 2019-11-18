@@ -38,6 +38,10 @@ export class SettingsService {
   public setData(data: Settings) {
     this.data = data;
 
+    if (this.data.backendAuto) {
+      this.data.backend = wasmSupport() ? 'wasm' : 'cpu';
+    }
+
     this.dataChange.emit(this.data);
 
     localStorage.setItem(SettingsService.localStorageKey, JSON.stringify(this.data));

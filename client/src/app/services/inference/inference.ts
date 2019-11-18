@@ -1,15 +1,14 @@
 import { InferenceSession, Tensor } from 'onnxjs';
-import { wasmSupport } from 'src/app/util/util';
 
 export interface Inference {
   infer(input: Tensor): Promise<Tensor>;
 }
 
 export class MainThreadInference implements Inference {
-  private backend = wasmSupport() ? 'wasm' : 'cpu';
-  private session = new InferenceSession({ backendHint: this.backend }) ;
+  private session: InferenceSession;
 
-  constructor(model: Uint8Array) {
+  constructor(model: Uint8Array, backend: string) {
+    this.session = new InferenceSession({ backendHint: backend }) ;
     this.session.loadModel(model);
   }
 
