@@ -4,8 +4,27 @@
   padding-top: 5px;
   width: 226px;
   margin: 0 auto;
+  position: relative;
 }
 
 .right {
   float: right;
+}
+
+.clear-btn {
+  position: absolute;
+  right: 5px;
+  color: #F00;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.classify-btn {
+  position: absolute;
+  right: 0px;
+  bottom: 0px;
+}
+
+.full-width {
+  width: 100%;
 }
