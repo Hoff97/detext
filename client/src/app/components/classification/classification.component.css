@@ -1,8 +1,13 @@
 .classification-wrapper {
   margin: 0 auto;
+  text-align: center;
 }
 
 .predictions {
   width: 200px;
   margin: 0 auto;
+}
+
+.large {
+  font-size: 30px;
 }
