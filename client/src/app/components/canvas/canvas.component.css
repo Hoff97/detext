@@ -28,3 +28,10 @@
 .full-width {
   width: 100%;
 }
+
+.settings-btn {
+  position: absolute;
+  left: 5px;
+  font-size: 20px;
+  cursor: pointer;
+}

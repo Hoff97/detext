@@ -1,0 +1,15 @@
+<div class="input-group mt-2" *ngIf="!loggedIn">
+  <input type="text" placeholder="Username"
+         aria-label="Username" class="form-control"
+         [(ngModel)]="username">
+  <input type="password" placeholder="Password"
+         aria-label="Password" class="form-control"
+         [(ngModel)]="password">
+  <div class="input-group-append">
+    <button class="btn btn-outline-secondary" type="button"
+      id="button-addon2" (click)="login()">Login</button>
+  </div>
+</div>
+<div *ngIf="loggedIn">
+  Already logged in
+</div>
