@@ -46,7 +46,7 @@ class MathSymbolView(viewsets.ModelViewSet):
             # forcibly invalidate the prefetch cache on the instance.
             instance._prefetched_objects_cache = {}
 
-        return Response(serializer.data)
+        return Response('Ok')
 
 class ClassificationModelView(viewsets.ViewSet):
     queryset = ClassificationModel.objects.all()
