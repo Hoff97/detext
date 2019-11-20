@@ -6,7 +6,8 @@ from django.contrib.auth.models import Group, User
 from PIL import Image
 from rest_framework import mixins, permissions, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.mixins import CreateModelMixin
+from rest_framework.exceptions import PermissionDenied, bad_request
+from rest_framework.mixins import CreateModelMixin, UpdateModelMixin
 from rest_framework.response import Response
 
 from detext.server.models import ClassificationModel, MathSymbol, TrainImage
@@ -19,6 +20,33 @@ class MathSymbolView(viewsets.ModelViewSet):
     queryset = MathSymbol.objects.all()
     serializer_class = MathSymbolSerializer
     ordering = ['timestamp']
+
+    """
+    Update a model instance.
+    """
+    def update(self, request, *args, **kwargs):
+        if request.user.id is None:
+            raise PermissionDenied({"message":"Can only update class symbol when logged in"})
+
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+
+        if 'image' in request.data:
+            return bad_request(request)
+
+        img = MathSymbol.objects.get(pk=instance.id).image
+        instance.image = img
+
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        if getattr(instance, '_prefetched_objects_cache', None):
+            # If 'prefetch_related' has been applied to a queryset, we need to
+            # forcibly invalidate the prefetch cache on the instance.
+            instance._prefetched_objects_cache = {}
+
+        return Response(serializer.data)
 
 class ClassificationModelView(viewsets.ViewSet):
     queryset = ClassificationModel.objects.all()
