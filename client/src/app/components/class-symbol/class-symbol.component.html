@@ -6,7 +6,20 @@
     </div>
     <div class="column ml-2">
         Score: {{(prop*100) | number:'1.0-2'}}%<br/>
-        <font class="code">{{class.latex}}</font>
+        <div *ngIf="!latexEdit" class="mt-2">
+          <font class="code" *ngIf="class.latex.length > 0">{{class.latex}}</font>
+          <font class="code" *ngIf="class.latex.length == 0">No latex code</font>
+          <i class="fa fa-edit pointer ml-1" (click)="editLatex()"></i>
+        </div>
+        <div class="input-group input-group-sm small-width mt-2" *ngIf="latexEdit">
+          <input type="text" class="form-control" placeholder="Latex code"
+            aria-label="Latex code" aria-describedby="button-latex-edit" [(ngModel)]="class.latex">
+          <div class="input-group-append">
+            <button class="btn btn-outline-secondary" type="button" id="button-latex-edit" (click)="editLatex()">
+                <i class="fa fa-edit"></i>
+            </button>
+          </div>
+        </div>
     </div>
   </div>
   <div class="row center" *ngIf="!expanded">

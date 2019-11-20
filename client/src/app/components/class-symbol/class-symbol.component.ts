@@ -21,6 +21,7 @@ export class ClassSymbolComponent implements OnInit {
   public loggedIn;
 
   public descriptEdit = false;
+  public latexEdit = false;
 
   @Output() correct = new EventEmitter<ClassSymbol>();
 
@@ -48,6 +49,16 @@ export class ClassSymbolComponent implements OnInit {
     this.descriptEdit = !this.descriptEdit;
 
     if (!this.descriptEdit) {
+      this.symbolService.updateSymbol(this.class).subscribe(response => {
+        console.log(response);
+      });
+    }
+  }
+
+  editLatex() {
+    this.latexEdit = !this.latexEdit;
+
+    if (!this.latexEdit) {
       this.symbolService.updateSymbol(this.class).subscribe(response => {
         console.log(response);
       });
