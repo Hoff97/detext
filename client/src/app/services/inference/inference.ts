@@ -2,6 +2,8 @@ import { InferenceSession, Tensor } from 'onnxjs';
 
 export interface Inference {
   infer(input: Tensor): Promise<Tensor>;
+
+  setModel(model: Uint8Array);
 }
 
 export class MainThreadInference implements Inference {
@@ -16,5 +18,9 @@ export class MainThreadInference implements Inference {
     const outputMap = await this.session.run([input]);
     const outputTensor: Tensor = outputMap.values().next().value;
     return outputTensor;
+  }
+
+  async setModel(model: Uint8Array) {
+    await this.session.loadModel(model);
   }
 }

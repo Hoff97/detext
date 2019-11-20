@@ -39,4 +39,8 @@ export class SymbolService {
       })
     );
   }
+
+  getSymbolsLocal(): Promise<ClassSymbol[]> {
+    return this.dbService.getSymbols();
+  }
 }
