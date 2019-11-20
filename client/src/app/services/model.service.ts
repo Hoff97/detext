@@ -42,4 +42,8 @@ export class ModelService {
       })
     );
   }
+
+  getRecentLocal(): Promise<Model> {
+    return this.dbService.getModel();
+  }
 }

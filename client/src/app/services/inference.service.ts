@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
 import ndarray from 'ndarray';
 import ops from 'ndarray-ops';
-import { Tensor } from 'onnxjs';
-import { ClassSymbol } from '../data/types';
+import { InferenceSession, Tensor } from 'onnxjs';
+import { ClassSymbol, Model } from '../data/types';
 import { base64ToBinary } from '../util/data';
-import { Inference, MainThreadInference } from './inference/inference';
 import { ModelService } from './model.service';
 import { SettingsService } from './settings.service';
 import { SymbolService } from './symbol.service';
@@ -13,36 +12,34 @@ import { SymbolService } from './symbol.service';
   providedIn: 'root'
 })
 export class InferenceService {
-  private inference: Inference;
-
   private classes: ClassSymbol[];
 
   private backend: string;
 
   private decodedModel: Uint8Array;
 
+  private session: InferenceSession;
+
   constructor(private modelService: ModelService,
               private symbolService: SymbolService,
               private settingsService: SettingsService) {
     this.setupModel();
 
-    this.symbolService.getSymbols().subscribe((symbols) => {
-      this.classes = symbols.map(symbol => symbol);
-    });
-
     this.backend = this.settingsService.getData().backend;
 
     this.settingsService.dataChange.subscribe(data => {
       if (this.backend !== data.backend) {
-        this.backend = data.backend;
-        this.inference = new MainThreadInference(this.decodedModel, this.backend);
+        this.changeBackend(data.backend);
       }
     });
   }
 
   public async infer(image: ImageData) {
-    const inputs = this.preprocess(image.data, image.width, image.height);
-    const output = await this.inference.infer(inputs);
+    const input = this.preprocess(image.data, image.width, image.height);
+
+    const outputMap = await this.session.run([input]);
+    const output: Tensor = outputMap.values().next().value;
+
     return this.softMax(output.data as Float32Array);
   }
 
@@ -63,10 +60,32 @@ export class InferenceService {
   }
 
   private async setupModel() {
-    const model = await this.modelService.getRecent().toPromise();
+    let symbolPromise = this.symbolService.getSymbolsLocal();
+    let modelPromise = this.modelService.getRecentLocal();
+    let [symbols, model] = await Promise.all([symbolPromise, modelPromise]);
+
+    if (symbols && model) {
+      await this.setSymbolsModel(symbols, model);
+    }
+
+    symbolPromise = this.symbolService.getSymbols().toPromise();
+    modelPromise = this.modelService.getRecent().toPromise();
+    [symbols, model] = await Promise.all([symbolPromise, modelPromise]);
+    await this.setSymbolsModel(symbols, model);
+  }
+
+  private async setSymbolsModel(symbols: ClassSymbol[], model: Model) {
+    this.classes = symbols;
     this.decodedModel = base64ToBinary(model.model);
 
-    this.inference = new MainThreadInference(this.decodedModel, this.backend);
+    this.session = new InferenceSession({ backendHint: this.backend }) ;
+    await this.session.loadModel(this.decodedModel);
+  }
+
+  private async changeBackend(backend: string) {
+    this.backend = backend;
+    this.session = new InferenceSession({ backendHint: this.backend }) ;
+    await this.session.loadModel(this.decodedModel);
   }
 
   private preprocess(data, width, height) {

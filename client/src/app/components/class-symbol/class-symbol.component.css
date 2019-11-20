@@ -29,3 +29,11 @@
 .full-width {
   width: 100%;
 }
+
+.pointer {
+  cursor: pointer;
+}
+
+.small-width {
+  width: 140px;
+}
