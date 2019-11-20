@@ -1,5 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ClassSymbol } from 'src/app/data/types';
+import { LoginService } from 'src/app/services/login.service';
+import { SymbolService } from 'src/app/services/symbol.service';
 
 @Component({
   selector: 'app-class-symbol',
@@ -16,9 +18,16 @@ export class ClassSymbolComponent implements OnInit {
 
   public correctClass = false;
 
+  public loggedIn;
+
+  public descriptEdit = false;
+
   @Output() correct = new EventEmitter<ClassSymbol>();
 
-  constructor() { }
+  constructor(private loginService: LoginService,
+              private symbolService: SymbolService) {
+    this.loggedIn = this.loginService.isLoggedIn();
+  }
 
   ngOnInit() {
   }
@@ -30,5 +39,18 @@ export class ClassSymbolComponent implements OnInit {
 
   toggleExpand() {
     this.expanded = !this.expanded;
+    if (!this.expanded) {
+      this.descriptEdit = false;
+    }
+  }
+
+  editDescription() {
+    this.descriptEdit = !this.descriptEdit;
+
+    if (!this.descriptEdit) {
+      this.symbolService.updateSymbol(this.class).subscribe(response => {
+        console.log(response);
+      });
+    }
   }
 }

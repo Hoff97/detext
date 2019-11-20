@@ -14,9 +14,27 @@
         <font><i class="fa fa-chevron-down expand-btn" (click)="toggleExpand()"></i></font>
     </div>
   </div>
+  <div class="row mt-1" *ngIf="expanded">
+      <div class="column full-width ml-3 mr-3">
+        <div *ngIf="!descriptEdit">
+          <font *ngIf="class.description.length > 0">{{class.description}}</font>
+          <font *ngIf="class.description.length == 0">No description</font>
+          <i class="fa fa-edit pointer ml-1" (click)="editDescription()"></i>
+        </div>
+        <div class="input-group input-group-sm mb-3" *ngIf="descriptEdit">
+          <input type="text" class="form-control" placeholder="Description"
+            aria-label="Description" aria-describedby="button-descript-edit" [(ngModel)]="class.description">
+          <div class="input-group-append">
+            <button class="btn btn-outline-secondary" type="button" id="button-descript-edit" (click)="editDescription()">
+                <i class="fa fa-edit"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   <div class="row center mt-3" *ngIf="expanded">
     <div class="column full-width">
-        <i class="fa fa-chevron-up expand-btn" (click)="toggleExpand()"></i>
+      <i class="fa fa-chevron-up expand-btn" (click)="toggleExpand()"></i>
     </div>
   </div>
   <button type="button"

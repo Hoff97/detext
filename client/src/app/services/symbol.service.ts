@@ -43,4 +43,13 @@ export class SymbolService {
   getSymbolsLocal(): Promise<ClassSymbol[]> {
     return this.dbService.getSymbols();
   }
+
+  updateSymbol(symbol: ClassSymbol) {
+    return this.http.put<ClassSymbol[]>(`${this.urlPrefix}api/symbol/${symbol.id}/?format=json`, {
+      timestamp: symbol.timestamp,
+      name: symbol.name,
+      description: symbol.description,
+      latex: symbol.latex
+    });
+  }
 }
