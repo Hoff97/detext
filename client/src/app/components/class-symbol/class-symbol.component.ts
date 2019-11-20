@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ClassSymbol } from 'src/app/data/types';
 import { LoginService } from 'src/app/services/login.service';
 import { SymbolService } from 'src/app/services/symbol.service';
+import { binaryToBase64 } from 'src/app/util/data';
 
 @Component({
   selector: 'app-class-symbol',
@@ -23,11 +24,14 @@ export class ClassSymbolComponent implements OnInit {
   public descriptEdit = false;
   public latexEdit = false;
 
+  private reader: FileReader;
+
   @Output() correct = new EventEmitter<ClassSymbol>();
 
   constructor(private loginService: LoginService,
               private symbolService: SymbolService) {
     this.loggedIn = this.loginService.isLoggedIn();
+    this.reader = new FileReader();
   }
 
   ngOnInit() {
@@ -63,5 +67,19 @@ export class ClassSymbolComponent implements OnInit {
         console.log(response);
       });
     }
+  }
+
+  handleImageInput(files) {
+    this.reader.onload = () => {
+      const text = this.reader.result;
+      const byteArray = new Uint8Array(text as any);
+
+      this.class.image = binaryToBase64(byteArray);
+      this.symbolService.updateImage(this.class).subscribe(response => {
+        console.log(response);
+      });
+    };
+
+    this.reader.readAsArrayBuffer(files[0]);
   }
 }

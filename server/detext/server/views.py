@@ -48,6 +48,21 @@ class MathSymbolView(viewsets.ModelViewSet):
 
         return Response('Ok')
 
+    @action(detail=True, methods=['put'])
+    def image(self, request, pk=None):
+        if pk == None:
+            return bad_request(request, Exception('Primary key can not be null'))
+
+        if 'image' not in request.data:
+            return bad_request(request, Exception('Image needs to be sent with this request'))
+
+
+        symbol = MathSymbol.objects.get(pk=pk)
+        symbol.image = base64.b64decode(request.data['image'])
+        symbol.save()
+
+        return Response('Ok')
+
 class ClassificationModelView(viewsets.ViewSet):
     queryset = ClassificationModel.objects.all()
     serializer_class = ClassificationModelSerializer

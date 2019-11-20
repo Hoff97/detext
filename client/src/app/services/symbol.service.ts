@@ -52,4 +52,10 @@ export class SymbolService {
       latex: symbol.latex
     });
   }
+
+  updateImage(symbol: ClassSymbol) {
+    return this.http.put<ClassSymbol[]>(`${this.urlPrefix}api/symbol/${symbol.id}/image/?format=json`, {
+      image: symbol.image
+    });
+  }
 }

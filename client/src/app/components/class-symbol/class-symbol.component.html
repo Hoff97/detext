@@ -43,6 +43,14 @@
             </button>
           </div>
         </div>
+
+        <div class="input-group mb-3">
+          <div class="custom-file">
+            <input type="file" class="custom-file-input" id="inputGroupImage"
+              (change)="handleImageInput($event.target.files)">
+            <label class="custom-file-label" for="inputGroupImage">Choose image</label>
+          </div>
+        </div>
       </div>
     </div>
   <div class="row center mt-3" *ngIf="expanded">
