@@ -14,3 +14,7 @@ export function binaryToBase64(arr): string {
   }).join('');
   return btoa(binstr);
 }
+
+export function strToBase64(str): string {
+  return btoa(str);
+}

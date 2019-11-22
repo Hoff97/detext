@@ -8,6 +8,7 @@ export interface ClassSymbol extends HasId {
   description: string;
   latex: string;
   image: string;
+  imgDatUri?: string;
 }
 
 export interface Model extends HasId {

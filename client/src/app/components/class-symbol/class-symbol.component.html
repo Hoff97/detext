@@ -2,7 +2,8 @@
   <div class="row">
     <div class="column">
       <img src="https://icatcare.org/app/uploads/2018/07/Thinking-of-getting-a-cat.png"
-        width="100px" height="100px"/><br/>
+        width="100px" height="100px" *ngIf="!class.imgDatUri"/>
+      <img [src]="class.imgDatUri" width="100px" height="100px" *ngIf="class.imgDatUri"/><br/>
     </div>
     <div class="column ml-2">
         Score: {{(prop*100) | number:'1.0-2'}}%<br/>

@@ -36,12 +36,23 @@ export class SymbolService {
       }),
       catchError((err) => {
         return this.dbService.getSymbols();
+      }),
+      map((symbols: ClassSymbol[]) => {
+        return symbols.map(this.updateSymbolImgDataUri);
       })
     );
   }
 
-  getSymbolsLocal(): Promise<ClassSymbol[]> {
-    return this.dbService.getSymbols();
+  private updateSymbolImgDataUri(symbol: ClassSymbol) {
+    if (symbol.image && symbol.image.length > 0) {
+      symbol.imgDatUri = atob(symbol.image);
+    }
+    return symbol;
+  }
+
+  async getSymbolsLocal(): Promise<ClassSymbol[]> {
+    const symbols =  await this.dbService.getSymbols();
+    return symbols.map(this.updateSymbolImgDataUri);
   }
 
   updateSymbol(symbol: ClassSymbol) {
