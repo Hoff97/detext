@@ -3,7 +3,7 @@ export interface HasId {
 }
 
 export interface ClassSymbol extends HasId {
-  timestamp: string;
+  timestamp?: string;
   name: string;
   description: string;
   latex: string;
