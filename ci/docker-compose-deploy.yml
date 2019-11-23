@@ -12,10 +12,12 @@ services:
       - static-django:/usr/src/app/django
     depends_on:
       - db
+    restart: on-failure
   client:
     image: hoff97/detext-client
     volumes:
       - static-content:/usr/src/app/public
+    restart: on-failure
   nginx:
     image: hoff97/detext-nginx
     ports:
@@ -28,6 +30,7 @@ services:
      - static-content:/usr/src/app/public
      - static-django:/usr/src/app/django
      - letsencrypt:/etc/letsencrypt/
+    restart: on-failure
 
 volumes:
   postgres_data:
