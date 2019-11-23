@@ -7,7 +7,8 @@ from PIL import Image
 from rest_framework import mixins, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied, bad_request
-from rest_framework.mixins import CreateModelMixin, UpdateModelMixin
+from rest_framework.mixins import (CreateModelMixin, DestroyModelMixin,
+                                   UpdateModelMixin)
 from rest_framework.response import Response
 
 from detext.server.models import ClassificationModel, MathSymbol, TrainImage
@@ -20,6 +21,16 @@ class MathSymbolView(viewsets.ModelViewSet):
     queryset = MathSymbol.objects.all()
     serializer_class = MathSymbolSerializer
     ordering = ['timestamp']
+
+    """
+    Destroy a model instance.
+    """
+    def destroy(self, request, *args, **kwargs):
+        if request.user.id is None:
+            raise PermissionDenied({"message":"Can only delete class symbol when logged in"})
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     """
     Create a model instance.
@@ -69,6 +80,8 @@ class MathSymbolView(viewsets.ModelViewSet):
         if 'image' not in request.data:
             return bad_request(request, Exception('Image needs to be sent with this request'))
 
+        if request.user.id is None:
+            raise PermissionDenied({"message":"Can only update class image when logged in"})
 
         symbol = MathSymbol.objects.get(pk=pk)
         symbol.image = base64.b64decode(request.data['image'])
