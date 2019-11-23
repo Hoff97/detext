@@ -28,7 +28,7 @@ export class LoginService {
   }
 
   public login(username: string, password: string) {
-    const observable = this.httpClient.post<LoginRequest>(this.urlPrefix + 'api-token-auth/', {
+    const observable = this.httpClient.post<LoginRequest>(this.urlPrefix + 'api/api-token-auth/', {
       username,
       password
     });

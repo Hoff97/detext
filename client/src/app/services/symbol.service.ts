@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
@@ -18,7 +19,8 @@ export class SymbolService {
 
   constructor(private http: HttpClient,
               private dbService: DbService,
-              private settingsService: SettingsService) {
+              private settingsService: SettingsService,
+              private sanitizer: DomSanitizer) {
     this.settingsService.dataChange.subscribe((data: Settings) => {
       if (data.download && !this.downloaded) {
         this.getSymbols().subscribe(x => {
@@ -36,12 +38,23 @@ export class SymbolService {
       }),
       catchError((err) => {
         return this.dbService.getSymbols();
+      }),
+      map((symbols: ClassSymbol[]) => {
+        return symbols.map(symbol => this.updateSymbolImgDataUri(symbol));
       })
     );
   }
 
-  getSymbolsLocal(): Promise<ClassSymbol[]> {
-    return this.dbService.getSymbols();
+  private updateSymbolImgDataUri(symbol: ClassSymbol) {
+    if (symbol.image && symbol.image.length > 0) {
+      symbol.imgDatUri = this.sanitizer.bypassSecurityTrustResourceUrl(atob(symbol.image)) as any;
+    }
+    return symbol;
+  }
+
+  async getSymbolsLocal(): Promise<ClassSymbol[]> {
+    const symbols =  await this.dbService.getSymbols();
+    return symbols.map(symbol => this.updateSymbolImgDataUri(symbol));
   }
 
   updateSymbol(symbol: ClassSymbol) {
@@ -57,5 +70,13 @@ export class SymbolService {
     return this.http.put<ClassSymbol[]>(`${this.urlPrefix}api/symbol/${symbol.id}/image/?format=json`, {
       image: symbol.image
     });
+  }
+
+  create(symbol: ClassSymbol): Observable<ClassSymbol> {
+    return this.http.post<ClassSymbol>(this.urlPrefix + 'api/symbol/?format=json', symbol).pipe(
+      map((sym: ClassSymbol) => {
+        return this.updateSymbolImgDataUri(sym);
+      })
+    );
   }
 }

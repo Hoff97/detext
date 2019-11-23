@@ -3,11 +3,12 @@ export interface HasId {
 }
 
 export interface ClassSymbol extends HasId {
-  timestamp: string;
+  timestamp?: string;
   name: string;
   description: string;
   latex: string;
   image: string;
+  imgDatUri?: string;
 }
 
 export interface Model extends HasId {

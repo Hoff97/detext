@@ -1,0 +1,36 @@
+<button type="button" class="btn btn-outline-success" style="width: 100%;"
+    *ngIf="!creating" (click)="creating = true">
+  <i class="fa fa-plus"></i>
+  New symbol
+</button>
+<div class="class-card" *ngIf="creating">
+  <div class="input-group mb-1">
+    <input type="text" class="form-control" placeholder="Name" aria-label="Name"
+      [(ngModel)]="class.name">
+  </div>
+  <div class="input-group mb-1">
+    <input type="text" class="form-control" placeholder="Latex-code" aria-label="Latex-code"
+      [(ngModel)]="class.latex">
+  </div>
+  <div class="input-group mb-1">
+    <input type="text" class="form-control" placeholder="Description" aria-label="Description"
+      [(ngModel)]="class.description">
+  </div>
+  <div class="input-group mb-3" *ngIf="loggedIn">
+    <div class="custom-file">
+      <input type="file" class="custom-file-input" id="inputGroupImage"
+        (change)="handleImageInput($event.target.files)">
+      <label class="custom-file-label" for="inputGroupImage">Choose image</label>
+    </div>
+  </div>
+  <img [src]="class.imgDatUri" width="100px" height="100px" *ngIf="class.imgDatUri"/>
+  <button type="button" class="btn btn-outline-success" style="width: 100%;" (click)="create()"
+      *ngIf="class.name !== '' && class.latex !== '' && class.description !== ''">
+    <i class="fa fa-plus"></i>
+  </button>
+  <button type="button" class="btn btn-outline-success" style="width: 100%;" disabled
+      *ngIf="class.name === '' || class.latex === '' || class.description === ''">
+    <i class="fa fa-plus"></i>
+  </button>
+</div>
+

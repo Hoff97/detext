@@ -2,21 +2,23 @@
   <div class="row">
     <div class="column">
       <img src="https://icatcare.org/app/uploads/2018/07/Thinking-of-getting-a-cat.png"
-        width="100px" height="100px"/><br/>
+        width="100px" height="100px" *ngIf="!class.imgDatUri"/>
+      <img [src]="class.imgDatUri" width="100px" height="100px" *ngIf="class.imgDatUri" class="ml-3"/><br/>
     </div>
     <div class="column ml-2">
         Score: {{(prop*100) | number:'1.0-2'}}%<br/>
         <div *ngIf="!latexEdit" class="mt-2">
           <font class="code" *ngIf="class.latex.length > 0">{{class.latex}}</font>
           <font class="code" *ngIf="class.latex.length == 0">No latex code</font>
-          <i class="fa fa-edit pointer ml-1" (click)="editLatex()"></i>
+          <i class="fa fa-edit pointer ml-1" (click)="editLatex()" *ngIf="loggedIn"></i>
         </div>
         <div class="input-group input-group-sm small-width mt-2" *ngIf="latexEdit">
           <input type="text" class="form-control" placeholder="Latex code"
             aria-label="Latex code" aria-describedby="button-latex-edit" [(ngModel)]="class.latex">
           <div class="input-group-append">
-            <button class="btn btn-outline-secondary" type="button" id="button-latex-edit" (click)="editLatex()">
-                <i class="fa fa-edit"></i>
+            <button class="btn btn-outline-secondary" type="button" id="button-latex-edit"
+                (click)="editLatex()">
+              <i class="fa fa-edit"></i>
             </button>
           </div>
         </div>
@@ -28,31 +30,33 @@
     </div>
   </div>
   <div class="row mt-1" *ngIf="expanded">
-      <div class="column full-width ml-3 mr-3">
-        <div *ngIf="!descriptEdit">
-          <font *ngIf="class.description.length > 0">{{class.description}}</font>
-          <font *ngIf="class.description.length == 0">No description</font>
-          <i class="fa fa-edit pointer ml-1" (click)="editDescription()"></i>
+    <div class="column full-width ml-3 mr-3">
+      <div *ngIf="!descriptEdit">
+        <font *ngIf="class.description.length > 0">{{class.description}}</font>
+        <font *ngIf="class.description.length == 0">No description</font>
+        <i class="fa fa-edit pointer ml-1" (click)="editDescription()" *ngIf="loggedIn"></i>
+      </div>
+      <div class="input-group input-group-sm mb-3" *ngIf="descriptEdit">
+        <input type="text" class="form-control" placeholder="Description"
+          aria-label="Description" aria-describedby="button-descript-edit" [(ngModel)]="class.description">
+        <div class="input-group-append">
+          <button class="btn btn-outline-secondary" type="button" id="button-descript-edit"
+             (click)="editDescription()">
+            <i class="fa fa-edit"></i>
+          </button>
         </div>
-        <div class="input-group input-group-sm mb-3" *ngIf="descriptEdit">
-          <input type="text" class="form-control" placeholder="Description"
-            aria-label="Description" aria-describedby="button-descript-edit" [(ngModel)]="class.description">
-          <div class="input-group-append">
-            <button class="btn btn-outline-secondary" type="button" id="button-descript-edit" (click)="editDescription()">
-                <i class="fa fa-edit"></i>
-            </button>
-          </div>
-        </div>
+      </div>
 
-        <div class="input-group mb-3">
-          <div class="custom-file">
-            <input type="file" class="custom-file-input" id="inputGroupImage"
-              (change)="handleImageInput($event.target.files)">
-            <label class="custom-file-label" for="inputGroupImage">Choose image</label>
-          </div>
+      <div class="input-group mb-3" *ngIf="loggedIn">
+        <div class="custom-file">
+          <input type="file" class="custom-file-input" id="inputGroupImage"
+            (change)="handleImageInput($event.target.files)">
+          <label class="custom-file-label" for="inputGroupImage">Choose image</label>
         </div>
       </div>
     </div>
+    <font *ngIf="loggedIn" class="ml-3">{{class.name}}</font>
+  </div>
   <div class="row center mt-3" *ngIf="expanded">
     <div class="column full-width">
       <i class="fa fa-chevron-up expand-btn" (click)="toggleExpand()"></i>
