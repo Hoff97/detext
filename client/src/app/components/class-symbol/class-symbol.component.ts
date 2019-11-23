@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 import { ClassSymbol } from 'src/app/data/types';
 import { LoginService } from 'src/app/services/login.service';
 import { SymbolService } from 'src/app/services/symbol.service';
@@ -29,7 +30,8 @@ export class ClassSymbolComponent implements OnInit {
   @Output() correct = new EventEmitter<ClassSymbol>();
 
   constructor(private loginService: LoginService,
-              private symbolService: SymbolService) {
+              private symbolService: SymbolService,
+              private sanitizer: DomSanitizer) {
     this.loggedIn = this.loginService.isLoggedIn();
     this.reader = new FileReader();
   }
@@ -74,7 +76,7 @@ export class ClassSymbolComponent implements OnInit {
       const text = this.reader.result;
 
       this.class.image = strToBase64(text);
-      this.class.imgDatUri = text as any;
+      this.class.imgDatUri = this.sanitizer.bypassSecurityTrustResourceUrl(text as any) as any;
       this.symbolService.updateImage(this.class).subscribe(response => {
         console.log(response);
       });

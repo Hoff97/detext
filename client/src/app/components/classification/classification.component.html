@@ -2,7 +2,12 @@
   <p *ngIf="loading">
     <i class="fa fa-spinner large fa-spin center"></i>
   </p>
-  <table *ngIf="!loading" class="predictions">
+  <table *ngIf="!loading && predictions.length > 0" class="predictions">
+    <tr>
+      <td style="width: 100%;">
+        <app-new-symbol (created)="created($event)"></app-new-symbol>
+      </td>
+    </tr>
     <tr *ngFor="let pred of predSorted">
       <td style="width: 100%;">
         <app-class-symbol [class]="pred.class"

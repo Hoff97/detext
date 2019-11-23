@@ -16,6 +16,7 @@ import { SettingsComponent } from './components/settings/settings.component';
 import { StartComponent } from './components/start/start.component';
 import { Interceptor } from './util/http';
 import { LoginComponent } from './components/login/login.component';
+import { NewSymbolComponent } from './components/new-symbol/new-symbol.component';
 
 
 @NgModule({
@@ -27,7 +28,8 @@ import { LoginComponent } from './components/login/login.component';
     CanvasComponent,
     ClassificationComponent,
     ClassSymbolComponent,
-    LoginComponent
+    LoginComponent,
+    NewSymbolComponent
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,10 @@
+.class-card {
+  position: relative;
+  border: 1px solid #777;
+  border-radius: 5px;
+  padding: 5px;
+  margin-bottom: 5px;
+  overflow: hidden;
+  min-width: 250px;
+  text-align: left;
+}

@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { ClassSymbol } from 'src/app/data/types';
+import { SymbolService } from 'src/app/services/symbol.service';
 
 interface Prediction {
   prop: number;
@@ -22,7 +23,7 @@ export class ClassificationComponent implements OnInit, OnChanges {
   public predSorted: Prediction[];
   public correctSelected = false;
 
-  constructor() { }
+  constructor(private symbolService: SymbolService) { }
 
   ngOnInit() {
   }
@@ -40,5 +41,11 @@ export class ClassificationComponent implements OnInit, OnChanges {
   selectCorrect(cls: ClassSymbol) {
     this.correctSelected = true;
     this.correct.emit(cls);
+  }
+
+  created(symbol: ClassSymbol) {
+    this.symbolService.create(symbol).subscribe(sym => {
+      this.correct.emit(sym);
+    });
   }
 }
