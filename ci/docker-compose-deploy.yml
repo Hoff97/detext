@@ -6,12 +6,16 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     restart: on-failure
+  tex2svg:
+    image: hoff97/tex2svg
+    restart: on-failure
   server:
     image: hoff97/detext-server
     volumes:
       - static-django:/usr/src/app/django
     depends_on:
       - db
+      - tex2svg
     restart: on-failure
   client:
     image: hoff97/detext-client
