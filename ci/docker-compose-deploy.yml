@@ -30,6 +30,7 @@ services:
     depends_on:
       - "server"
       - "client"
+      - "tex2svg"
     volumes:
      - static-content:/usr/src/app/public
      - static-django:/usr/src/app/django
