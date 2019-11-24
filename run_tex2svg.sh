@@ -1,0 +1,1 @@
+docker run -p 0.0.0.0:9000:8000 hoff97/tex2svg

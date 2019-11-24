@@ -10,7 +10,7 @@
   </div>
   <div class="input-group mb-1">
     <input type="text" class="form-control" placeholder="Latex-code" aria-label="Latex-code"
-      [(ngModel)]="class.latex">
+      [(ngModel)]="class.latex" (blur)="getLatexSvg()">
   </div>
   <div class="input-group mb-1">
     <input type="text" class="form-control" placeholder="Description" aria-label="Description"
@@ -23,6 +23,7 @@
       <label class="custom-file-label" for="inputGroupImage">Choose image</label>
     </div>
   </div>
+  <img [src]="'/tex2svg/?latex=' + class.latex" width="100px" height="100px" *ngIf="displayCodeImg && !class.imgDatUri"/>
   <img [src]="class.imgDatUri" width="100px" height="100px" *ngIf="class.imgDatUri"/>
   <button type="button" class="btn btn-outline-success" style="width: 100%;" (click)="create()"
       *ngIf="class.name !== '' && class.latex !== '' && class.description !== ''">
