@@ -25,6 +25,7 @@ class TrainImage(models.Model):
 
 class ClassificationModel(models.Model):
     model = models.BinaryField(editable=True)
+    pytorch = models.BinaryField(editable=True, blank=True)
     timestamp = models.DateTimeField()
 
     # TODO: Add train/test accuracy, other infos?
