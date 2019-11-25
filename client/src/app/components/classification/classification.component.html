@@ -6,8 +6,10 @@
     <tr>
       <td style="width: 100%;">
         <div class="btn-group" role="group" aria-label="Basic example">
-          <button type="button" class="btn btn-secondary" (click)="page='predicted'">Predicted</button>
-          <button type="button" class="btn btn-secondary" (click)="page='other'">Other</button>
+          <button type="button" [ngClass]="page=='predicted' ? 'btn btn-primary' : 'btn btn-secondary'"
+              (click)="page='predicted'">Predicted</button>
+          <button type="button" [ngClass]="page=='other' ? 'btn btn-primary' : 'btn btn-secondary'"
+              (click)="page='other'">Other</button>
         </div>
       </td>
     </tr>
