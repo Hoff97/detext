@@ -18,10 +18,14 @@ export class ClassificationComponent implements OnInit, OnChanges {
   @Input() public classes: ClassSymbol[];
   @Input() public loading: boolean;
 
+  @Output() public reloadClasses = new EventEmitter<void>();
   @Output() public correct = new EventEmitter<ClassSymbol>();
 
   public predSorted: Prediction[];
+  public unpredicted: ClassSymbol[];
   public correctSelected = false;
+
+  public page = 'predicted';
 
   constructor(private symbolService: SymbolService) { }
 
@@ -36,6 +40,7 @@ export class ClassificationComponent implements OnInit, OnChanges {
         class: this.classes[ix]
       };
     }).sort((a, b) => a.prop > b.prop ? -1 : 1);
+    this.unpredicted = this.classes.slice(this.predictions.length);
   }
 
   selectCorrect(cls: ClassSymbol) {
@@ -46,6 +51,7 @@ export class ClassificationComponent implements OnInit, OnChanges {
   created(symbol: ClassSymbol) {
     this.symbolService.create(symbol).subscribe(sym => {
       this.correct.emit(sym);
+      this.reloadClasses.emit();
     });
   }
 }

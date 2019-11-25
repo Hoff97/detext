@@ -1,7 +1,9 @@
 import base64
 import binascii
 import io
+import urllib
 
+from django.conf import settings
 from django.contrib.auth.models import Group, User
 from PIL import Image
 from rest_framework import mixins, permissions, status, viewsets
@@ -37,7 +39,18 @@ class MathSymbolView(viewsets.ModelViewSet):
     """
     def create(self, request, *args, **kwargs):
         if request.user.id is None:
-            request.data.image = None
+            request.data['image'] = None
+
+        code = request.data['latex']
+
+        if 'image' not in request.data or request.data['image'] == None or request.data['image'] == '':
+            url = settings.TEXSVG_URL + '?latex=' + code
+            svg = urllib.request.urlopen(url).read()
+
+            svg = base64.b64encode(svg).decode('utf-8')
+            pre = 'data:image/svg+xml;base64,'
+            svg = (pre + svg).encode('utf-8')
+            request.data['image'] = svg
 
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -107,7 +120,7 @@ class TrainImageView(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         imgB64 = request.data['image']
         imgBytes = base64.decodebytes(imgB64.encode())
-        img = Image.frombytes('RGBA', (request.data.pop('width'), request.data.pop('height')), imgBytes)
+        img = Image.frombytes('RGBA', (request.data.pop('width'), request.data.pop('height')), imgBytes).convert('L')
 
         byteArr = io.BytesIO()
         img.save(byteArr, format='png')

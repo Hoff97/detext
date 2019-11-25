@@ -5,7 +5,6 @@ import * as moment from 'moment';
 import { ClassSymbol } from 'src/app/data/types';
 import { LoginService } from 'src/app/services/login.service';
 import { strToBase64 } from 'src/app/util/data';
-import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-new-symbol',
@@ -13,9 +12,6 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./new-symbol.component.css']
 })
 export class NewSymbolComponent implements OnInit {
-
-  private urlPrefix = environment.urlPrefix;
-
   @Output() created = new EventEmitter<ClassSymbol>();
 
   creating = false;
@@ -61,5 +57,18 @@ export class NewSymbolComponent implements OnInit {
 
   getLatexSvg() {
     this.displayCodeImg = true;
+  }
+
+  cancel() {
+    this.class = {
+      name: '',
+      latex: '',
+      description: '',
+      image: '',
+      imgDatUri: '',
+      timestamp: moment().format()
+    };
+    this.displayCodeImg = false;
+    this.creating = false;
   }
 }

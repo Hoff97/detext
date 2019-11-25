@@ -5,7 +5,7 @@ services:
     image: postgres:10.1-alpine
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-    restart: on-failure
+    restart: always
   tex2svg:
     image: hoff97/tex2svg
     restart: always
@@ -16,7 +16,7 @@ services:
     depends_on:
       - db
       - tex2svg
-    restart: on-failure
+    restart: always
   client:
     image: hoff97/detext-client
     volumes:
@@ -35,7 +35,7 @@ services:
      - static-content:/usr/src/app/public
      - static-django:/usr/src/app/django
      - letsencrypt:/etc/letsencrypt/
-    restart: on-failure
+    restart: always
 
 volumes:
   postgres_data:

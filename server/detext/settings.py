@@ -27,6 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+TEXSVG_URL = 'http://localhost:9000/'
 
 # Application definition
 
