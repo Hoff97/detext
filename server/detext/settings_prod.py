@@ -61,6 +61,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'detext.wsgi.application'
 
+TEXSVG_URL = 'http://tex2svg:8000/'
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
