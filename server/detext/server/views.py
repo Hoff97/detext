@@ -107,7 +107,7 @@ class TrainImageView(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         imgB64 = request.data['image']
         imgBytes = base64.decodebytes(imgB64.encode())
-        img = Image.frombytes('RGBA', (request.data.pop('width'), request.data.pop('height')), imgBytes)
+        img = Image.frombytes('RGBA', (request.data.pop('width'), request.data.pop('height')), imgBytes).convert('L')
 
         byteArr = io.BytesIO()
         img.save(byteArr, format='png')
