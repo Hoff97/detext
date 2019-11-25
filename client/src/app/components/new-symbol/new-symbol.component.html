@@ -25,13 +25,18 @@
   </div>
   <img [src]="'/tex2svg/?latex=' + class.latex" width="100px" height="100px" *ngIf="displayCodeImg && !class.imgDatUri"/>
   <img [src]="class.imgDatUri" width="100px" height="100px" *ngIf="class.imgDatUri"/>
-  <button type="button" class="btn btn-outline-success" style="width: 100%;" (click)="create()"
-      *ngIf="class.name !== '' && class.latex !== '' && class.description !== ''">
-    <i class="fa fa-plus"></i>
-  </button>
-  <button type="button" class="btn btn-outline-success" style="width: 100%;" disabled
-      *ngIf="class.name === '' || class.latex === '' || class.description === ''">
-    <i class="fa fa-plus"></i>
-  </button>
+  <div class="btn-group" role="group" style="width: 100%;">
+    <button type="button" class="btn btn-outline-warning" (click)="cancel()">
+      <i class="fa fa-times"></i>
+    </button>
+    <button type="button" class="btn btn-outline-success right" (click)="create()"
+        *ngIf="class.name !== '' && class.latex !== '' && class.description !== ''">
+      <i class="fa fa-plus"></i>
+    </button>
+    <button type="button" class="btn btn-outline-success right" disabled
+        *ngIf="class.name === '' || class.latex === '' || class.description === ''">
+      <i class="fa fa-plus"></i>
+    </button>
+  </div>
 </div>
 
