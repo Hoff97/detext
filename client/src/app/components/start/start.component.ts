@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ClassSymbol } from 'src/app/data/types';
 import { InferenceService } from 'src/app/services/inference.service';
+import { SymbolService } from 'src/app/services/symbol.service';
 import { TrainImageService } from 'src/app/services/train-image.service';
 import { binaryToBase64 } from 'src/app/util/data';
 
@@ -19,15 +20,19 @@ export class StartComponent implements OnInit {
   private img?: ImageData;
 
   constructor(private inferenceService: InferenceService,
-              private trainImageService: TrainImageService) { }
+              private trainImageService: TrainImageService,
+              private symbolService: SymbolService) { }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.symbolService.getSymbols().subscribe(symbols => {
+      this.classes = symbols;
+    });
+  }
 
   async predictClass(image: ImageData) {
     this.loading = true;
     this.img = image;
     this.predictions = Array.prototype.slice.call(await this.inferenceService.infer(image));
-    this.classes = this.inferenceService.getClasses();
     this.loading = false;
   }
 
@@ -47,5 +52,9 @@ export class StartComponent implements OnInit {
 
   cleared() {
     this.predictions = [];
+  }
+
+  async reloadClasses() {
+    this.classes = await this.symbolService.getSymbols().toPromise();
   }
 }

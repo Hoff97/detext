@@ -5,13 +5,29 @@
   <table *ngIf="!loading && predictions.length > 0" class="predictions">
     <tr>
       <td style="width: 100%;">
+        <div class="btn-group" role="group" aria-label="Basic example">
+          <button type="button" class="btn btn-secondary" (click)="page='predicted'">Predicted</button>
+          <button type="button" class="btn btn-secondary" (click)="page='other'">Other</button>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td style="width: 100%;">
         <app-new-symbol (created)="created($event)"></app-new-symbol>
       </td>
     </tr>
-    <tr *ngFor="let pred of predSorted">
+    <tr *ngFor="let pred of page==='predicted' ? predSorted : []">
       <td style="width: 100%;">
         <app-class-symbol [class]="pred.class"
           [prop]="pred.prop"
+          (correct)="selectCorrect($event)"
+          [correctEnabled]="!correctSelected">
+        </app-class-symbol>
+      </td>
+    </tr>
+    <tr *ngFor="let class of page==='other' ? unpredicted : []">
+      <td style="width: 100%;">
+        <app-class-symbol [class]="class"
           (correct)="selectCorrect($event)"
           [correctEnabled]="!correctSelected">
         </app-class-symbol>

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import ndarray from 'ndarray';
 import ops from 'ndarray-ops';
 import { InferenceSession, Tensor } from 'onnxjs';
-import { ClassSymbol, Model } from '../data/types';
+import { Model } from '../data/types';
 import { base64ToBinary } from '../util/data';
 import { ModelService } from './model.service';
 import { SettingsService } from './settings.service';
@@ -12,8 +12,6 @@ import { SymbolService } from './symbol.service';
   providedIn: 'root'
 })
 export class InferenceService {
-  private classes: ClassSymbol[];
-
   private backend: string;
 
   private decodedModel: Uint8Array;
@@ -43,10 +41,6 @@ export class InferenceService {
     return this.softMax(output.data as Float32Array);
   }
 
-  public getClasses() {
-    return this.classes;
-  }
-
   private softMax(array: Float32Array) {
     let sum = 0;
     for (let i = 0; i < array.length; i++) {
@@ -60,22 +54,12 @@ export class InferenceService {
   }
 
   private async setupModel() {
-    let symbolPromise = this.symbolService.getSymbolsLocal();
-    let modelPromise = this.modelService.getRecentLocal();
-    let [symbols, model] = await Promise.all([symbolPromise, modelPromise]);
-
-    if (symbols && model) {
-      await this.setSymbolsModel(symbols, model);
-    }
-
-    symbolPromise = this.symbolService.getSymbols().toPromise();
-    modelPromise = this.modelService.getRecent().toPromise();
-    [symbols, model] = await Promise.all([symbolPromise, modelPromise]);
-    await this.setSymbolsModel(symbols, model);
+    const modelPromise = this.modelService.getRecent().toPromise();
+    const model = await modelPromise;
+    await this.setModel(model);
   }
 
-  private async setSymbolsModel(symbols: ClassSymbol[], model: Model) {
-    this.classes = symbols;
+  private async setModel(model: Model) {
     this.decodedModel = base64ToBinary(model.model);
 
     this.session = new InferenceSession({ backendHint: this.backend }) ;
