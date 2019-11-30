@@ -29,3 +29,12 @@
 </div>
 
 <app-login></app-login>
+
+<div *ngIf="loggedIn">
+  <button type="button" class="btn btn-outline-success right" (click)="retrain()" *ngIf="!retraining">
+    Retrain
+  </button>
+  <button type="button" class="btn btn-outline-success right disabled" *ngIf="retraining">
+    Retrain
+  </button>
+</div>
