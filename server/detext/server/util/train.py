@@ -19,6 +19,8 @@ from scripts.models.linear import LinearModel
 from detext.server.models import ClassificationModel, MathSymbol, TrainImage
 
 import scripts.models.mobilenet as mm
+import gc
+
 
 def valid_func(x):
     return random.random() < 2
@@ -89,6 +91,15 @@ def train_classifier(train_batch_size=16, test_batch_size=4, transfer_learn = Fa
     model = model.to('cpu')
     old_model.set_classifier(model.classifier)
     old_model = old_model.eval()
+
+    del dataloaders
+    del dataset_sizes
+    del sampler
+    del weights
+    del train_dataset
+    del test_dataset
+    del full_dataset
+    gc.collect()
 
     byteArr = io.BytesIO()
     dummy_input = torch.randn(1, 3, 224, 224)
