@@ -17,7 +17,7 @@ from detext.server.models import TrainImage
 def update_train_features(torch_model, num_classes):
     with torch.no_grad():
         model = mm.MobileNet(features=num_classes, pretrained=False)
-        model.load_state_dict(torch.load(torch_model))
+        model.load_state_dict(torch.load(torch_model, map_location=torch.device('cpu')))
         model = model.eval()
 
         for i, train_img in enumerate(TrainImage.objects.all()):
