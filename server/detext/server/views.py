@@ -141,19 +141,21 @@ class TrainImageView(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def update_features(self, train_image, img):
-        latest_model = ClassificationModel.objects.all().order_by('-timestamp').first()
-        old_classes = MathSymbol.objects.all().order_by('-timestamp').filter(timestamp__lte=latest_model.timestamp)
-        model = mm.MobileNet(features=len(old_classes), pretrained=False)
-        model.load_state_dict(torch.load(io.BytesIO(latest_model.pytorch)))
+        with torch.no_grad():
+            latest_model = ClassificationModel.objects.all().order_by('-timestamp').first()
+            old_classes = MathSymbol.objects.all().filter(timestamp__lte=latest_model.timestamp)
+            model = mm.MobileNet(features=len(old_classes), pretrained=False)
+            model.load_state_dict(torch.load(io.BytesIO(latest_model.pytorch)))
+            model = model.eval()
 
-        img = mm.preprocess(img)
-        img = img.repeat((3,1,1))
-        img = img.reshape((1,img.shape[0], img.shape[1], img.shape[2]))
+            img = mm.preprocess(img)
+            img = img.repeat((3,1,1))
+            img = img.reshape((1,img.shape[0], img.shape[1], img.shape[2]))
 
-        features = model.features(img)
-        features = features.mean([2, 3])
-        byte_f = io.BytesIO()
-        torch.save(features, byte_f)
+            features = model.features(img)
+            features = features.mean([2, 3])
+            byte_f = io.BytesIO()
+            torch.save(features, byte_f)
 
-        train_image.features = byte_f.getvalue()
-        train_image.save()
+            train_image.features = byte_f.getvalue()
+            train_image.save()

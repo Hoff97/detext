@@ -16,7 +16,7 @@ def update_features(apps, schema_editor):
     MathSymbol = apps.get_model("server", "MathSymbol")
 
     current_model = ClassificationModel.objects.all().order_by('-timestamp').first()
-    old_classes = MathSymbol.objects.all().order_by('-timestamp').filter(timestamp__lte=current_model.timestamp)
+    old_classes = MathSymbol.objects.all().filter(timestamp__lte=current_model.timestamp)
 
     update_train_features(io.BytesIO(current_model.pytorch), len(old_classes))
 
