@@ -124,7 +124,7 @@ class ClassificationModelView(viewsets.ViewSet):
         if request.user.id is None:
             raise PermissionDenied({"message":"Can only trigger training as root"})
 
-        train_classifier(settings.ML.TRAIN_BATCH_SIZE, settings.ML.TEST_BATCH_SIZE)
+        train_classifier(settings.ML['TRAIN_BATCH_SIZE'], settings.ML['TEST_BATCH_SIZE'])
 
         return Response('Ok')
 

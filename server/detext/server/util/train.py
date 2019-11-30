@@ -84,7 +84,7 @@ def train_classifier(train_batch_size=16, test_batch_size=4, transfer_learn = Fa
 
     model = model.to(device)
 
-    model = train_model(model, criterion, dataloaders, dataset_sizes, device, num_epochs = 2, step_size=2)
+    model = train_model(model, criterion, dataloaders, dataset_sizes, device, num_epochs = 5, step_size=2)
 
     model = model.to('cpu')
     old_model.set_classifier(model.classifier)
