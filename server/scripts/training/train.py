@@ -10,11 +10,11 @@ from torchvision import datasets
 from scripts.models.cnn import CNNNet, preprocess
 
 
-def train_model(model, criterion, dataloaders, dataset_sizes, device='cpu', num_epochs=25):
-    optimizer = optim.Adam(model.parameters())
+def train_model(model, criterion, dataloaders, dataset_sizes, device='cpu', num_epochs=25, lr=1e-3, step_size=7):
+    optimizer = optim.Adam(model.parameters(), lr=lr)
 
     # Decay LR by a factor of 0.1 every 7 epochs
-    scheduler = lr_scheduler.StepLR(optimizer, step_size=7, gamma=0.1)
+    scheduler = lr_scheduler.StepLR(optimizer, step_size=step_size, gamma=0.1)
 
     since = time.time()
 
