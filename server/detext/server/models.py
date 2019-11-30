@@ -28,8 +28,9 @@ class ClassificationModel(models.Model):
     model = models.BinaryField(editable=True)
     pytorch = models.BinaryField(editable=True, blank=True)
     timestamp = models.DateTimeField()
+    accuracy = models.FloatField(default=0.9)
 
     # TODO: Add train/test accuracy, other infos?
 
     def __str__(self):
-        return f"{self.timestamp}"
+        return f"{self.timestamp} - Accuracy: {self.accuracy}"

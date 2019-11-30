@@ -65,7 +65,7 @@ def run():
     model = mm.MobileNet(features=len(full_dataset.classes), pretrained=False)
     model = model.to(device)
 
-    model = train_model(model, criterion, dataloaders, dataset_sizes, device, num_epochs = 5)
+    model, accuracy = train_model(model, criterion, dataloaders, dataset_sizes, device, num_epochs = 5)
 
     byteArr = io.BytesIO()
     dummy_input = torch.randn(1, 3, 224, 224, device='cuda')
@@ -74,5 +74,5 @@ def run():
     torchByteArr = io.BytesIO()
     torch.save(model.state_dict(), torchByteArr)
 
-    model_entity = ClassificationModel(None, model=byteArr.getvalue(), timestamp=timezone.now(), pytorch=torchByteArr.getvalue())
+    model_entity = ClassificationModel(None, model=byteArr.getvalue(), timestamp=timezone.now(), pytorch=torchByteArr.getvalue(), accuracy=accuracy)
     model_entity.save()

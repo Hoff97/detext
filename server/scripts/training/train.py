@@ -84,4 +84,4 @@ def train_model(model, criterion, dataloaders, dataset_sizes, device='cpu', num_
 
     # load best model weights
     model.load_state_dict(best_model_wts)
-    return model
+    return model, best_acc

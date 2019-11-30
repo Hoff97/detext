@@ -12,7 +12,7 @@ class MathSymbolSerializer(serializers.ModelSerializer):
 class ClassificationModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = ClassificationModel
-        fields = ['id', 'model', 'timestamp']
+        fields = ['id', 'model', 'timestamp', 'accuracy']
 
 class TrainImageSerializer(serializers.ModelSerializer):
     class Meta:
