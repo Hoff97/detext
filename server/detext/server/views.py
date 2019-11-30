@@ -17,6 +17,9 @@ from detext.server.models import ClassificationModel, MathSymbol, TrainImage
 from detext.server.serializers import (ClassificationModelSerializer,
                                        MathSymbolSerializer,
                                        TrainImageSerializer)
+import scripts.models.mobilenet as mm
+from scripts.models.mobilenet import MobileNet
+import torch
 
 
 class MathSymbolView(viewsets.ModelViewSet):
@@ -130,7 +133,27 @@ class TrainImageView(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        serializer.save()
+        train_image = serializer.save()
+
+        self.update_features(train_image, img)
 
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def update_features(self, train_image, img):
+        latest_model = ClassificationModel.objects.all().order_by('-timestamp').first()
+        old_classes = MathSymbol.objects.all().order_by('-timestamp').filter(timestamp__lte=latest_model.timestamp)
+        model = mm.MobileNet(features=len(old_classes), pretrained=False)
+        model.load_state_dict(torch.load(io.BytesIO(latest_model.pytorch)))
+
+        img = mm.preprocess(img)
+        img = img.repeat((3,1,1))
+        img = img.reshape((1,img.shape[0], img.shape[1], img.shape[2]))
+
+        features = model.features(img)
+        features = features.mean([2, 3])
+        byte_f = io.BytesIO()
+        torch.save(features, byte_f)
+
+        train_image.features = byte_f.getvalue()
+        train_image.save()
