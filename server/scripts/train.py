@@ -44,8 +44,14 @@ def run():
 
     train_dataset, test_dataset = torch.utils.data.random_split(full_dataset, [train_size, test_size])
 
+    weights = torch.zeros(len(train_dataset))
+    for i, data in enumerate(train_dataset):
+        weights[i] = 1. / full_dataset.class_counts[data[1]]
+
+    sampler = torch.utils.data.sampler.WeightedRandomSampler(weights, len(weights))
+
     dataloaders = {
-        "train": torch.utils.data.DataLoader(train_dataset, batch_size=4, shuffle=True, num_workers=1),
+        "train": torch.utils.data.DataLoader(train_dataset, batch_size=4, num_workers=1, sampler=sampler),
         "test":  torch.utils.data.DataLoader(test_dataset, batch_size=4, shuffle=True, num_workers=1)
     }
     dataset_sizes = {

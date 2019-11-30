@@ -45,8 +45,14 @@ def run():
 
     train_dataset, test_dataset = torch.utils.data.random_split(full_dataset, [train_size, test_size])
 
+    weights = torch.zeros(len(train_dataset))
+    for i, data in enumerate(train_dataset):
+        weights[i] = 1. / full_dataset.class_counts[data[1]]
+
+    sampler = torch.utils.data.sampler.WeightedRandomSampler(weights, len(weights))
+
     dataloaders = {
-        "train": torch.utils.data.DataLoader(train_dataset, batch_size=16, shuffle=True, num_workers=1),
+        "train": torch.utils.data.DataLoader(train_dataset, batch_size=16, num_workers=1, sampler=sampler),
         "test":  torch.utils.data.DataLoader(test_dataset, batch_size=4, shuffle=True, num_workers=1)
     }
     dataset_sizes = {
@@ -68,15 +74,13 @@ def run():
     n_features = full_dataset.get_input_shape()[0]
     n_classes = full_dataset.num_classes
 
-    w = torch.zeros((n_classes, n_features))
+    """w = torch.zeros((n_classes, n_features))
     b = torch.zeros(n_classes)
     nn.init.normal_(w, 0, 0.01)
     w[:len(old_classes),:] = weight
-    b[:len(old_classes)] = bias
+    b[:len(old_classes)] = bias"""
 
     model = LinearModel(n_features, n_classes)
-    model.classifier[1].weight.data = w
-    model.classifier[1].bias.data = b
     model = model.to(device)
 
     model = train_model(model, criterion, dataloaders, dataset_sizes, device, num_epochs = 20, step_size=2)
