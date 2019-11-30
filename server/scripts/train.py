@@ -70,6 +70,9 @@ def run():
     byteArr = io.BytesIO()
     dummy_input = torch.randn(1, 3, 224, 224, device='cuda')
     torch.onnx.export(model, dummy_input, byteArr)
-    print(byteArr)
-    model_entity = ClassificationModel(None, model=byteArr.getvalue(), timestamp=timezone.now())
+
+    torchByteArr = io.BytesIO()
+    torch.save(model.state_dict(), torchByteArr)
+
+    model_entity = ClassificationModel(None, model=byteArr.getvalue(), timestamp=timezone.now(), pytorch=torchByteArr.getvalue())
     model_entity.save()

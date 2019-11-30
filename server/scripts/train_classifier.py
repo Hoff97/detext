@@ -21,6 +21,7 @@ from detext.server.models import ClassificationModel, MathSymbol, TrainImage
 import scripts.models.mobilenet as mm
 
 device = "cuda"
+transfer_learn = False
 
 def valid_func(x):
     return random.random() < 2
@@ -64,30 +65,41 @@ def run():
     print(dataset_sizes)
 
     latest_model = ClassificationModel.objects.all().order_by('-timestamp').first()
-    old_classes = MathSymbol.objects.all().filter(timestamp__lte=latest_model.timestamp)
-    old_model = mm.MobileNet(features=len(old_classes), pretrained=False)
-    old_model.load_state_dict(torch.load(io.BytesIO(latest_model.pytorch)))
-
-    weight = torch.tensor(old_model.classifier[1].weight.detach())
-    bias = torch.tensor(old_model.classifier[1].bias.detach())
+    state_dict = torch.load(io.BytesIO(latest_model.pytorch))
+    old_model = mm.MobileNet(features=state_dict['mobilenet.classifier.1.bias'].shape[0], pretrained=False)
+    old_model.load_state_dict(state_dict)
 
     n_features = full_dataset.get_input_shape()[0]
     n_classes = full_dataset.num_classes
-
-    """w = torch.zeros((n_classes, n_features))
-    b = torch.zeros(n_classes)
-    nn.init.normal_(w, 0, 0.01)
-    w[:len(old_classes),:] = weight
-    b[:len(old_classes)] = bias"""
+    print(n_classes)
 
     model = LinearModel(n_features, n_classes)
+    if transfer_learn:
+
+        weight = torch.tensor(old_model.classifier[1].weight.detach())
+        bias = torch.tensor(old_model.classifier[1].bias.detach())
+        w = torch.zeros((n_classes, n_features))
+        b = torch.zeros(n_classes)
+        nn.init.normal_(w, 0, 0.01)
+        w[:len(old_classes),:] = weight
+        b[:len(old_classes)] = bias
+        model.classifier[1].weight.data = w
+        model.classifier[1].bias.data = b
+
     model = model.to(device)
 
-    model = train_model(model, criterion, dataloaders, dataset_sizes, device, num_epochs = 20, step_size=2)
+    model = train_model(model, criterion, dataloaders, dataset_sizes, device, num_epochs = 2, step_size=2)
 
-    """byteArr = io.BytesIO()
-    dummy_input = torch.randn(1, 3, 224, 224, device='cuda')
-    torch.onnx.export(model, dummy_input, byteArr)
-    print(byteArr)
-    model_entity = ClassificationModel(None, model=byteArr.getvalue(), timestamp=timezone.now())
-    model_entity.save()"""
+    model = model.to('cpu')
+    old_model.set_classifier(model.classifier)
+    old_model = old_model.eval()
+
+    byteArr = io.BytesIO()
+    dummy_input = torch.randn(1, 3, 224, 224)
+    torch.onnx.export(old_model, dummy_input, byteArr)
+
+    torchByteArr = io.BytesIO()
+    torch.save(old_model.state_dict(), torchByteArr)
+
+    model_entity = ClassificationModel(None, model=byteArr.getvalue(), timestamp=timezone.now(), pytorch=torchByteArr.getvalue())
+    model_entity.save()

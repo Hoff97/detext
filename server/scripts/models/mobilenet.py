@@ -24,6 +24,10 @@ class MobileNet(nn.Module):
                 nn.init.normal_(m.weight, 0, 0.01)
                 nn.init.zeros_(m.bias)
 
+    def set_classifier(self, classifier):
+        self.classifier = classifier
+        self.mobilenet.classifier = self.classifier
+
     def forward(self, x):
         return self.mobilenet(x)
 
