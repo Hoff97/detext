@@ -24,7 +24,7 @@ def valid_func(x):
     return random.random() < 2
 
 def get_data(item):
-    features = torch.load(io.BytesIO(item.features)).detach().reshape((-1))
+    features = torch.load(io.BytesIO(item.features), map_location=torch.device('cpu')).detach().reshape((-1))
     return features
 
 def get_label(item):
@@ -62,7 +62,7 @@ def train_classifier(train_batch_size=16, test_batch_size=4, transfer_learn = Fa
     print(dataset_sizes)
 
     latest_model = ClassificationModel.objects.all().order_by('-timestamp').first()
-    state_dict = torch.load(io.BytesIO(latest_model.pytorch))
+    state_dict = torch.load(io.BytesIO(latest_model.pytorch), map_location=torch.device('cpu'))
     old_model = mm.MobileNet(features=state_dict['mobilenet.classifier.1.bias'].shape[0], pretrained=False)
     old_model.load_state_dict(state_dict)
 

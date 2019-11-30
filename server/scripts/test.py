@@ -23,7 +23,7 @@ def valid_func(x):
 data_dir = 'res/test'
 full_dataset = datasets.ImageFolder(data_dir, mm.preprocess)
 dataloader = torch.utils.data.DataLoader(full_dataset, batch_size=1, shuffle=True, num_workers=4)
-model = torch.load("res/mobile_cnn.pth")
+model = torch.load("res/mobile_cnn.pth", map_location=torch.device('cpu'))
 model.eval()
 model = model.to(device)
 

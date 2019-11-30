@@ -157,7 +157,7 @@ class TrainImageView(viewsets.ModelViewSet):
             latest_model = ClassificationModel.objects.all().order_by('-timestamp').first()
             old_classes = MathSymbol.objects.all().filter(timestamp__lte=latest_model.timestamp)
             model = mm.MobileNet(features=len(old_classes), pretrained=False)
-            model.load_state_dict(torch.load(io.BytesIO(latest_model.pytorch)))
+            model.load_state_dict(torch.load(io.BytesIO(latest_model.pytorch), map_location=torch.device('cpu')))
             model = model.eval()
 
             img = mm.preprocess(img)
