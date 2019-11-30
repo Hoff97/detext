@@ -19,9 +19,18 @@ class DBDataset(Dataset):
         self.class_to_ix = {
             get_class_name(cls_ent): ix for ix, cls_ent in enumerate(class_table.objects.all().order_by('timestamp'))
         }
+
+        self.class_counts = torch.zeros(len(self.classes))
+        for entity in self.entities:
+            label = self.class_to_ix[get_label(entity)]
+            self.class_counts[label] += 1
+
         self.num_classes = len(self.classes)
         self.get_data = get_data
         self.get_label = get_label
+
+    def get_input_shape(self):
+        return self.get_data(self.entities[0]).shape
 
     def __getitem__(self, index):
         entity = self.entities[index]

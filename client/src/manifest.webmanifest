@@ -1,6 +1,6 @@
 {
-  "name": "Detext",
-  "short_name": "Math symbol detector",
+  "name": "Math symbol detector",
+  "short_name": "Detext",
   "theme_color": "#8E44AD",
   "background_color": "#fafafa",
   "display": "standalone",

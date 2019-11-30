@@ -44,8 +44,14 @@ def run():
 
     train_dataset, test_dataset = torch.utils.data.random_split(full_dataset, [train_size, test_size])
 
+    weights = torch.zeros(len(train_dataset))
+    for i, data in enumerate(train_dataset):
+        weights[i] = 1. / full_dataset.class_counts[data[1]]
+
+    sampler = torch.utils.data.sampler.WeightedRandomSampler(weights, len(weights))
+
     dataloaders = {
-        "train": torch.utils.data.DataLoader(train_dataset, batch_size=4, shuffle=True, num_workers=1),
+        "train": torch.utils.data.DataLoader(train_dataset, batch_size=4, num_workers=1, sampler=sampler),
         "test":  torch.utils.data.DataLoader(test_dataset, batch_size=4, shuffle=True, num_workers=1)
     }
     dataset_sizes = {
@@ -59,11 +65,14 @@ def run():
     model = mm.MobileNet(features=len(full_dataset.classes), pretrained=False)
     model = model.to(device)
 
-    model = train_model(model, criterion, dataloaders, dataset_sizes, device, num_epochs = 5)
+    model, accuracy = train_model(model, criterion, dataloaders, dataset_sizes, device, num_epochs = 5)
 
     byteArr = io.BytesIO()
     dummy_input = torch.randn(1, 3, 224, 224, device='cuda')
     torch.onnx.export(model, dummy_input, byteArr)
-    print(byteArr)
-    model_entity = ClassificationModel(None, model=byteArr.getvalue(), timestamp=timezone.now())
+
+    torchByteArr = io.BytesIO()
+    torch.save(model.state_dict(), torchByteArr)
+
+    model_entity = ClassificationModel(None, model=byteArr.getvalue(), timestamp=timezone.now(), pytorch=torchByteArr.getvalue(), accuracy=accuracy)
     model_entity.save()

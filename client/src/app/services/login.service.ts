@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 
@@ -14,6 +14,8 @@ interface LoginRequest {
 })
 export class LoginService {
   public static storageItem = 'auth-token';
+
+  public loginSucceeded = new EventEmitter<void>();
 
   private loggedIn = false;
   private token?: token;
@@ -35,6 +37,9 @@ export class LoginService {
 
     return observable.pipe(map(response => {
       this.setLoginToken(response.token);
+
+      this.loginSucceeded.emit();
+
       return this.token;
     }));
   }

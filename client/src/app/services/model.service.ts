@@ -46,4 +46,8 @@ export class ModelService {
   getRecentLocal(): Promise<Model> {
     return this.dbService.getModel();
   }
+
+  retrain(): Observable<void> {
+    return this.http.post<void>(this.urlPrefix + 'api/model/train/?format=json', {});
+  }
 }

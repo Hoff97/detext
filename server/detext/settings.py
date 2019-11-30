@@ -133,3 +133,8 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication'
     ]
 }
+
+ML = {
+    'TRAIN_BATCH_SIZE': 16,
+    'TEST_BATCH_SIZE': 4
+}
