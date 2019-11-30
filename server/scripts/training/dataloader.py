@@ -23,6 +23,9 @@ class DBDataset(Dataset):
         self.get_data = get_data
         self.get_label = get_label
 
+    def get_input_shape(self):
+        return self.get_data(self.entities[0]).shape
+
     def __getitem__(self, index):
         entity = self.entities[index]
         data = self.get_data(entity)
