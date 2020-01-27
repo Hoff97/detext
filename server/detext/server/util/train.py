@@ -49,7 +49,7 @@ def train_classifier(train_batch_size=16, test_batch_size=4, transfer_learn = Fa
 
     weights = torch.zeros(len(train_dataset))
     for i, data in enumerate(train_dataset):
-        weights[i] = 1. / math.log(full_dataset.class_counts[data[1]])
+        weights[i] = 1. / (math.log(full_dataset.class_counts[data[1]]) + 1.)
 
     sampler = torch.utils.data.sampler.WeightedRandomSampler(weights, len(weights))
 
