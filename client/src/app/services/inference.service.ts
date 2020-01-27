@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import ndarray from 'ndarray';
 import ops from 'ndarray-ops';
 import { InferenceSession, Tensor } from 'onnxjs';
@@ -17,6 +17,9 @@ export class InferenceService {
   private decodedModel: Uint8Array;
 
   private session: InferenceSession;
+
+  public modelAvailable = new EventEmitter<boolean>();
+  public model = false;
 
   constructor(private modelService: ModelService,
               private symbolService: SymbolService,
@@ -74,6 +77,9 @@ export class InferenceService {
 
     this.session = new InferenceSession({ backendHint: this.backend }) ;
     await this.session.loadModel(this.decodedModel);
+
+    this.modelAvailable.emit(true);
+    this.model = true;
   }
 
   private async changeBackend(backend: string) {

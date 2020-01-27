@@ -1,4 +1,4 @@
-<div class="row">
+<div class="row" *ngIf="!modelLoading">
   <div class="col-md-auto">
     <app-canvas (imageChange)="predictClass($event)"
       [width]="224" [height]="224" (cleared)="cleared()">
@@ -13,4 +13,8 @@
       (reloadClasses)="reloadClasses()">
     </app-classification>
   </div>
+</div>
+
+<div class="row" *ngIf="modelLoading">
+  <i class="fa fa-spinner large fa-spin center center-text"></i>
 </div>
