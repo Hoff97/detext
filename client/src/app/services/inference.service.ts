@@ -21,6 +21,8 @@ export class InferenceService {
   constructor(private modelService: ModelService,
               private symbolService: SymbolService,
               private settingsService: SettingsService) {
+    this.setupModelLocal();
+
     this.setupModel();
 
     this.backend = this.settingsService.getData().backend;
@@ -51,6 +53,14 @@ export class InferenceService {
       array[i] = array[i] / sum;
     }
     return array;
+  }
+
+  private async setupModelLocal() {
+    const modelPromise = this.modelService.getRecentLocal();
+    const model = await modelPromise;
+    if (model) {
+      await this.setModel(model);
+    }
   }
 
   private async setupModel() {
