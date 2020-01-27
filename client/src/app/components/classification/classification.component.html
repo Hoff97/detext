@@ -6,9 +6,9 @@
     <tr>
       <td style="width: 100%;">
         <div class="btn-group" role="group" aria-label="Basic example">
-          <button type="button" [ngClass]="page=='predicted' ? 'btn btn-primary' : 'btn btn-secondary'"
+          <button type="button" [ngClass]="tab=='predicted' ? 'btn btn-primary' : 'btn btn-secondary'"
               (click)="setTab('predicted')">Predicted</button>
-          <button type="button" [ngClass]="page=='other' ? 'btn btn-primary' : 'btn btn-secondary'"
+          <button type="button" [ngClass]="tab=='other' ? 'btn btn-primary' : 'btn btn-secondary'"
               (click)="setTab('other')">Other</button>
         </div>
       </td>
