@@ -84,6 +84,16 @@ class MathSymbolView(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
 
+        if instance.image is None or len(instance.image) == 0:
+            url = settings.TEXSVG_URL + '?latex=' + instance.latex
+            svg = urllib.request.urlopen(url).read()
+
+            svg = base64.b64encode(svg).decode('utf-8')
+            pre = 'data:image/svg+xml;base64,'
+            svg = (pre + svg).encode('utf-8')
+            instance.image = svg
+            instance.save()
+
         if getattr(instance, '_prefetched_objects_cache', None):
             # If 'prefetch_related' has been applied to a queryset, we need to
             # forcibly invalidate the prefetch cache on the instance.
