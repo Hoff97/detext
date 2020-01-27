@@ -3,7 +3,7 @@ import { ClassSymbol } from 'src/app/data/types';
 import { SymbolService } from 'src/app/services/symbol.service';
 
 interface Prediction {
-  prop: number;
+  prop?: number;
   class: ClassSymbol;
 }
 
@@ -22,10 +22,16 @@ export class ClassificationComponent implements OnInit, OnChanges {
   @Output() public correct = new EventEmitter<ClassSymbol>();
 
   public predSorted: Prediction[];
-  public unpredicted: ClassSymbol[];
+  public unpredicted: Prediction[];
   public correctSelected = false;
 
-  public page = 'predicted';
+  public tab = 'predicted';
+
+  public shown: Prediction[];
+  public page = 1;
+  public currentPage: Prediction[];
+
+  public pageSize = 5;
 
   constructor(private symbolService: SymbolService) { }
 
@@ -40,7 +46,13 @@ export class ClassificationComponent implements OnInit, OnChanges {
         class: this.classes[ix]
       };
     }).sort((a, b) => a.prop > b.prop ? -1 : 1);
-    this.unpredicted = this.classes.slice(this.predictions.length);
+    this.unpredicted = this.classes.slice(this.predictions.length).map(cls => {
+      return {
+        class: cls
+      };
+    });
+    this.setTab(this.tab);
+    this.setPage(this.page);
   }
 
   selectCorrect(cls: ClassSymbol) {
@@ -53,5 +65,26 @@ export class ClassificationComponent implements OnInit, OnChanges {
       this.correct.emit(sym);
       this.reloadClasses.emit();
     });
+  }
+
+  setTab(tab: string) {
+    const changed = this.tab !== tab;
+
+    this.tab = tab;
+
+    if (tab === 'predicted') {
+      this.shown = this.predSorted;
+    } else {
+      this.shown = this.unpredicted;
+    }
+
+    if (changed) {
+      this.setPage(1);
+    }
+  }
+
+  setPage(page: number) {
+    this.page = page;
+    this.currentPage = this.shown.slice((page - 1) * this.pageSize, page * this.pageSize);
   }
 }

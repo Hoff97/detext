@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import ndarray from 'ndarray';
 import ops from 'ndarray-ops';
 import { InferenceSession, Tensor } from 'onnxjs';
@@ -18,9 +18,14 @@ export class InferenceService {
 
   private session: InferenceSession;
 
+  public modelAvailable = new EventEmitter<boolean>();
+  public model = false;
+
   constructor(private modelService: ModelService,
               private symbolService: SymbolService,
               private settingsService: SettingsService) {
+    this.setupModelLocal();
+
     this.setupModel();
 
     this.backend = this.settingsService.getData().backend;
@@ -53,6 +58,14 @@ export class InferenceService {
     return array;
   }
 
+  private async setupModelLocal() {
+    const modelPromise = this.modelService.getRecentLocal();
+    const model = await modelPromise;
+    if (model) {
+      await this.setModel(model);
+    }
+  }
+
   private async setupModel() {
     const modelPromise = this.modelService.getRecent().toPromise();
     const model = await modelPromise;
@@ -64,6 +77,9 @@ export class InferenceService {
 
     this.session = new InferenceSession({ backendHint: this.backend }) ;
     await this.session.loadModel(this.decodedModel);
+
+    this.modelAvailable.emit(true);
+    this.model = true;
   }
 
   private async changeBackend(backend: string) {

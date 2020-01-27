@@ -53,6 +53,7 @@ export class NewSymbolComponent implements OnInit {
 
   create() {
     this.created.emit(this.class);
+    this.cancel();
   }
 
   getLatexSvg() {

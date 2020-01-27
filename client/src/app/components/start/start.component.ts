@@ -13,6 +13,7 @@ import { binaryToBase64 } from 'src/app/util/data';
 export class StartComponent implements OnInit {
 
   public loading = false;
+  public modelLoading = true;
 
   public predictions = [];
   public classes = [];
@@ -21,7 +22,12 @@ export class StartComponent implements OnInit {
 
   constructor(private inferenceService: InferenceService,
               private trainImageService: TrainImageService,
-              private symbolService: SymbolService) { }
+              private symbolService: SymbolService) {
+    this.modelLoading = !this.inferenceService.model;
+    this.inferenceService.modelAvailable.subscribe(x => {
+      this.modelLoading = false;
+    });
+  }
 
   ngOnInit() {
     this.symbolService.getSymbols().subscribe(symbols => {
