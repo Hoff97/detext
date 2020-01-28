@@ -2,32 +2,26 @@ language: python
 services:
 - docker
 
-before_script:
-- echo "$DOCKER_TOKEN" | docker login -u "$DOCKER_USERNAME" --password-stdin
-- "./ci/add_docker.sh"
-script:
-- "./ci/build.sh"
-
-deploy:
-- provider: script
-  script: bash ./ci/deploy.sh
-  skip_cleanup: true
-  on:
-    branch: master
+jobs:
+  include:
+    - stage: before_install
+      script: ./ci/before_install.sh
+    - stage: test
+      script: ./ci/test.sh
+    - stage: before_script
+      script: echo "$DOCKER_TOKEN" | docker login -u "$DOCKER_USERNAME" --password-stdin
+    - stage: before_script
+      script: ./ci/add_docker.sh
+    - stage: build
+      script: ./ci/build.sh
+    - stage: deploy
+      script: bash ./ci/deploy.sh
+      skip_cleanup: true
+      on:
+        branch: master
 
 env:
   global:
   - secure: f8sK/EIzj6t7eWy57yScKPetHW+2o4pWpHRB2VsgFLesrqNeDg9QwDyVYrule4tCU1TBFtwzRJyOufZr3BWb1rnKcPftNW/FcfO9hRqRBR37tQTkGJo7UHFQ6bwrnCz0iFheU1Xwko3Ajp5z9QG0dCE9ps1Upp2f4Iez7Pz66n5VAy/fxmhWDHLePW3le0GKDdMj009JEpcXHGry49IBu3E4Ul0F3FscnBpL2B2KOlQ92l1j2lAkQPzTetntKcLVs7+PwhgLTq0dQcp7TB4GUTU2GtpJzX4KWPe9m1+MQHPcoIr6S1zioCDZbOiaNpAJWEeGSKzS5scycC6h+l3ZVw2UqxAdanhcLuXDFm6LxPH1LI/A+etbzJ/6Tk+atzZ9GFSN85Rw4cmSdaUbO+Byb25nqiz3+K62LtSD6YSlAVFysA01PQ3R9xPS2HNlpteujMl5Y5nFLm2HbpQZ7sE+sXdjH4wyqjxvVJ2xJ6QKzNxN/0zN2tGblcPLb5OmYmErxRQGQHZKfYO8hA7lyOzqwQmIZxe1brWlziE1CDFaNd9teh2FqBi+V15RFAe5I2RlxWz0oMFJC/L3ToF8c59UBgdU32vOLnqrLbxbpoI5ApQ0MpNcYiZ93NaAgkxQQFKmiL3z6BD3sFSIpxaTpP1Iu9FDe4EcVNIXThwzgWwOphU=
   - secure: mFYmYjlxphqhjdyGU0VBci2u0+KtaZaOqdqF18mLrJBq+yWjdCVaMhzlyQYTZlUoJKHkxR1NBTg8tDGMU+GS24RKMeziHMGtfbL0CSJu5DxZMRpmBj5sIH94aFsCo53WCHKtk6WqsFPztBzwCRr/EPW5CfQ3Emn+WUGB7hQ9SXPkuCIHj9UxnTQGQfG1q+x3tn0Gsr2xcr18arQjKAnA7ldS8TktYRNw/HAVd169EH54BZSZOjCU3/tRd4TmMgLea6EQ7Nc5rYk+ySKFpncEQccrQOx9EC0cf5kCafjdMQvyxt//b4jNKfy14h+8P0yAU/fqJkOZ5gq6d9E4jtHegoTTnhFdDSyCsHqFuYE7t9ZfPrNkIesGqOILZ6AaIeZTs2ANVX7EDShbERZzEICSyJ2ahw5OnkLW4Y39qaqOSyQPsU1RtoNEq4dHJA9MaiUz+LfSAb1D/UxoQwk6Yg1IOq7qUSwTgzbuxFmXov01ZSQ2EIT+/hsZaPHtLbc6P5hCu9Xem7CGht4SSqglTCMQFoPr55zbBu6qy86iwf7eFhySYIgt3BM6QMqm4PgsRkfW0IYzkRyGOAHVdmrDsf+NPzd303ZEZBn3KYwk0rRm4DbnMUHiX1iQY3OeKvOo/cIeiOz3dnJKgShfjfzjNSNYzvd1dayXDsvtqQwLBON7Ktc=
   - secure: B12pWObP3gZJ8tBuhJDiXTNxRO3fP2EDSB1PluKstUWURu716FHVG2bfwfyySezYxU0zIwIrM1fxT0g+dXepcVcf1BEP8RLzN3cUTA11r9lCY30TMJewu5Ox7VSH/Y2Ow1N71BKygmrVfFzcdSnaRWw+fcks9PqvG844Q9Ebpu0RVhHnc5K2kYKIhL1AMTPZssVj71VxTthiiSKWy+KPdMSfQdOEu3qe/0JhB+buOqnm37/XhL86eSuGBJKr9Y0iTzJ34UKatxReze/GH335pzTGjA1gJB60HWb7ViBOu3y3o/JQWTBgTOuZUwogEo7duQWqHoY2UwycfljL9co2BjeUrdp5s7WLAVWqLw8R6covAjbm2/ma8AHm+BcdmLPGOEKx95dp6y91jaq5R4EN4e6r2kVYUn+Uo2vRTubWpiP3px+gN0KNVW4Fc8xgJoiNzDXuaQoLH1DkJl7WojrMoyIJcCzjXTcvPm1XfKa9zOp9A93AZZ9PcaH0z0JiR2+8jgeuzvZ0uI0DkUxFgYUzzMWAB72WznKBW2JGcYPrTAerA/S+/G500xS+10zJwA6JDrPtZ8qQYpL1/ipVYMSho2dJ/rQaIxQKw5VexB6iyepS92VsR64ljAaZ2w26Gv3CqhB+pIw9O9t+8yizRlX06jo0XT15pDx3eJpChvdRvrw=
-
-before_install:
-- eval "$(ssh-agent)"
-- openssl aes-256-cbc -K $encrypted_b25e5455c7d9_key -iv $encrypted_b25e5455c7d9_iv
-  -in id_rsa_detext.enc -out ./ci/id_rsa_detext -d
-- chmod 600 ./ci/id_rsa_detext
-- ssh-add ./ci/id_rsa_detext
-- base=https://github.com/docker/machine/releases/download/v0.16.0 &&
-  curl -L $base/docker-machine-$(uname -s)-$(uname -m) >/tmp/docker-machine &&
-  sudo mv /tmp/docker-machine /usr/local/bin/docker-machine &&
-  chmod +x /usr/local/bin/docker-machine
