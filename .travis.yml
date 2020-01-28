@@ -2,23 +2,24 @@ language: python
 services:
 - docker
 
-jobs:
-  include:
-    - stage: before_install
-      script: ./ci/before_install.sh
-    - stage: test
-      script: ./ci/test.sh
-    - stage: before_script
-      script: echo "$DOCKER_TOKEN" | docker login -u "$DOCKER_USERNAME" --password-stdin
-    - stage: before_script
-      script: ./ci/add_docker.sh
-    - stage: build
-      script: ./ci/build.sh
-    - stage: deploy
-      script: bash ./ci/deploy.sh
-      skip_cleanup: true
-      on:
-        branch: master
+before_install:
+  - "./ci/before_install.sh"
+
+before_script:
+  - echo "$DOCKER_TOKEN" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - "./ci/add_docker.sh"
+script:
+  ./ci/build.sh
+
+test:
+  - "./ci/test.sh"
+
+deploy:
+  - provider: script
+    script: bash ./ci/deploy.sh
+    skip_cleanup: true
+    on:
+      branch: master
 
 env:
   global:
