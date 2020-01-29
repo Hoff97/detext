@@ -44,21 +44,23 @@ class MathSymbolView(viewsets.ModelViewSet):
     Create a model instance.
     """
     def create(self, request, *args, **kwargs):
+        req_data = request.data.copy()
+
         if request.user.id is None:
-            request.data['image'] = None
+            req_data['image'] = None
 
-        code = request.data['latex']
+        code = req_data['latex']
 
-        if 'image' not in request.data or request.data['image'] == None or request.data['image'] == '':
+        if 'image' not in req_data or req_data['image'] == None or req_data['image'] == '':
             url = settings.TEXSVG_URL + '?latex=' + code
             svg = urllib.request.urlopen(url).read()
 
             svg = base64.b64encode(svg).decode('utf-8')
             pre = 'data:image/svg+xml;base64,'
             svg = (pre + svg).encode('utf-8')
-            request.data['image'] = svg
+            req_data['image'] = svg
 
-        serializer = self.get_serializer(data=request.data)
+        serializer = self.get_serializer(data=req_data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
