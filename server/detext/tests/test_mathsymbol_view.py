@@ -77,8 +77,6 @@ class MathSymbolViewTest(AuthTestCase, TestCase):
             'timestamp': datetime.now()
         }, content_type='application/json', **self.auth_headers)
 
-        print(response.content)
-
         self.assertEquals(response.status_code, status.HTTP_200_OK)
 
     def test_update_should_not_contain_image(self):

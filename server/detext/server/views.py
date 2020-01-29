@@ -150,16 +150,21 @@ class TrainImageView(viewsets.ModelViewSet):
     serializer_class = TrainImageSerializer
 
     def create(self, request, *args, **kwargs):
+        req_data = request.data.copy()
+
+        width = self.parse_int_arg(req_data.pop('width'))
+        height = self.parse_int_arg(req_data.pop('height'))
+
         imgB64 = request.data['image']
         imgBytes = base64.decodebytes(imgB64.encode())
-        img = Image.frombytes('RGBA', (request.data.pop('width'), request.data.pop('height')), imgBytes).convert('L')
+        img = Image.frombytes('RGBA', (width, height), imgBytes).convert('L')
 
         byteArr = io.BytesIO()
         img.save(byteArr, format='png')
         byteArr = byteArr.getvalue()
-        request.data['image'] = base64.encodebytes(byteArr).decode('utf-8')
+        req_data['image'] = base64.encodebytes(byteArr).decode('utf-8')
 
-        serializer = self.get_serializer(data=request.data)
+        serializer = self.get_serializer(data=req_data)
         serializer.is_valid(raise_exception=True)
 
         train_image = serializer.save()
@@ -168,6 +173,13 @@ class TrainImageView(viewsets.ModelViewSet):
 
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def parse_int_arg(self, arg):
+        if type(arg) == list:
+            arg = arg[0]
+        if type(arg) == str:
+            arg = int(arg)
+        return arg
 
     def update_features(self, train_image, img):
         with torch.no_grad():
