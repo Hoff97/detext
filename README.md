@@ -1,3 +1,5 @@
+[![codecov](https://codecov.io/gh/Hoff97/detext/branch/develop/graph/badge.svg)](https://codecov.io/gh/Hoff97/detext)
+
 # Whats this?
 
 This is a simple app for detecting and classifying math symbols. It displays the class of the input of the user
