@@ -47,3 +47,74 @@ class MathSymbolViewTest(AuthTestCase, TestCase):
         }, **self.auth_headers)
 
         self.assertEquals(response.status_code, status.HTTP_201_CREATED)
+
+    def test_create_requires_name(self):
+        response = self.client.post(f'/api/symbol/', {
+            'description': 'test2',
+            'latex': 'string',
+            'image': 'abcd',
+            'timestamp': datetime.now()
+        }, **self.auth_headers)
+
+        self.assertEquals(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_update_requires_login(self):
+        response = self.client.put(f'/api/symbol/{self.o.id}/', {
+            'name': 'test2',
+            'description': 'test2',
+            'latex': 'string',
+            'image': 'abcd',
+            'timestamp': datetime.now()
+        })
+
+        self.assertEquals(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_update_works(self):
+        response = self.client.put(f'/api/symbol/{self.o.id}/', {
+            'name': 'test2',
+            'description': 'test2',
+            'latex': 'string',
+            'timestamp': datetime.now()
+        }, content_type='application/json', **self.auth_headers)
+
+        print(response.content)
+
+        self.assertEquals(response.status_code, status.HTTP_200_OK)
+
+    def test_update_should_not_contain_image(self):
+        response = self.client.put(f'/api/symbol/{self.o.id}/', {
+            'name': 'test2',
+            'description': 'test2',
+            'latex': 'string',
+            'image': 'abcd',
+            'timestamp': datetime.now()
+        }, content_type='application/json', **self.auth_headers)
+
+        self.assertEquals(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_update_image_should_work(self):
+        response = self.client.put(f'/api/symbol/{self.o.id}/image/', {
+            'image': 'abcd'
+        }, content_type='application/json', **self.auth_headers)
+
+        self.assertEquals(response.status_code, status.HTTP_200_OK)
+
+    def test_update_image_should_require_login(self):
+        response = self.client.put(f'/api/symbol/{self.o.id}/image/', {
+            'image': 'abcd'
+        }, content_type='application/json')
+
+        self.assertEquals(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_update_image_should_require_valid_pk(self):
+        response = self.client.put(f'/api/symbol/200/image/', {
+            'image': 'abcd'
+        }, content_type='application/json', **self.auth_headers)
+
+        self.assertEquals(response.status_code, status.HTTP_400_BAD_REQUEST)
+    
+    def test_update_image_should_require_image(self):
+        response = self.client.put(f'/api/symbol/200/image/', {
+        }, content_type='application/json', **self.auth_headers)
+
+        self.assertEquals(response.status_code, status.HTTP_400_BAD_REQUEST)
