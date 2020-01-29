@@ -52,12 +52,7 @@ class MathSymbolView(viewsets.ModelViewSet):
         code = req_data['latex']
 
         if 'image' not in req_data or req_data['image'] == None or req_data['image'] == '':
-            url = settings.TEXSVG_URL + '?latex=' + code
-            svg = urllib.request.urlopen(url).read()
-
-            svg = base64.b64encode(svg).decode('utf-8')
-            pre = 'data:image/svg+xml;base64,'
-            svg = (pre + svg).encode('utf-8')
+            svg = self.get_latex_svg(code)
             req_data['image'] = svg
 
         serializer = self.get_serializer(data=req_data)
@@ -87,13 +82,7 @@ class MathSymbolView(viewsets.ModelViewSet):
         self.perform_update(serializer)
 
         if instance.image is None or len(instance.image) == 0:
-            url = settings.TEXSVG_URL + '?latex=' + instance.latex
-            svg = urllib.request.urlopen(url).read()
-
-            svg = base64.b64encode(svg).decode('utf-8')
-            pre = 'data:image/svg+xml;base64,'
-            svg = (pre + svg).encode('utf-8')
-            instance.image = svg
+            instance.image = self.get_latex_svg(instance.latex)
             instance.save()
 
         if getattr(instance, '_prefetched_objects_cache', None):
@@ -102,6 +91,15 @@ class MathSymbolView(viewsets.ModelViewSet):
             instance._prefetched_objects_cache = {}
 
         return Response('Ok')
+
+    def get_latex_svg(self, code):
+        url = settings.TEXSVG_URL + '?latex=' + code
+        svg = urllib.request.urlopen(url).read()
+
+        svg = base64.b64encode(svg).decode('utf-8')
+        pre = 'data:image/svg+xml;base64,'
+        svg = (pre + svg).encode('utf-8')
+        return svg
 
     @action(detail=True, methods=['put'])
     def image(self, request, pk=None):
