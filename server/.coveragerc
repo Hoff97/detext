@@ -1,0 +1,6 @@
+[run]
+omit =
+    **/__init__.py
+    detext/settings_prod.py
+    detext/wsgi.py
+    manage.py
