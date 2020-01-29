@@ -1,4 +1,4 @@
-[![codecov](https://codecov.io/gh/Hoff97/detext/branch/develop/graph/badge.svg)](https://codecov.io/gh/Hoff97/detext)
+[![Build Status](https://travis-ci.com/Hoff97/detext.svg?branch=develop)](https://travis-ci.com/Hoff97/detext) [![codecov](https://codecov.io/gh/Hoff97/detext/branch/develop/graph/badge.svg)](https://codecov.io/gh/Hoff97/detext)
 
 # Whats this?
 
