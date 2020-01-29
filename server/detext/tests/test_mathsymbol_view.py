@@ -24,7 +24,7 @@ class MathSymbolViewTest(AuthTestCase, TestCase):
 
     def test_can_get_math_symbol(self):
         response = self.client.get('/api/symbol/')
-        self.assertEquals(response.status_code, 200)
+        self.assertEquals(response.status_code, status.HTTP_200_OK)
 
     def test_delete_requires_login(self):
         response = self.client.delete(f'/api/symbol/{self.o.id}/')
@@ -112,7 +112,7 @@ class MathSymbolViewTest(AuthTestCase, TestCase):
         }, content_type='application/json', **self.auth_headers)
 
         self.assertEquals(response.status_code, status.HTTP_400_BAD_REQUEST)
-    
+
     def test_update_image_should_require_image(self):
         response = self.client.put(f'/api/symbol/200/image/', {
         }, content_type='application/json', **self.auth_headers)

@@ -37,7 +37,7 @@ def get_label(item):
 def get_class_name(item):
     return item.name
 
-def train_classifier(train_batch_size=16, test_batch_size=4, transfer_learn = False, device = "cpu"):
+def train_classifier(train_batch_size=16, test_batch_size=4, transfer_learn = False, device = "cpu", num_epochs = 5):
     criterion = nn.CrossEntropyLoss()
 
     full_dataset = DBDataset(TrainImage, MathSymbol, get_data, get_label, get_class_name, filter=valid_func)
@@ -88,7 +88,7 @@ def train_classifier(train_batch_size=16, test_batch_size=4, transfer_learn = Fa
 
     model = model.to(device)
 
-    model, accuracy = train_model(model, criterion, dataloaders, dataset_sizes, device, num_epochs = 5, step_size=2)
+    model, accuracy = train_model(model, criterion, dataloaders, dataset_sizes, device, num_epochs = num_epochs, step_size=2)
 
     model = model.to('cpu')
     old_model.set_classifier(model.classifier)

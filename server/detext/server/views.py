@@ -77,7 +77,7 @@ class MathSymbolView(viewsets.ModelViewSet):
         instance = self.get_object()
 
         if 'image' in request.data:
-            return bad_request(request)
+            return bad_request(request, Exception('Image should not be contained in update request'))
 
         img = MathSymbol.objects.get(pk=instance.id).image
         instance.image = img
@@ -114,11 +114,14 @@ class MathSymbolView(viewsets.ModelViewSet):
         if request.user.id is None:
             raise PermissionDenied({"message":"Can only update class image when logged in"})
 
-        symbol = MathSymbol.objects.get(pk=pk)
-        symbol.image = base64.b64decode(request.data['image'])
-        symbol.save()
+        try:
+            symbol = MathSymbol.objects.get(pk=pk)
+            symbol.image = base64.b64decode(request.data['image'])
+            symbol.save()
 
-        return Response('Ok')
+            return Response('Ok')
+        except MathSymbol.DoesNotExist as e:
+            return bad_request(request, e)
 
 class ClassificationModelView(viewsets.ViewSet):
     queryset = ClassificationModel.objects.all()
@@ -136,7 +139,11 @@ class ClassificationModelView(viewsets.ViewSet):
         if request.user.id is None:
             raise PermissionDenied({"message":"Can only trigger training as root"})
 
-        train_classifier(settings.ML['TRAIN_BATCH_SIZE'], settings.ML['TEST_BATCH_SIZE'])
+        epochs = 5
+        if 'epochs' in request.data:
+            epochs = int(request.data['epochs'])
+
+        train_classifier(settings.ML['TRAIN_BATCH_SIZE'], settings.ML['TEST_BATCH_SIZE'], num_epochs=epochs)
 
         return Response('Ok')
 
