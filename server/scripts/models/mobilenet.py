@@ -34,19 +34,6 @@ class MobileNet(nn.Module):
     def features(self, x):
         return self.mobilenet.features(x)
 
-    def linear(self, x):
-        return self.mobilenet.linear(x)
-
-    def freeze(self):
-        for p in self.mobilenet.parameters():
-            p.requires_grad = False
-        for p in self.classifier.parameters():
-            p.requires_grad = True
-
-    def unfreeze(self):
-        for p in self.mobilenet.parameters():
-            p.requires_grad = True
-
 preprocess = transforms.Compose([
     transforms.Resize(224),
     transforms.ToTensor()
