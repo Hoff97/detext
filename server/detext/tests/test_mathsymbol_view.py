@@ -1,22 +1,20 @@
-import json
 from datetime import datetime
 
-from django.contrib.auth.models import User
 from django.test import TestCase
-from django.urls import reverse
 from rest_framework import status
 
 from detext.server.models import MathSymbol
 
-from rest_framework.test import APIClient
-
 from detext.tests.util.auth import AuthTestCase
+
 
 class MathSymbolViewTest(AuthTestCase, TestCase):
     def setUp(self):
         super().setUp()
 
-        self.o = MathSymbol.objects.create(name = 'Test', description = 'Test', timestamp = datetime.now())
+        self.o = MathSymbol.objects.create(name='Test',
+                                           description='Test',
+                                           timestamp=datetime.now())
 
     def tearDown(self):
         super().tearDown()
@@ -31,7 +29,8 @@ class MathSymbolViewTest(AuthTestCase, TestCase):
         self.assertEquals(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_can_delete(self):
-        response = self.client.delete(f'/api/symbol/{self.o.id}/', **self.auth_headers)
+        response = self.client.delete(f'/api/symbol/{self.o.id}/',
+                                      **self.auth_headers)
         self.assertEquals(response.status_code, status.HTTP_204_NO_CONTENT)
 
         with self.assertRaises(MathSymbol.DoesNotExist):

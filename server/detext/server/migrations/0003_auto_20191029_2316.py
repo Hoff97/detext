@@ -30,7 +30,7 @@ def load_dataset(apps, schema_editor):
 
     num_imgs = len(full_dataset.imgs)
     if 'test' in sys.argv:
-        num_imgs = 100
+        num_imgs = 10
 
     instance_list = []
     for cl in full_dataset.classes:

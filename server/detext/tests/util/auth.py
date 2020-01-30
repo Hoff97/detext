@@ -5,7 +5,9 @@ from django.contrib.auth.models import User
 
 class AuthTestCase:
     def setUp(self):
-        self.user = User.objects.create_superuser(username='testuser', email='testemail@a.c', password='12345')
+        self.user = User.objects.create_superuser(username='testuser',
+                                                  email='testemail@a.c',
+                                                  password='12345')
 
         self.login()
 

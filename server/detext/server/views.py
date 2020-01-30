@@ -1,16 +1,12 @@
 import base64
-import binascii
 import io
 import urllib
 
 from django.conf import settings
-from django.contrib.auth.models import Group, User
 from PIL import Image
-from rest_framework import mixins, permissions, status, viewsets
+from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied, bad_request
-from rest_framework.mixins import (CreateModelMixin, DestroyModelMixin,
-                                   UpdateModelMixin)
 from rest_framework.response import Response
 
 from detext.server.models import ClassificationModel, MathSymbol, TrainImage
@@ -18,12 +14,10 @@ from detext.server.serializers import (ClassificationModelSerializer,
                                        MathSymbolSerializer,
                                        TrainImageSerializer)
 import scripts.models.mobilenet as mm
-from scripts.models.mobilenet import MobileNet
 import torch
 
 from detext.server.util.train import train_classifier
 
-from django.conf import settings
 
 class MathSymbolView(viewsets.ModelViewSet):
     queryset = MathSymbol.objects.all()
@@ -35,7 +29,9 @@ class MathSymbolView(viewsets.ModelViewSet):
     """
     def destroy(self, request, *args, **kwargs):
         if request.user.id is None:
-            raise PermissionDenied({"message":"Can only delete class symbol when logged in"})
+            raise PermissionDenied({
+                "message": "Can only delete class symbol when logged in"
+            })
         instance = self.get_object()
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -51,7 +47,8 @@ class MathSymbolView(viewsets.ModelViewSet):
 
         code = req_data['latex']
 
-        if 'image' not in req_data or req_data['image'] == None or req_data['image'] == '':
+        if 'image' not in req_data or req_data['image'] is None\
+                or req_data['image'] == '':
             svg = self.get_latex_svg(code)
             req_data['image'] = svg
 
@@ -59,25 +56,30 @@ class MathSymbolView(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(serializer.data, status=status.HTTP_201_CREATED,
+                        headers=headers)
 
     """
     Update a model instance.
     """
     def update(self, request, *args, **kwargs):
         if request.user.id is None:
-            raise PermissionDenied({"message":"Can only update class symbol when logged in"})
+            raise PermissionDenied({
+                "message": "Can only update class symbol when logged in"
+            })
 
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
 
         if 'image' in request.data:
-            return bad_request(request, Exception('Image should not be contained in update request'))
+            return bad_request(request,
+                               Exception('Image should not be contained in update request'))
 
         img = MathSymbol.objects.get(pk=instance.id).image
         instance.image = img
 
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer = self.get_serializer(instance, data=request.data,
+                                         partial=partial)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
 
@@ -103,14 +105,18 @@ class MathSymbolView(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['put'])
     def image(self, request, pk=None):
-        if pk == None:
-            return bad_request(request, Exception('Primary key can not be null'))
+        if pk is None:
+            return bad_request(request,
+                               Exception('Primary key can not be null'))
 
         if 'image' not in request.data:
-            return bad_request(request, Exception('Image needs to be sent with this request'))
+            return bad_request(request,
+                               Exception('Image needs to be sent with this request'))
 
         if request.user.id is None:
-            raise PermissionDenied({"message":"Can only update class image when logged in"})
+            raise PermissionDenied({
+                "message": "Can only update class image when logged in"
+            })
 
         try:
             symbol = MathSymbol.objects.get(pk=pk)
@@ -121,13 +127,15 @@ class MathSymbolView(viewsets.ModelViewSet):
         except MathSymbol.DoesNotExist as e:
             return bad_request(request, e)
 
+
 class ClassificationModelView(viewsets.ViewSet):
     queryset = ClassificationModel.objects.all()
     serializer_class = ClassificationModelSerializer
 
     @action(detail=False)
     def latest(self, request):
-        latest = ClassificationModel.objects.all().order_by('-timestamp').first()
+        latest = ClassificationModel.objects.all()\
+            .order_by('-timestamp').first()
 
         serializer = ClassificationModelSerializer(latest, many=False)
         return Response(serializer.data)
@@ -135,15 +143,20 @@ class ClassificationModelView(viewsets.ViewSet):
     @action(detail=False, methods=['POST'])
     def train(self, request):
         if request.user.id is None:
-            raise PermissionDenied({"message":"Can only trigger training as root"})
+            raise PermissionDenied({
+                "message": "Can only trigger training as root"
+            })
 
         epochs = 5
         if 'epochs' in request.data:
             epochs = int(request.data['epochs'])
 
-        train_classifier(settings.ML['TRAIN_BATCH_SIZE'], settings.ML['TEST_BATCH_SIZE'], num_epochs=epochs)
+        train_classifier(settings.ML['TRAIN_BATCH_SIZE'],
+                         settings.ML['TEST_BATCH_SIZE'],
+                         num_epochs=epochs)
 
         return Response('Ok')
+
 
 class TrainImageView(viewsets.ModelViewSet):
     queryset = TrainImage.objects.all()
@@ -172,7 +185,8 @@ class TrainImageView(viewsets.ModelViewSet):
         self.update_features(train_image, img)
 
         headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(serializer.data, status=status.HTTP_201_CREATED,
+                        headers=headers)
 
     def parse_int_arg(self, arg):
         if type(arg) == list:
@@ -183,15 +197,19 @@ class TrainImageView(viewsets.ModelViewSet):
 
     def update_features(self, train_image, img):
         with torch.no_grad():
-            latest_model = ClassificationModel.objects.all().order_by('-timestamp').first()
-            old_classes = MathSymbol.objects.all().filter(timestamp__lte=latest_model.timestamp)
+            latest_model = ClassificationModel.objects.all()\
+                .order_by('-timestamp').first()
+            old_classes = MathSymbol.objects.all()\
+                .filter(timestamp__lte=latest_model.timestamp)
+
             model = mm.MobileNet(features=len(old_classes), pretrained=False)
-            model.load_state_dict(torch.load(io.BytesIO(latest_model.pytorch), map_location=torch.device('cpu')))
+            model.load_state_dict(torch.load(io.BytesIO(latest_model.pytorch),
+                                             map_location=torch.device('cpu')))
             model = model.eval()
 
             img = mm.preprocess(img)
-            img = img.repeat((3,1,1))
-            img = img.reshape((1,img.shape[0], img.shape[1], img.shape[2]))
+            img = img.repeat((3, 1, 1))
+            img = img.reshape((1, img.shape[0], img.shape[1], img.shape[2]))
 
             features = model.features(img)
             features = features.mean([2, 3])

@@ -1,23 +1,30 @@
 import torch
-import torch.nn.functional as F
 from django.db import models
 from torch.utils.data import Dataset
 
 
 class DBDataset(Dataset):
-    def __init__(self, data_table: models.Model, class_table: models.Model, get_data, get_label, get_class_name, filter = None):
+    def __init__(self, data_table: models.Model, class_table: models.Model,
+                 get_data, get_label, get_class_name, filter=None):
         self.data_table = data_table
 
         if filter is not None:
-            self.entities = [row for row in self.data_table.objects.all() if filter(row)]
+            self.entities = [
+                row for row in self.data_table.objects.all()
+                if filter(row)
+            ]
         else:
             self.entities = list(self.data_table.objects.all())
 
         self.len = len(self.entities)
 
-        self.classes = [get_class_name(cls_ent) for cls_ent in class_table.objects.all().order_by('timestamp')]
+        self.classes = [
+            get_class_name(cls_ent)
+            for cls_ent in class_table.objects.all().order_by('timestamp')
+        ]
         self.class_to_ix = {
-            get_class_name(cls_ent): ix for ix, cls_ent in enumerate(class_table.objects.all().order_by('timestamp'))
+            get_class_name(cls_ent): ix for ix, cls_ent in
+            enumerate(class_table.objects.all().order_by('timestamp'))
         }
 
         self.class_counts = torch.zeros(len(self.classes))

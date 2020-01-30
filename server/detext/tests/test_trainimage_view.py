@@ -1,14 +1,9 @@
 import base64
 import io
-import json
-from datetime import datetime
 
-from django.contrib.auth.models import User
 from django.test import TestCase
-from django.urls import reverse
 from PIL import Image
 from rest_framework import status
-from rest_framework.test import APIClient
 
 from detext.server.models import TrainImage
 from detext.tests.util.auth import AuthTestCase

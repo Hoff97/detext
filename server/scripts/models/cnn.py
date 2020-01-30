@@ -1,8 +1,4 @@
-import torch
 import torch.nn as nn
-import torch.optim as optim
-import torchvision.models as models
-from torch.optim import lr_scheduler
 from torchvision import transforms
 
 preprocess = transforms.Compose([
@@ -10,8 +6,9 @@ preprocess = transforms.Compose([
     transforms.ToTensor(),
 ])
 
+
 class CNNNet(nn.Module):
-    def __init__(self, features = 2):
+    def __init__(self, features=2):
         super(CNNNet, self).__init__()
 
         self.features = features

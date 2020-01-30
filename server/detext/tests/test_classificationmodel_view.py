@@ -1,16 +1,8 @@
-import json
-from datetime import datetime
-
-from django.contrib.auth.models import User
 from django.test import TestCase
-from django.urls import reverse
 from rest_framework import status
 
-from detext.server.models import MathSymbol
-
-from rest_framework.test import APIClient
-
 from detext.tests.util.auth import AuthTestCase
+
 
 class MathSymbolViewTest(AuthTestCase, TestCase):
     def setUp(self):

@@ -1,20 +1,12 @@
-import copy
-import random
-import time
-
 import numpy as np
 import onnx
 import onnxruntime as ort
 import torch
-import torch.nn as nn
-import torch.optim as optim
-from torch.optim import lr_scheduler
 from torchvision import datasets
 
-import models.cnn as cm
 import models.mobilenet as mm
-from models.mobilenet import MobileNet
-from training.train import train_model
+
+from torch.utils.data import DataLoader
 
 # Load the ONNX model
 model = onnx.load("res/mobile_cnn.onnx")
@@ -29,7 +21,7 @@ ort_session = ort.InferenceSession('res/mobile_cnn.onnx')
 
 data_dir = 'res/test'
 full_dataset = datasets.ImageFolder(data_dir, mm.preprocess)
-dataloader = torch.utils.data.DataLoader(full_dataset, batch_size=1, shuffle=True, num_workers=4)
+dataloader = DataLoader(full_dataset, batch_size=1, shuffle=True, num_workers=4)
 
 for i, data in enumerate(dataloader):
     inputs, labels = data
