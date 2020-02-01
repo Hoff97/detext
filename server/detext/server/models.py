@@ -1,5 +1,13 @@
+from __future__ import annotations
+
 from django.contrib.auth.models import User
 from django.db import models
+
+import torch
+
+import io
+
+from scripts.models.mobilenet import MobileNet
 
 
 class MathSymbol(models.Model):
@@ -33,7 +41,19 @@ class ClassificationModel(models.Model):
     timestamp = models.DateTimeField()
     accuracy = models.FloatField(default=0.9)
 
-    # TODO: Add train/test accuracy, other infos?
-
     def __str__(self):
         return f"{self.timestamp} - Accuracy: {self.accuracy}"
+
+    @classmethod
+    def get_latest(cls) -> ClassificationModel:
+        return cls.objects.all().order_by('-timestamp').first()
+
+    def to_pytorch(self) -> MobileNet:
+        state_dict = torch.load(io.BytesIO(self.pytorch),
+                                map_location=torch.device('cpu'))
+        model = MobileNet(
+            features=state_dict['mobilenet.classifier.1.bias'].shape[0],
+            pretrained=False)
+        model.load_state_dict(state_dict)
+
+        return model

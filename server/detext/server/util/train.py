@@ -9,7 +9,6 @@ from django.utils import timezone
 from torch.utils.data import random_split, DataLoader
 from torch.utils.data.sampler import WeightedRandomSampler
 
-from scripts.models.mobilenet import MobileNet
 from detext.server.models import ClassificationModel, MathSymbol, TrainImage
 from scripts.models.linear import LinearModel
 from scripts.training.dataloader import DBDataset
@@ -71,14 +70,7 @@ def train_classifier(train_batch_size=16,
     print(dataloaders)
     print(dataset_sizes)
 
-    latest_model = ClassificationModel.objects.all()\
-        .order_by('-timestamp').first()
-    state_dict = torch.load(io.BytesIO(latest_model.pytorch),
-                            map_location=torch.device('cpu'))
-    old_model = MobileNet(
-        features=state_dict['mobilenet.classifier.1.bias'].shape[0],
-        pretrained=False)
-    old_model.load_state_dict(state_dict)
+    old_model = ClassificationModel.get_latest().to_pytorch()
 
     n_features = full_dataset.get_input_shape()[0]
     n_classes = full_dataset.num_classes

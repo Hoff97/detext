@@ -197,15 +197,7 @@ class TrainImageView(viewsets.ModelViewSet):
 
     def update_features(self, train_image, img):
         with torch.no_grad():
-            latest_model = ClassificationModel.objects.all()\
-                .order_by('-timestamp').first()
-            old_classes = MathSymbol.objects.all()\
-                .filter(timestamp__lte=latest_model.timestamp)
-
-            model = mm.MobileNet(features=len(old_classes), pretrained=False)
-            model.load_state_dict(torch.load(io.BytesIO(latest_model.pytorch),
-                                             map_location=torch.device('cpu')))
-            model = model.eval()
+            model = ClassificationModel.get_latest().to_pytorch()
 
             img = mm.preprocess(img)
             img = img.repeat((3, 1, 1))
