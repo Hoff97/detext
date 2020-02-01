@@ -35,7 +35,7 @@ def get_class_name(item):
     return item.name
 
 
-def run():
+def run(num_epochs=5):
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
     criterion = nn.CrossEntropyLoss()
@@ -73,7 +73,7 @@ def run():
     model = model.to(device)
 
     model, accuracy = train_model(model, criterion, dataloaders, dataset_sizes,
-                                  device, num_epochs=5)
+                                  device, num_epochs=num_epochs)
 
     byteArr = io.BytesIO()
     dummy_input = torch.randn(1, 3, 224, 224, device='cuda')
