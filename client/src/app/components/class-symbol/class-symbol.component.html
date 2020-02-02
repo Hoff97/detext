@@ -54,8 +54,22 @@
           <label class="custom-file-label" for="inputGroupImage">Choose image</label>
         </div>
       </div>
+
+      <div *ngIf="!nameEdit && loggedIn">
+        <font>{{class.name}}</font>
+        <i class="fa fa-edit pointer ml-1" (click)="editName()" *ngIf="loggedIn"></i>
+      </div>
+      <div class="input-group input-group-sm mb-3" *ngIf="nameEdit && loggedIn">
+        <input type="text" class="form-control" placeholder="Name"
+          aria-label="Name" aria-describedby="button-name-edit" [(ngModel)]="class.name">
+        <div class="input-group-append">
+          <button class="btn btn-outline-secondary" type="button" id="button-name-edit"
+             (click)="editName()">
+            <i class="fa fa-edit"></i>
+          </button>
+        </div>
+      </div>
     </div>
-    <font *ngIf="loggedIn" class="ml-3">{{class.name}}</font>
   </div>
   <div class="row center mt-3" *ngIf="expanded">
     <div class="column full-width">
