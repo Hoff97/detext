@@ -3,10 +3,19 @@ python:
 - '3.7'
 services:
 - docker
+addons:
+  apt:
+    sources:
+      - google-chrome
+    packages:
+      - google-chrome-stable
+
+
 before_install:
 - "./ci/before_install.sh"
 install:
 - "./ci/install.sh"
+
 before_script:
 - echo "$DOCKER_TOKEN" | docker login -u "$DOCKER_USERNAME" --password-stdin
 - "./ci/add_docker.sh"
@@ -14,16 +23,21 @@ script:
 - "./ci/test.sh"
 - "./ci/after_test.sh"
 - "./ci/build.sh"
+
 deploy:
 - provider: script
   script: bash ./ci/deploy.sh
   skip_cleanup: true
   on:
     branch: master
+
+
 cache:
   directories:
     - $HOME/.cache/pip
     - $TRAVIS_BUILD_DIR/client/node_modules
+
+
 env:
   global:
   - NODE_JS_VERSION=10
