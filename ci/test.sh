@@ -12,4 +12,4 @@ docker stop tex2svg
 
 cd ../client
 npm install
-npm run test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
+npm run test -- --no-watch --no-progress --browsers=ChromeHeadlessCI --code-coverage
