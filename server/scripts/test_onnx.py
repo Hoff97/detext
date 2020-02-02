@@ -1,5 +1,4 @@
 import numpy as np
-import onnx
 import onnxruntime as ort
 import torch
 from torchvision import datasets

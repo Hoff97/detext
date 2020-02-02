@@ -20,8 +20,10 @@ def run():
     dataloader = DataLoader(full_dataset, batch_size=1, shuffle=True,
                             num_workers=4)
 
-    state_dict = torch.load("res/mobile_cnn.pth", map_location=torch.device('cpu'))
-    model = mm.MobileNet(features=state_dict['mobilenet.classifier.1.bias'].shape[0], pretrained=False)
+    state_dict = torch.load("res/mobile_cnn.pth",
+                            map_location=torch.device('cpu'))
+    n_features = state_dict['mobilenet.classifier.1.bias'].shape[0]
+    model = mm.MobileNet(features=n_features, pretrained=False)
     model.load_state_dict(state_dict)
     model = model.to(device)
 
