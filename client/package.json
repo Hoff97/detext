@@ -8,6 +8,7 @@
     "dev": "ng serve --proxy-config proxy.conf.dev.json --host 0.0.0.0",
     "build-prod": "ng build --prod --base-href '/client/' --aot",
     "test": "ng test",
+    "test-ci": "ng test --no-watch --code-coverage",
     "lint": "ng lint",
     "e2e": "ng e2e",
     "pwa": "ng build --prod && serve ./dist/client"
