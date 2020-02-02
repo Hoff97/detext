@@ -35,9 +35,7 @@ def get_class_name(item):
     return item.name
 
 
-def run(num_epochs=5):
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
+def run(num_epochs=5, device="cuda"):
     criterion = nn.CrossEntropyLoss()
 
     full_dataset = DBDataset(TrainImage, MathSymbol, get_data, get_label,

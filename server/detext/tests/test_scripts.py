@@ -17,4 +17,4 @@ class ScriptTest(TestCase):
         train_classifier.run()
 
     def test_train_script(self):
-        train.run(num_epochs=1)
+        train.run(num_epochs=1, device="cpu")
