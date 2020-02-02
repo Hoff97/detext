@@ -1,4 +1,4 @@
-bash <(curl -s https://codecov.io/bash) -f client/coverage/cobertura-coverage.xml -f server/.coverage
+bash <(curl -s https://codecov.io/bash) -f client/coverage/cobertura-coverage.xml -f server/coverage.xml
 
 cd server
 COV=$(coverage report | grep TOTAL | grep -o '[^ ]*%')
