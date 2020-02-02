@@ -4,6 +4,9 @@ cd server
 COV=$(coverage report | grep TOTAL | grep -o '[^ ]*%')
 STYLE=$(flake8 ./ | wc -l)
 
+echo $COV
+echo $STYLE
+
 curl \
   --header "Authorization: Token $SERIES_CI_TOKEN" \
   --data value="$COV" \

@@ -1,3 +1,6 @@
+source ~/.nvm/nvm.sh
+nvm use $NODE_JS_VERSION
+
 cd server
 pip install -r requirements.txt
 
