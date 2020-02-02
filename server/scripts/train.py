@@ -74,7 +74,7 @@ def run(num_epochs=5, device="cuda"):
                                   device, num_epochs=num_epochs)
 
     byteArr = io.BytesIO()
-    dummy_input = torch.randn(1, 3, 224, 224, device='cuda')
+    dummy_input = torch.randn(1, 3, 224, 224, device=device)
     torch.onnx.export(model, dummy_input, byteArr)
 
     torchByteArr = io.BytesIO()
