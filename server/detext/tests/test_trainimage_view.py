@@ -31,3 +31,13 @@ class MathSymbolViewTest(AuthTestCase, TestCase):
         }, **self.auth_headers)
 
         self.assertEquals(response.status_code, status.HTTP_201_CREATED)
+
+    def test_dist_works(self):
+        response = self.client.get(f'/api/image/dist/')
+
+        self.assertEquals(response.status_code, status.HTTP_200_OK)
+
+    def test_dist_works_with_args(self):
+        response = self.client.get(f'/api/image/dist/?log&width=10&height=10')
+
+        self.assertEquals(response.status_code, status.HTTP_200_OK)

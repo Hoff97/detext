@@ -9,6 +9,8 @@ from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied, bad_request
 from rest_framework.response import Response
 
+from django.http import HttpResponse
+
 from detext.server.models import ClassificationModel, MathSymbol, TrainImage
 from detext.server.serializers import (ClassificationModelSerializer,
                                        MathSymbolSerializer,
@@ -17,6 +19,11 @@ import scripts.models.mobilenet as mm
 import torch
 
 from detext.server.util.train import train_classifier
+
+from django.db.models import Count
+
+import matplotlib.pyplot as plt
+import numpy as np
 
 
 class MathSymbolView(viewsets.ModelViewSet):
@@ -210,3 +217,35 @@ class TrainImageView(viewsets.ModelViewSet):
 
             train_image.features = byte_f.getvalue()
             train_image.save()
+
+    @action(detail=False, methods=['GET'])
+    def dist(self, request):
+        vals = TrainImage.objects.values('symbol') \
+            .annotate(number=Count('id')) \
+            .order_by('-number')
+        vals = list(vals)
+        labels = [MathSymbol.get(val['symbol']).name for val in vals]
+        values = [val['number'] for val in vals]
+
+        y_pos = np.arange(len(labels))
+
+        width = 15
+        height = 15
+        if request.GET.get('width') is not None:
+            width = int(request.GET.get('width'))
+        if request.GET.get('height') is not None:
+            height = int(request.GET.get('height'))
+
+        plt.figure(figsize=(width, height), dpi=80)
+        if request.GET.get('log') == '':
+            plt.yscale('log')
+        else:
+            plt.yscale('linear')
+        plt.bar(y_pos, values, align='center', alpha=0.5)
+        plt.xticks(y_pos, labels)
+        plt.title('Number of images per class')
+
+        img_io = io.BytesIO()
+        plt.savefig(img_io)
+
+        return HttpResponse(img_io.getvalue(), content_type="image/png")

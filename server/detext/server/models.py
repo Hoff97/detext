@@ -21,6 +21,10 @@ class MathSymbol(models.Model):
     def __str__(self):
         return f"{self.name}"
 
+    @classmethod
+    def get(cls, id) -> MathSymbol:
+        return cls.objects.get(pk=id)
+
 
 class TrainImage(models.Model):
     symbol = models.ForeignKey(MathSymbol, on_delete=models.CASCADE)
