@@ -7,7 +7,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { LoginService } from 'src/app/services/login.service';
 import { ModelService } from 'src/app/services/model.service';
-import { SettingsService, Settings } from 'src/app/services/settings.service';
+import { SettingsService, Settings, defaultSettings } from 'src/app/services/settings.service';
 import { EventEmitter } from '@angular/core';
 import { NEVER, of } from 'rxjs';
 
@@ -17,12 +17,6 @@ describe('SettingsComponent', () => {
   let loginServiceSpy: jasmine.SpyObj<LoginService>;
   let modelServiceSpy: jasmine.SpyObj<ModelService>;
   let settingsServiceSpy: jasmine.SpyObj<SettingsService>;
-
-  const standardData: Settings = {
-    backend: 'cpu',
-    backendAuto: true,
-    download: true
-  };
 
   beforeEach(async(() => {
     loginServiceSpy = jasmine.createSpyObj('LoginService', ['login', 'getToken', 'isLoggedIn']);
@@ -45,7 +39,7 @@ describe('SettingsComponent', () => {
   }));
 
   beforeEach(() => {
-    settingsServiceSpy.getData.and.returnValue(standardData);
+    settingsServiceSpy.getData.and.returnValue(defaultSettings);
 
     fixture = TestBed.createComponent(SettingsComponent);
     component = fixture.componentInstance;
@@ -58,7 +52,7 @@ describe('SettingsComponent', () => {
 
   it('should handle settings changes', () => {
     settingsServiceSpy.dataChange.emit({
-      ...standardData,
+      ...defaultSettings,
       backend: 'wasm'
     });
 

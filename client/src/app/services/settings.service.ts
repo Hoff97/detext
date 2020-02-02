@@ -7,6 +7,12 @@ export interface Settings {
   download: boolean;
 }
 
+export const defaultSettings: Settings = {
+  backend: 'cpu',
+  backendAuto: true,
+  download: true
+};
+
 @Injectable({
   providedIn: 'root'
 })
