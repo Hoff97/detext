@@ -20,6 +20,10 @@ deploy:
   skip_cleanup: true
   on:
     branch: master
+cache:
+  directories:
+    - $HOME/.cache/pip
+    - client/node_modules
 env:
   global:
   - secure: f8sK/EIzj6t7eWy57yScKPetHW+2o4pWpHRB2VsgFLesrqNeDg9QwDyVYrule4tCU1TBFtwzRJyOufZr3BWb1rnKcPftNW/FcfO9hRqRBR37tQTkGJo7UHFQ6bwrnCz0iFheU1Xwko3Ajp5z9QG0dCE9ps1Upp2f4Iez7Pz66n5VAy/fxmhWDHLePW3le0GKDdMj009JEpcXHGry49IBu3E4Ul0F3FscnBpL2B2KOlQ92l1j2lAkQPzTetntKcLVs7+PwhgLTq0dQcp7TB4GUTU2GtpJzX4KWPe9m1+MQHPcoIr6S1zioCDZbOiaNpAJWEeGSKzS5scycC6h+l3ZVw2UqxAdanhcLuXDFm6LxPH1LI/A+etbzJ/6Tk+atzZ9GFSN85Rw4cmSdaUbO+Byb25nqiz3+K62LtSD6YSlAVFysA01PQ3R9xPS2HNlpteujMl5Y5nFLm2HbpQZ7sE+sXdjH4wyqjxvVJ2xJ6QKzNxN/0zN2tGblcPLb5OmYmErxRQGQHZKfYO8hA7lyOzqwQmIZxe1brWlziE1CDFaNd9teh2FqBi+V15RFAe5I2RlxWz0oMFJC/L3ToF8c59UBgdU32vOLnqrLbxbpoI5ApQ0MpNcYiZ93NaAgkxQQFKmiL3z6BD3sFSIpxaTpP1Iu9FDe4EcVNIXThwzgWwOphU=
