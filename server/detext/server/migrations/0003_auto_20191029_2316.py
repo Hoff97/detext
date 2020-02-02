@@ -1,5 +1,6 @@
 import io
 import random
+import sys
 from pathlib import Path
 
 from django.db import IntegrityError, migrations, transaction
@@ -27,6 +28,10 @@ def load_dataset(apps, schema_editor):
     data_dir = 'res/datasets/math_symbols_small'
     full_dataset = datasets.ImageFolder(data_dir, is_valid_file=valid_func)
 
+    num_imgs = len(full_dataset.imgs)
+    if 'test' in sys.argv:
+        num_imgs = 10
+
     instance_list = []
     for cl in full_dataset.classes:
         cls_instance = MathSymbol(None, cl.lower(), timezone.now())
@@ -37,7 +42,7 @@ def load_dataset(apps, schema_editor):
         except IntegrityError:
             cls_instance.delete()
 
-    for i, data in enumerate(full_dataset.imgs):
+    for i, data in enumerate(full_dataset.imgs[:num_imgs]):
         if i%200 == 0:
             print(f"Saving image {i+1}/{len(full_dataset.imgs)}")
         img_path, ix = data

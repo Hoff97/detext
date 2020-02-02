@@ -2,15 +2,12 @@ import copy
 import time
 
 import torch
-import torch.nn as nn
 import torch.optim as optim
 from torch.optim import lr_scheduler
-from torchvision import datasets
-
-from scripts.models.cnn import CNNNet, preprocess
 
 
-def train_model(model, criterion, dataloaders, dataset_sizes, device='cpu', num_epochs=25, lr=1e-3, step_size=7):
+def train_model(model, criterion, dataloaders, dataset_sizes, device='cpu',
+                num_epochs=25, lr=1e-3, step_size=7):
     optimizer = optim.Adam(model.parameters(), lr=lr)
 
     # Decay LR by a factor of 0.1 every 7 epochs
@@ -37,7 +34,7 @@ def train_model(model, criterion, dataloaders, dataset_sizes, device='cpu', num_
 
             # Iterate over data.
             for i, data in enumerate(dataloaders[phase]):
-                if i%100 == 0:
+                if i % 100 == 0:
                     print(f"  {i}/{len(dataloaders[phase])}")
                 inputs, labels = data
                 inputs = inputs.to(device)

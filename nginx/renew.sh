@@ -1,1 +1,1 @@
-certbot renew --nginx -d detext.haskai.de -m frithjof97@web.de --agree-tos
+certbot certonly --nginx -d detext.haskai.de -m frithjof97@web.de --agree-tos --renew-by-default

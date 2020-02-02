@@ -1,0 +1,12 @@
+[flake8]
+exclude =
+    .git,
+    __pycache__,
+    old,
+    build,
+    dist,
+    settings.py,
+    settings_prod.py,
+    migrations
+max-line-length = 79
+max-complexity = 10

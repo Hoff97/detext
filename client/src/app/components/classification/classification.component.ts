@@ -14,22 +14,22 @@ interface Prediction {
 })
 export class ClassificationComponent implements OnInit, OnChanges {
 
-  @Input() public predictions: number[];
-  @Input() public classes: ClassSymbol[];
+  @Input() public predictions: number[] = [];
+  @Input() public classes: ClassSymbol[] = [];
   @Input() public loading: boolean;
 
   @Output() public reloadClasses = new EventEmitter<void>();
   @Output() public correct = new EventEmitter<ClassSymbol>();
 
-  public predSorted: Prediction[];
-  public unpredicted: Prediction[];
+  public predSorted: Prediction[] = [];
+  public unpredicted: Prediction[] = [];
   public correctSelected = false;
 
   public tab = 'predicted';
 
-  public shown: Prediction[];
+  public shown: Prediction[] = [];
   public page = 1;
-  public currentPage: Prediction[];
+  public currentPage: Prediction[] = [];
 
   public pageSize = 5;
 

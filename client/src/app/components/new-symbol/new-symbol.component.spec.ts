@@ -1,6 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { NewSymbolComponent } from './new-symbol.component';
+import { FormsModule } from '@angular/forms';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('NewSymbolComponent', () => {
   let component: NewSymbolComponent;
@@ -8,7 +10,8 @@ describe('NewSymbolComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ NewSymbolComponent ]
+      declarations: [ NewSymbolComponent ],
+      imports: [ FormsModule, HttpClientTestingModule ]
     })
     .compileComponents();
   }));

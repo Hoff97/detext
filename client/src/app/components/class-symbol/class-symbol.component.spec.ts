@@ -1,6 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ClassSymbolComponent } from './class-symbol.component';
+import { FormsModule } from '@angular/forms';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('ClassSymbolComponent', () => {
   let component: ClassSymbolComponent;
@@ -8,7 +10,8 @@ describe('ClassSymbolComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ClassSymbolComponent ]
+      declarations: [ ClassSymbolComponent ],
+      imports: [ FormsModule, HttpClientTestingModule ]
     })
     .compileComponents();
   }));

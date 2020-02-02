@@ -12,9 +12,14 @@ import { strToBase64 } from 'src/app/util/data';
 })
 export class ClassSymbolComponent implements OnInit {
 
-  @Input() public class: ClassSymbol;
-  @Input() public prop: number;
-  @Input() public correctEnabled: boolean;
+  @Input() public class: ClassSymbol = {
+    name: '',
+    description: '',
+    latex: '',
+    image: ''
+  };
+  @Input() public prop = 0;
+  @Input() public correctEnabled = false;
 
   public expanded = false;
 
