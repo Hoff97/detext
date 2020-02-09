@@ -9,10 +9,17 @@ from django.utils import timezone
 from torch.utils.data import random_split, DataLoader
 from torch.utils.data.sampler import WeightedRandomSampler
 
+from detext.server.ml.util.util import eval_model
 from detext.server.models import ClassificationModel, MathSymbol, TrainImage
-from scripts.models.linear import LinearModel
-from scripts.training.dataloader import DBDataset
-from scripts.training.train import train_model
+from detext.server.ml.models.linear import LinearModel
+from detext.server.ml.training.dataloader import DBDataset
+from detext.server.ml.training.train import train_model
+
+import seaborn as sn
+import pandas as pd
+import matplotlib.pyplot as plt
+
+from scripts.train import setup_db_dl
 
 
 def valid_func(x):
@@ -36,39 +43,14 @@ def get_class_name(item):
 
 def train_classifier(train_batch_size=16,
                      test_batch_size=4,
-                     transfer_learn=False,
                      device="cpu",
                      num_epochs=5):
+
     criterion = nn.CrossEntropyLoss()
 
-    full_dataset = DBDataset(TrainImage, MathSymbol, get_data, get_label,
-                             get_class_name, filter=valid_func)
-    test_train_split = 0.9
-    train_size = int(test_train_split * len(full_dataset))
-    test_size = len(full_dataset) - train_size
-
-    train_dataset, test_dataset = random_split(full_dataset,
-                                               [train_size, test_size])
-
-    weights = torch.zeros(len(train_dataset))
-    for i, data in enumerate(train_dataset):
-        weights[i] = 1. / (math.log(full_dataset.class_counts[data[1]]) + 1.)
-
-    sampler = WeightedRandomSampler(weights, len(weights))
-
-    dataloaders = {
-        "train": DataLoader(train_dataset, batch_size=train_batch_size,
-                            num_workers=1, sampler=sampler),
-        "test":  DataLoader(test_dataset, batch_size=test_batch_size,
-                            shuffle=True, num_workers=1)
-    }
-    dataset_sizes = {
-        "train": len(train_dataset),
-        "test": len(test_dataset)
-    }
+    dataloaders, full_dataset = setup_db_dl(train_batch_size, test_batch_size, get_data)
 
     print(dataloaders)
-    print(dataset_sizes)
 
     old_model = ClassificationModel.get_latest().to_pytorch()
 
@@ -79,19 +61,15 @@ def train_classifier(train_batch_size=16,
 
     model = model.to(device)
 
-    model, accuracy = train_model(model, criterion, dataloaders, dataset_sizes,
-                                  device, num_epochs=num_epochs, step_size=2)
+    model, accuracy = train_model(model, criterion, dataloaders, device, num_epochs=num_epochs, step_size=2)
+
+    eval_model(model, dataloaders["test"], device, len(full_dataset.classes))
 
     model = model.to('cpu')
     old_model.set_classifier(model.classifier)
     old_model = old_model.eval()
 
     del dataloaders
-    del dataset_sizes
-    del sampler
-    del weights
-    del train_dataset
-    del test_dataset
     del full_dataset
     gc.collect()
 

@@ -6,8 +6,13 @@ import torch.optim as optim
 from torch.optim import lr_scheduler
 
 
-def train_model(model, criterion, dataloaders, dataset_sizes, device='cpu',
+def train_model(model, criterion, dataloaders, device='cpu',
                 num_epochs=25, lr=1e-3, step_size=7):
+    dataset_sizes = {
+        "train": len(dataloaders["train"].dataset),
+        "test": len(dataloaders["test"].dataset)
+    }
+
     optimizer = optim.Adam(model.parameters(), lr=lr)
 
     # Decay LR by a factor of 0.1 every 7 epochs
@@ -34,8 +39,6 @@ def train_model(model, criterion, dataloaders, dataset_sizes, device='cpu',
 
             # Iterate over data.
             for i, data in enumerate(dataloaders[phase]):
-                if i % 100 == 0:
-                    print(f"  {i}/{len(dataloaders[phase])}")
                 inputs, labels = data
                 inputs = inputs.to(device)
                 labels = labels.to(device)
@@ -47,6 +50,7 @@ def train_model(model, criterion, dataloaders, dataset_sizes, device='cpu',
                 # track history if only in train
                 with torch.set_grad_enabled(phase == 'train'):
                     outputs = model(inputs)
+                    # print(outputs.shape)
                     _, preds = torch.max(outputs, 1)
                     loss = criterion(outputs, labels)
 
@@ -55,6 +59,7 @@ def train_model(model, criterion, dataloaders, dataset_sizes, device='cpu',
                         loss.backward()
                         optimizer.step()
 
+                print(f'  {i}/{len(dataloaders[phase])}: Loss: {loss.item():.4f}')
                 # statistics
                 running_loss += loss.item() * inputs.size(0)
                 running_corrects += torch.sum(preds == labels.data)

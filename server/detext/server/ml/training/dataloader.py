@@ -39,6 +39,12 @@ class DBDataset(Dataset):
     def get_input_shape(self):
         return self.get_data(self.entities[0]).shape
 
+    def get_lbl(self, index):
+        entity = self.entities[index]
+        label = self.get_label(entity)
+        label_tensor = self.class_to_ix[label]
+        return label_tensor
+
     def __getitem__(self, index):
         entity = self.entities[index]
         data = self.get_data(entity)
