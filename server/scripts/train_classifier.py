@@ -1,4 +1,4 @@
-from detext.server.util.train import train_classifier
+from detext.server.ml.train_classifier import train_classifier
 
 import torch
 
