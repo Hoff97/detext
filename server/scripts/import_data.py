@@ -1,9 +1,3 @@
-import io
-from pathlib import Path
-
-import torch
-from django.utils import timezone
-
 from detext.server.models import MathSymbol, TrainImage
 
 from tqdm import tqdm

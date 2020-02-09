@@ -77,8 +77,8 @@ class MathSymbolView(viewsets.ModelViewSet):
         instance = self.get_object()
 
         if 'image' in request.data:
-            return bad_request(request,
-                               Exception('Image should not be contained in update request'))
+            err_msg = 'Image should not be contained in update request'
+            return bad_request(request, Exception(err_msg))
 
         img = MathSymbol.objects.get(pk=instance.id).image
         instance.image = img
@@ -115,8 +115,8 @@ class MathSymbolView(viewsets.ModelViewSet):
                                Exception('Primary key can not be null'))
 
         if 'image' not in request.data:
-            return bad_request(request,
-                               Exception('Image needs to be sent with this request'))
+            err_msg = 'Image needs to be sent with this request'
+            return bad_request(request, Exception(err_msg))
 
         if request.user.id is None:
             raise PermissionDenied({

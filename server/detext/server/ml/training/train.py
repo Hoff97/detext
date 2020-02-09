@@ -59,7 +59,8 @@ def train_model(model, criterion, dataloaders, device='cpu',
                         loss.backward()
                         optimizer.step()
 
-                print(f'  {i}/{len(dataloaders[phase])}: Loss: {loss.item():.4f}')
+                print(f'  {i}/{len(dataloaders[phase])}:\
+                      Loss: {loss.item(): .4f}')
                 # statistics
                 running_loss += loss.item() * inputs.size(0)
                 running_corrects += torch.sum(preds == labels.data)

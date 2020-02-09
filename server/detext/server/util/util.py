@@ -8,6 +8,7 @@ from detext.server.models import TrainImage
 
 import time
 
+
 def update_train_features(torch_model, num_classes):
     with torch.no_grad():
         model = mm.MobileNet(features=num_classes, pretrained=False)
@@ -38,6 +39,6 @@ def timeit(method):
         result = method(*args, **kw)
         te = time.time()
 
-        print(f'{method.__name__}  {(te-ts)*1000} ms');
+        print(f'{method.__name__}  {(te-ts)*1000} ms')
         return result
     return timed

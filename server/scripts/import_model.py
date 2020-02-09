@@ -1,7 +1,5 @@
-import io
 from pathlib import Path
 
-import torch
 from django.utils import timezone
 
 from detext.server.models import ClassificationModel
@@ -19,6 +17,8 @@ def run():
 
     byte_arr = model.to_onnx()
 
-    model_instance = ClassificationModel(None, model=byte_arr.getvalue(), pytorch=pytorch, timestamp=timezone.now(),
+    model_instance = ClassificationModel(None, model=byte_arr.getvalue(),
+                                         pytorch=pytorch,
+                                         timestamp=timezone.now(),
                                          accuracy=0.99)
     model_instance.save()

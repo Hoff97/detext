@@ -28,7 +28,8 @@ def eval_model(model, test_dl, device, n_classes):
 
     print(conf_matrix)
 
-    df_cm = pd.DataFrame(conf_matrix.numpy(), index=[i for i in range(n_classes)],
+    df_cm = pd.DataFrame(conf_matrix.numpy(),
+                         index=[i for i in range(n_classes)],
                          columns=[i for i in range(n_classes)])
     plt.figure(figsize=(16, 12))
     sn.heatmap(df_cm, annot=True)
@@ -48,8 +49,10 @@ def augment_image(image):
                              rotate_limit=0, interpolation=cv2.INTER_CUBIC,
                              border_mode=cv2.BORDER_CONSTANT,
                              value=(255, 255, 255), p=p)
-    elastic = ElasticTransform(alpha=0.5, sigma=20, alpha_affine=20, border_mode=cv2.BORDER_CONSTANT,
-                               value=(255, 255, 255), interpolation=cv2.INTER_CUBIC, p=1.0)
+    elastic = ElasticTransform(alpha=0.5, sigma=20, alpha_affine=20,
+                               border_mode=cv2.BORDER_CONSTANT,
+                               value=(255, 255, 255),
+                               interpolation=cv2.INTER_CUBIC, p=1.0)
     aug = Compose([scale, elastic])
 
     image = image.resize((224, 224), resample=Image.LANCZOS)

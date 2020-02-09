@@ -45,7 +45,8 @@ def run(num_epochs=5, device="cpu"):
     model = mm.MobileNet(features=len(full_dataset.classes), pretrained=False)
     model = model.to(device)
 
-    model, accuracy = train_model(model, criterion, dataloaders, device, num_epochs=num_epochs)
+    model, accuracy = train_model(model, criterion, dataloaders, device,
+                                  num_epochs=num_epochs)
 
     byteArr = model.to_onnx()
 
@@ -73,10 +74,10 @@ def setup_db_dl(train_batch_size=4, test_batch_size=4, get_data=get_data):
     sampler = WeightedRandomSampler(weights, len(weights))
 
     dataloaders = {
-        "train": DataLoader(train_dataset, batch_size=train_batch_size, num_workers=1,
-                            sampler=sampler),
-        "test": DataLoader(test_dataset, batch_size=test_batch_size, shuffle=True,
-                           num_workers=1)
+        "train": DataLoader(train_dataset, batch_size=train_batch_size,
+                            num_workers=1, sampler=sampler),
+        "test": DataLoader(test_dataset, batch_size=test_batch_size,
+                           shuffle=True, num_workers=1)
     }
 
     return dataloaders, full_dataset

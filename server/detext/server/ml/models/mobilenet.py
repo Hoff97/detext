@@ -49,7 +49,8 @@ class MobileNet(nn.Module):
     @classmethod
     def from_file(cls, file):
         state_dict = torch.load(file)
-        model = MobileNet(features=state_dict['mobilenet.classifier.1.bias'].shape[0])
+        n_features = state_dict['mobilenet.classifier.1.bias'].shape[0]
+        model = MobileNet(features=n_features)
         model.load_state_dict(state_dict)
         return model
 

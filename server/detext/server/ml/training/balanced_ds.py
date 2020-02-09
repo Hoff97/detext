@@ -9,9 +9,10 @@ class BalancedDS(RemapDS):
         self.ds = ds
 
         self.class_counts = ds.class_counts
-        max_count = max(torch.max(self.class_counts),min_count)
+        max_count = max(torch.max(self.class_counts), min_count)
 
-        multiples = [int(num.item()) for num in torch.floor(max_count / self.class_counts)]
+        multiples = [int(num.item())
+                     for num in torch.floor(max_count / self.class_counts)]
         new_cls_counts = self.class_counts * multiples
         print(new_cls_counts)
 

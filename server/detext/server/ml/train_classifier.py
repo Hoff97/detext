@@ -1,24 +1,15 @@
 import gc
 import io
-import math
 import random
 
 import torch
 import torch.nn as nn
 from django.utils import timezone
-from torch.utils.data import random_split, DataLoader
-from torch.utils.data.sampler import WeightedRandomSampler
 
-from detext.server.ml.util.util import eval_model
-from detext.server.models import ClassificationModel, MathSymbol, TrainImage
 from detext.server.ml.models.linear import LinearModel
-from detext.server.ml.training.dataloader import DBDataset
 from detext.server.ml.training.train import train_model
-
-import seaborn as sn
-import pandas as pd
-import matplotlib.pyplot as plt
-
+from detext.server.ml.util.util import eval_model
+from detext.server.models import ClassificationModel
 from scripts.train import setup_db_dl
 
 
@@ -48,7 +39,8 @@ def train_classifier(train_batch_size=16,
 
     criterion = nn.CrossEntropyLoss()
 
-    dataloaders, full_dataset = setup_db_dl(train_batch_size, test_batch_size, get_data)
+    dataloaders, full_dataset = setup_db_dl(train_batch_size, test_batch_size,
+                                            get_data)
 
     print(dataloaders)
 
@@ -61,7 +53,8 @@ def train_classifier(train_batch_size=16,
 
     model = model.to(device)
 
-    model, accuracy = train_model(model, criterion, dataloaders, device, num_epochs=num_epochs, step_size=2)
+    model, accuracy = train_model(model, criterion, dataloaders, device,
+                                  num_epochs=num_epochs, step_size=2)
 
     eval_model(model, dataloaders["test"], device, len(full_dataset.classes))
 
