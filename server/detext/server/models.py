@@ -7,7 +7,11 @@ import torch
 
 import io
 
-from scripts.models.mobilenet import MobileNet
+from detext.server.ml.models.mobilenet import MobileNet
+
+import onnxruntime as ort
+
+from PIL import Image
 
 
 class MathSymbol(models.Model):
@@ -38,6 +42,9 @@ class TrainImage(models.Model):
     def __str__(self):
         return f"{self.symbol}"
 
+    def get_image(self):
+        return Image.open(io.BytesIO(self.image))
+
 
 class ClassificationModel(models.Model):
     model = models.BinaryField(editable=True)
@@ -61,3 +68,6 @@ class ClassificationModel(models.Model):
         model.load_state_dict(state_dict)
 
         return model
+
+    def to_onnx(self):
+        return ort.InferenceSession(io.BytesIO(self.model).getvalue())
