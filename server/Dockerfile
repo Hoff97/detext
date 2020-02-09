@@ -8,6 +8,9 @@ ENV PYTHONUNBUFFERED 1
 # Set work directory
 WORKDIR /code
 
+RUN apt-get update
+RUN apt-get install -y libglib2.0-0
+
 # Install dependencies
 COPY requirements.txt /code/
 RUN pip install -r requirements.txt
