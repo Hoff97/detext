@@ -3,8 +3,10 @@ import io
 import torch
 from PIL import Image
 
-import scripts.models.mobilenet as mm
+import detext.server.ml.models.mobilenet as mm
 from detext.server.models import TrainImage
+
+import time
 
 
 def update_train_features(torch_model, num_classes):
@@ -29,3 +31,14 @@ def update_train_features(torch_model, num_classes):
 
             train_img.features = byte_f.getvalue()
             train_img.save()
+
+
+def timeit(method):
+    def timed(*args, **kw):
+        ts = time.time()
+        result = method(*args, **kw)
+        te = time.time()
+
+        print(f'{method.__name__}  {(te-ts)*1000} ms')
+        return result
+    return timed

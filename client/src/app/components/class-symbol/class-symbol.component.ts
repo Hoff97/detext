@@ -29,6 +29,7 @@ export class ClassSymbolComponent implements OnInit {
 
   public descriptEdit = false;
   public latexEdit = false;
+  public nameEdit = false;
 
   private reader: FileReader;
 
@@ -70,6 +71,16 @@ export class ClassSymbolComponent implements OnInit {
     this.latexEdit = !this.latexEdit;
 
     if (!this.latexEdit) {
+      this.symbolService.updateSymbol(this.class).subscribe(response => {
+        console.log(response);
+      });
+    }
+  }
+
+  editName() {
+    this.nameEdit = !this.nameEdit;
+
+    if (!this.nameEdit) {
       this.symbolService.updateSymbol(this.class).subscribe(response => {
         console.log(response);
       });

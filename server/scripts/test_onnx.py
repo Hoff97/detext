@@ -1,15 +1,16 @@
 import numpy as np
-import onnxruntime as ort
 import torch
 from torchvision import datasets
 
-import scripts.models.mobilenet as mm
+import detext.server.ml.models.mobilenet as mm
 
 from torch.utils.data import DataLoader
 
+from detext.server.models import ClassificationModel
+
 
 def run():
-    ort_session = ort.InferenceSession('res/mobile_cnn.onnx')
+    ort_session = ClassificationModel.get_latest().to_onnx()
 
     data_dir = 'res/test'
     full_dataset = datasets.ImageFolder(data_dir, mm.preprocess)

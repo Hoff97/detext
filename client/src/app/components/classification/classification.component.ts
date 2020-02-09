@@ -64,6 +64,7 @@ export class ClassificationComponent implements OnInit, OnChanges {
     this.symbolService.create(symbol).subscribe(sym => {
       this.correct.emit(sym);
       this.reloadClasses.emit();
+      this.correctSelected = true;
     });
   }
 

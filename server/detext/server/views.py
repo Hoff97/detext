@@ -2,28 +2,26 @@ import base64
 import io
 import urllib
 
+import matplotlib.pyplot as plt
+import numpy as np
+import torch
 from django.conf import settings
+from django.db.models import Count
+from django.http import HttpResponse
 from PIL import Image
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied, bad_request
 from rest_framework.response import Response
+from tqdm import tqdm
 
-from django.http import HttpResponse
-
+import detext.server.ml.models.mobilenet as mm
+from detext.server.ml.train_classifier import train_classifier
 from detext.server.models import ClassificationModel, MathSymbol, TrainImage
 from detext.server.serializers import (ClassificationModelSerializer,
                                        MathSymbolSerializer,
                                        TrainImageSerializer)
-import scripts.models.mobilenet as mm
-import torch
-
-from detext.server.util.train import train_classifier
-
-from django.db.models import Count
-
-import matplotlib.pyplot as plt
-import numpy as np
+from detext.server.util.util import timeit
 
 
 class MathSymbolView(viewsets.ModelViewSet):
@@ -79,8 +77,8 @@ class MathSymbolView(viewsets.ModelViewSet):
         instance = self.get_object()
 
         if 'image' in request.data:
-            return bad_request(request,
-                               Exception('Image should not be contained in update request'))
+            err_msg = 'Image should not be contained in update request'
+            return bad_request(request, Exception(err_msg))
 
         img = MathSymbol.objects.get(pk=instance.id).image
         instance.image = img
@@ -117,8 +115,8 @@ class MathSymbolView(viewsets.ModelViewSet):
                                Exception('Primary key can not be null'))
 
         if 'image' not in request.data:
-            return bad_request(request,
-                               Exception('Image needs to be sent with this request'))
+            err_msg = 'Image needs to be sent with this request'
+            return bad_request(request, Exception(err_msg))
 
         if request.user.id is None:
             raise PermissionDenied({
@@ -202,6 +200,7 @@ class TrainImageView(viewsets.ModelViewSet):
             arg = int(arg)
         return arg
 
+    @timeit
     def update_features(self, train_image, img):
         with torch.no_grad():
             model = ClassificationModel.get_latest().to_pytorch()
@@ -224,28 +223,75 @@ class TrainImageView(viewsets.ModelViewSet):
             .annotate(number=Count('id')) \
             .order_by('-number')
         vals = list(vals)
+
         labels = [MathSymbol.get(val['symbol']).name for val in vals]
         values = [val['number'] for val in vals]
 
-        y_pos = np.arange(len(labels))
-
-        width = 15
-        height = 15
-        if request.GET.get('width') is not None:
-            width = int(request.GET.get('width'))
-        if request.GET.get('height') is not None:
-            height = int(request.GET.get('height'))
-
-        plt.figure(figsize=(width, height), dpi=80)
-        if request.GET.get('log') == '':
-            plt.yscale('log')
+        if request.GET.get('json') == '':
+            response = list(map(lambda x: {"name": x[0], "number": x[1]},
+                                zip(labels, values)))
+            return Response(response)
         else:
-            plt.yscale('linear')
-        plt.bar(y_pos, values, align='center', alpha=0.5)
-        plt.xticks(y_pos, labels)
-        plt.title('Number of images per class')
+            y_pos = np.arange(len(labels))
 
-        img_io = io.BytesIO()
-        plt.savefig(img_io)
+            width = 15
+            height = 15
+            if request.GET.get('width') is not None:
+                width = int(request.GET.get('width'))
+            if request.GET.get('height') is not None:
+                height = int(request.GET.get('height'))
 
-        return HttpResponse(img_io.getvalue(), content_type="image/png")
+            plt.figure(figsize=(width, height), dpi=80)
+            if request.GET.get('log') == '':
+                plt.yscale('log')
+            else:
+                plt.yscale('linear')
+            plt.bar(y_pos, values, align='center', alpha=0.5)
+            plt.xticks(y_pos, labels)
+            plt.title('Number of images per class')
+
+            img_io = io.BytesIO()
+            plt.savefig(img_io)
+
+            return HttpResponse(img_io.getvalue(), content_type="image/png")
+
+    @action(detail=False, methods=['GET'])
+    def download(self, request):
+        if request.user.id is None:
+            raise PermissionDenied({
+                "message": "Can only trigger training as root"
+            })
+
+        res = {
+            "train_images": [],
+            "symbols": []
+        }
+
+        symbols = list(MathSymbol.objects.all())
+        for i, symbol in enumerate(symbols):
+            res["symbols"].append({
+                "id": symbol.id,
+                "name": symbol.name,
+                "timestamp": symbol.timestamp,
+                "description": symbol.description,
+                "latex": symbol.latex,
+                "image": symbol.image
+            })
+
+        train_images = list(TrainImage.objects.all())
+        for image in tqdm(train_images):
+            res["train_images"].append({
+                "symbol": image.symbol.id,
+                "image": image.image,
+                "features": image.features
+            })
+
+        byte = io.BytesIO()
+        np.save(byte, res)
+
+        arr = byte.getvalue()
+
+        response = HttpResponse(arr, content_type="application/octet-stream")
+        response['Content-Disposition'] = 'attachment; filename="download.pth"'
+
+        return response

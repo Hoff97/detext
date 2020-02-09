@@ -15,7 +15,7 @@ type Point = {
 })
 export class CanvasComponent implements AfterViewInit {
   // a reference to the canvas element from our template
-  @ViewChild('canvas', {static: false}) public canvas: ElementRef;
+  @ViewChild('canvas', {static: false}) public canvas: ElementRef<HTMLCanvasElement>;
 
   // setting a width and height for the canvas
   @Input() public width = 400;
@@ -30,15 +30,12 @@ export class CanvasComponent implements AfterViewInit {
   private cx: CanvasRenderingContext2D;
 
   public ngAfterViewInit() {
-    // get the context
-    const canvasEl: HTMLCanvasElement = this.canvas.nativeElement;
+    const canvasEl = this.canvas.nativeElement;
     this.cx = canvasEl.getContext('2d');
 
-    // set the width and height
     canvasEl.width = this.width;
     canvasEl.height = this.height;
 
-    // we'll implement this method to start capturing mouse events
     this.captureEvents(canvasEl);
 
     this.clear();
@@ -74,37 +71,7 @@ export class CanvasComponent implements AfterViewInit {
             );
         })
       )
-      .subscribe((res: [MouseEvent | TouchEvent, MouseEvent | TouchEvent]) => {
-        const rect = canvasEl.getBoundingClientRect();
-
-        let [startX, startY, endX, endY] = [0, 0, 0, 0];
-        if (res[0] instanceof MouseEvent) {
-          startX = res[0].clientX;
-          startY = res[0].clientY;
-        } else {
-          startX = res[0].touches[0].clientX;
-          startY = res[0].touches[0].clientY;
-        }
-        if (res[1] instanceof MouseEvent) {
-          endX = res[1].clientX;
-          endY = res[1].clientY;
-        } else {
-          endX = res[1].touches[0].clientX;
-          endY = res[1].touches[0].clientY;
-        }
-
-        const prevPos = {
-          x: startX - rect.left,
-          y: startY - rect.top
-        };
-
-        const currentPos = {
-          x: endX - rect.left,
-          y: endY - rect.top
-        };
-
-        this.drawOnCanvas(prevPos, currentPos);
-      });
+      .subscribe(res => this.handleLineMove(res as any));
 
     mouseup.subscribe((ev: MouseEvent) => {
       if (this.autoemit) {
@@ -113,12 +80,44 @@ export class CanvasComponent implements AfterViewInit {
     });
   }
 
+  public handleLineMove(res: [MouseEvent | TouchEvent, MouseEvent | TouchEvent]) {
+    const rect = this.canvas.nativeElement.getBoundingClientRect();
+
+    let [startX, startY, endX, endY] = [0, 0, 0, 0];
+
+    if (res[0] instanceof MouseEvent) {
+      startX = res[0].clientX;
+      startY = res[0].clientY;
+    } else {
+      startX = res[0].touches[0].clientX;
+      startY = res[0].touches[0].clientY;
+    }
+    if (res[1] instanceof MouseEvent) {
+      endX = res[1].clientX;
+      endY = res[1].clientY;
+    } else {
+      endX = res[1].touches[0].clientX;
+      endY = res[1].touches[0].clientY;
+    }
+
+    const prevPos = {
+      x: startX - rect.left,
+      y: startY - rect.top
+    };
+
+    const currentPos = {
+      x: endX - rect.left,
+      y: endY - rect.top
+    };
+
+    this.drawOnCanvas(prevPos, currentPos);
+  }
+
   public emitContent() {
     this.imageChange.emit(this.getImageContent());
   }
 
   private drawOnCanvas(prevPos: Point, currentPos: Point) {
-    // incase the context is not set
     if (!this.cx) { return; }
 
     // set some default properties about the line

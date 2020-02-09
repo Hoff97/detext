@@ -91,3 +91,7 @@ db.sqlite3
 res/datasets/math_symbols
 
 .vscode/
+
+res/test
+
+.idea/

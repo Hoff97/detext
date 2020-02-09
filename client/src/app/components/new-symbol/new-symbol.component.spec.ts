@@ -25,4 +25,29 @@ describe('NewSymbolComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should be able to reset', () => {
+    component.cancel();
+  });
+
+  it('should be able to display latex codes', () => {
+    component.getLatexSvg();
+  });
+
+  it('should be able to create a new class', () => {
+    let clsRes;
+
+    component.class.name = 'Test';
+
+    component.created.subscribe(cls => clsRes = cls);
+
+    component.create();
+
+    expect(clsRes).toBeTruthy();
+    expect(clsRes.name).toEqual('Test');
+  });
+
+  it('should be able to handle image upload', () => {
+    component.handleImageInput([new Blob()]);
+  });
 });
