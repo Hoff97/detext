@@ -13,8 +13,6 @@ class BalancedDS(RemapDS):
 
         multiples = [int(num.item())
                      for num in torch.floor(max_count / self.class_counts)]
-        new_cls_counts = self.class_counts * multiples
-        print(new_cls_counts)
 
         indice_maps = []
         for i in range(len(ds)):
