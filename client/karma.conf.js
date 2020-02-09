@@ -13,6 +13,7 @@ module.exports = function (config) {
       require('@angular-devkit/build-angular/plugins/karma')
     ],
     client: {
+      captureConsole: true,
       clearContext: false // leave Jasmine Spec Runner output visible in browser
     },
     coverageIstanbulReporter: {
@@ -37,6 +38,9 @@ module.exports = function (config) {
     coverageIstanbulReporter: {
       reports: [ 'html', 'cobertura'],
       fixWebpackSourcePaths: true,
-     }
+     },
+     browserConsoleLogOptions: {
+      level: 'log'
+    }
   });
 };
