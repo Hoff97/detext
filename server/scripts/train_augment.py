@@ -32,7 +32,7 @@ def get_class_name(item):
     return item.name
 
 
-def run(num_epochs=1, device="cuda"):
+def run(num_epochs=5, device="cuda"):
     criterion = nn.CrossEntropyLoss()
 
     full_dataset = DBDataset(TrainImage, MathSymbol, get_data, get_label,
@@ -67,7 +67,7 @@ def run(num_epochs=1, device="cuda"):
                                   num_epochs=num_epochs)
 
     model = model.to('cpu')
-    torch.save(model.state_dict(), "test_augment_2.pth")
+    torch.save(model.state_dict(), "test_augment.pth")
 
     model = model.to('cuda')
     eval_model(model, dataloaders["test"], "cuda", len(full_dataset.classes))
