@@ -25,7 +25,7 @@ from detext.server.util.util import timeit
 
 
 class MathSymbolView(viewsets.ModelViewSet):
-    queryset = MathSymbol.objects.all()
+    queryset = MathSymbol.objects.all().order_by('timestamp')
     serializer_class = MathSymbolSerializer
     ordering = ['timestamp']
 
