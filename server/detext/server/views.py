@@ -275,15 +275,15 @@ class TrainImageView(viewsets.ModelViewSet):
                 "timestamp": symbol.timestamp,
                 "description": symbol.description,
                 "latex": symbol.latex,
-                "image": symbol.image
+                "image": from_memoryview(symbol.image)
             })
 
         train_images = list(TrainImage.objects.all())
         for image in tqdm(train_images):
             res["train_images"].append({
                 "symbol": image.symbol.id,
-                "image": image.image,
-                "features": image.features
+                "image": from_memoryview(image.image),
+                "features": from_memoryview(image.features)
             })
 
         byte = io.BytesIO()
@@ -295,3 +295,9 @@ class TrainImageView(viewsets.ModelViewSet):
         response['Content-Disposition'] = 'attachment; filename="download.pth"'
 
         return response
+
+
+def from_memoryview(data):
+    if isinstance(data, memoryview):
+        return data.tobytes()
+    return data
