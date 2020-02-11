@@ -1,14 +1,11 @@
-from detext.server.models import MathSymbol, TrainImage
-
+import numpy as np
 from tqdm import tqdm
 
-import numpy as np
+from detext.server.models import MathSymbol, TrainImage
 
 
-def run():
-    path = 'download.pth'
-
-    data = np.load(path, allow_pickle=True)
+def run(file='download.pth'):
+    data = np.load(file, allow_pickle=True)
 
     symbols = data.item().get("symbols")
     train_images = data.item().get("train_images")

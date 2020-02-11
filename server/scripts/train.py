@@ -6,15 +6,13 @@ import torch
 import torch.nn as nn
 from django.utils import timezone
 from PIL import Image
-from torch.utils.data import random_split
+from torch.utils.data import DataLoader, random_split
 from torch.utils.data.sampler import WeightedRandomSampler
 
 import detext.server.ml.models.mobilenet as mm
-from detext.server.models import ClassificationModel, MathSymbol, TrainImage
 from detext.server.ml.training.dataloader import DBDataset
-from detext.server.ml.training.train import train_model
-
-from torch.utils.data import DataLoader
+from detext.server.ml.training.train import Solver
+from detext.server.models import ClassificationModel, MathSymbol, TrainImage
 
 
 def valid_func(x):
@@ -45,8 +43,9 @@ def run(num_epochs=5, device="cpu"):
     model = mm.MobileNet(features=len(full_dataset.classes), pretrained=False)
     model = model.to(device)
 
-    model, accuracy = train_model(model, criterion, dataloaders, device,
-                                  num_epochs=num_epochs)
+    solver = Solver(criterion, dataloaders, model)
+    model, accuracy = solver.train(device=device,
+                                   num_epochs=num_epochs)
 
     byteArr = model.to_onnx()
 

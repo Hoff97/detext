@@ -13,7 +13,6 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied, bad_request
 from rest_framework.response import Response
-from tqdm import tqdm
 
 import detext.server.ml.models.mobilenet as mm
 from detext.server.ml.train_classifier import train_classifier
@@ -21,6 +20,7 @@ from detext.server.models import ClassificationModel, MathSymbol, TrainImage
 from detext.server.serializers import (ClassificationModelSerializer,
                                        MathSymbolSerializer,
                                        TrainImageSerializer)
+from detext.server.util.download import data_to_file
 from detext.server.util.util import timeit
 
 from django.utils import timezone
@@ -285,32 +285,7 @@ class TrainImageView(viewsets.ModelViewSet):
                 "message": "Can only trigger training as root"
             })
 
-        res = {
-            "train_images": [],
-            "symbols": []
-        }
-
-        symbols = list(MathSymbol.objects.all())
-        for i, symbol in enumerate(symbols):
-            res["symbols"].append({
-                "id": symbol.id,
-                "name": symbol.name,
-                "timestamp": symbol.timestamp,
-                "description": symbol.description,
-                "latex": symbol.latex,
-                "image": from_memoryview(symbol.image)
-            })
-
-        train_images = list(TrainImage.objects.all())
-        for image in tqdm(train_images):
-            res["train_images"].append({
-                "symbol": image.symbol.id,
-                "image": from_memoryview(image.image),
-                "features": from_memoryview(image.features)
-            })
-
-        byte = io.BytesIO()
-        np.save(byte, res)
+        byte = data_to_file()
 
         arr = byte.getvalue()
 
@@ -318,9 +293,3 @@ class TrainImageView(viewsets.ModelViewSet):
         response['Content-Disposition'] = 'attachment; filename="download.pth"'
 
         return response
-
-
-def from_memoryview(data):
-    if isinstance(data, memoryview):
-        return data.tobytes()
-    return data
