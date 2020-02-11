@@ -147,7 +147,6 @@ class ClassificationModelView(viewsets.ViewSet):
         serializer = ClassificationModelSerializer(latest, many=False)
         return Response(serializer.data)
 
-    @action(detail=False, methods=['POST'])
     def create(self, request):
         if request.user.id is None:
             raise PermissionDenied({
