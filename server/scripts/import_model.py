@@ -8,7 +8,7 @@ from detext.server.ml.models.mobilenet import MobileNet
 
 
 def run():
-    path = 'test_augment_2.pth'
+    path = 'test_augment.pth'
 
     pytorch = Path(path).read_bytes()
 

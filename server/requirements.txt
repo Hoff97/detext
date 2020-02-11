@@ -17,3 +17,4 @@ albumentations==0.4.3
 tqdm==4.39.0
 pandas==0.25.2
 seaborn==0.10.0
+requests==2.22.0

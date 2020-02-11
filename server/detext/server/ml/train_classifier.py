@@ -7,7 +7,7 @@ import torch.nn as nn
 from django.utils import timezone
 
 from detext.server.ml.models.linear import LinearModel
-from detext.server.ml.training.train import train_model
+from detext.server.ml.training.train import Solver
 from detext.server.ml.util.util import eval_model
 from detext.server.models import ClassificationModel
 from scripts.train import setup_db_dl
@@ -53,8 +53,10 @@ def train_classifier(train_batch_size=16,
 
     model = model.to(device)
 
-    model, accuracy = train_model(model, criterion, dataloaders, device,
-                                  num_epochs=num_epochs, step_size=2)
+    solver = Solver(criterion, dataloaders, model)
+    model, accuracy = solver.train(device=device,
+                                   num_epochs=num_epochs,
+                                   step_size=2)
 
     eval_model(model, dataloaders["test"], device, len(full_dataset.classes))
 
