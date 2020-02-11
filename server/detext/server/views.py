@@ -23,6 +23,8 @@ from detext.server.serializers import (ClassificationModelSerializer,
                                        TrainImageSerializer)
 from detext.server.util.util import timeit
 
+from django.utils import timezone
+
 
 class MathSymbolView(viewsets.ModelViewSet):
     queryset = MathSymbol.objects.all().order_by('timestamp')
@@ -144,6 +146,27 @@ class ClassificationModelView(viewsets.ViewSet):
 
         serializer = ClassificationModelSerializer(latest, many=False)
         return Response(serializer.data)
+
+    @action(detail=False, methods=['POST'])
+    def create(self, request):
+        if request.user.id is None:
+            raise PermissionDenied({
+                "message": "Can only create model as root"
+            })
+
+        pytorch = request.data['pytorch']
+        pytorch = base64.decodebytes(pytorch.encode())
+
+        onnx = request.data['onnx']
+        onnx = base64.decodebytes(onnx.encode())
+
+        model_instance = ClassificationModel(None, model=onnx,
+                                             pytorch=pytorch,
+                                             timestamp=timezone.now(),
+                                             accuracy=0.99)
+        model_instance.save()
+
+        return Response('Ok')
 
     @action(detail=False, methods=['POST'])
     def train(self, request):
