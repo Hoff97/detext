@@ -9,7 +9,7 @@ from torch.utils.data import DataLoader, random_split
 import detext.server.ml.models.mobilenet as mm
 from detext.server.ml.training.balanced_ds import BalancedDS
 from detext.server.ml.training.dataloader import DBDataset
-from detext.server.ml.training.train import train_model
+from detext.server.ml.training.train import Solver
 from detext.server.ml.util.util import augment_image, eval_model
 from detext.server.models import MathSymbol, TrainImage
 
@@ -63,8 +63,9 @@ def run(num_epochs=1, device="cuda"):
     model = mm.MobileNet(features=len(full_dataset.classes), pretrained=True)
     model = model.to(device)
 
-    model, accuracy = train_model(model, criterion, dataloaders, device,
-                                  num_epochs=num_epochs)
+    solver = Solver(criterion, dataloaders, model)
+    model, accuracy = solver.train(device=device,
+                                   num_epochs=num_epochs)
 
     model = model.to('cpu')
     torch.save(model.state_dict(), "test_augment.pth")
