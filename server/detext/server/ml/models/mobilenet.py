@@ -54,6 +54,9 @@ class MobileNet(nn.Module):
         model.load_state_dict(state_dict)
         return model
 
+    def to_file(self, file):
+        torch.save(self.state_dict(), file)
+
     def to_onnx(self):
         byte_arr = io.BytesIO()
         dummy_input = torch.randn(1, 3, 224, 224, device="cpu")

@@ -41,3 +41,19 @@ class MathSymbolViewTest(AuthTestCase, TestCase):
         response = self.client.get(f'/api/image/dist/?log&width=10&height=10')
 
         self.assertEquals(response.status_code, status.HTTP_200_OK)
+
+    def test_dist_can_return_json(self):
+        response = self.client.get(f'/api/image/dist/?json')
+
+        self.assertEquals(response.status_code, status.HTTP_200_OK)
+
+    def test_download_needs_login(self):
+        response = self.client.get(f'/api/image/download/',)
+
+        self.assertEquals(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_download_with_login_works(self):
+        response = self.client.get(f'/api/image/download/',
+                                   **self.auth_headers)
+
+        self.assertEquals(response.status_code, status.HTTP_200_OK)

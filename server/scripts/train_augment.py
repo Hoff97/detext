@@ -38,7 +38,7 @@ def run(num_epochs=1, device="cuda"):
     full_dataset = DBDataset(TrainImage, MathSymbol, get_data, get_label,
                              get_class_name, filter=valid_func)
 
-    full_dataset = BalancedDS(full_dataset, min_count=100)
+    full_dataset = BalancedDS(full_dataset)
 
     test_train_split = 0.9
     train_size = int(test_train_split * len(full_dataset))
@@ -67,7 +67,7 @@ def run(num_epochs=1, device="cuda"):
                                   num_epochs=num_epochs)
 
     model = model.to('cpu')
-    torch.save(model.state_dict(), "test_augment_2.pth")
+    torch.save(model.state_dict(), "test_augment.pth")
 
-    model = model.to('cuda')
-    eval_model(model, dataloaders["test"], "cuda", len(full_dataset.classes))
+    model = model.to(device)
+    eval_model(model, dataloaders["test"], device, len(full_dataset.classes))
