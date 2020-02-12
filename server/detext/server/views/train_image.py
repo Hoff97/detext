@@ -97,14 +97,20 @@ class TrainImageView(viewsets.ModelViewSet):
             if request.GET.get('height') is not None:
                 height = int(request.GET.get('height'))
 
-            plt.figure(figsize=(width, height), dpi=80)
+            fig, ax = plt.subplots(figsize=(width, height), dpi=80)
             if request.GET.get('log') == '':
                 plt.yscale('log')
             else:
                 plt.yscale('linear')
-            plt.bar(y_pos, values, align='center', alpha=0.5)
-            plt.xticks(y_pos, labels)
+            rects = ax.bar(y_pos, values, align='center', alpha=0.5)
+            plt.xticks(y_pos, labels, rotation=45)
             plt.title('Number of images per class')
+
+            for i, rect in enumerate(rects):
+                height = rect.get_height()
+                ax.text(rect.get_x() + rect.get_width()/2., 1.05*height,
+                        '%i' % values[i],
+                        ha='center', va='bottom')
 
             img_io = io.BytesIO()
             plt.savefig(img_io)
