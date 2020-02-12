@@ -8,6 +8,7 @@ import torch
 from django.conf import settings
 from django.db.models import Count
 from django.http import HttpResponse
+from django.utils import timezone
 from PIL import Image
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
@@ -20,10 +21,8 @@ from detext.server.models import ClassificationModel, MathSymbol, TrainImage
 from detext.server.serializers import (ClassificationModelSerializer,
                                        MathSymbolSerializer,
                                        TrainImageSerializer)
-from detext.server.util.download import data_to_file
+from detext.server.util.transfer import data_to_file
 from detext.server.util.util import timeit
-
-from django.utils import timezone
 
 
 class MathSymbolView(viewsets.ModelViewSet):

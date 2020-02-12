@@ -4,3 +4,5 @@ omit =
     detext/settings_prod.py
     detext/wsgi.py
     manage.py
+    scripts/download.py
+    scripts/upload.py

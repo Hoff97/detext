@@ -1,8 +1,11 @@
+import base64
 import io
+from pathlib import Path
 
 import numpy as np
 from tqdm import tqdm
 
+from detext.server.ml.models.mobilenet import MobileNet
 from detext.server.models import MathSymbol, TrainImage
 
 
@@ -41,3 +44,16 @@ def from_memoryview(data):
     if isinstance(data, memoryview):
         return data.tobytes()
     return data
+
+
+def get_upload_json(file_name):
+    pytorch = Path(file_name).read_bytes()
+    model = MobileNet.from_file(file_name)
+    model.eval()
+    byte_arr = model.to_onnx()
+
+    json = {
+        "pytorch": base64.b64encode(pytorch).decode('utf-8'),
+        "onnx": base64.b64encode(byte_arr.getvalue()).decode('utf-8')
+    }
+    return json

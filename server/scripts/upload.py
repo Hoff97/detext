@@ -1,10 +1,6 @@
 import requests
 
-from detext.server.ml.models.mobilenet import MobileNet
-
-from pathlib import Path
-
-import base64
+from detext.server.util.transfer import get_upload_json
 
 
 def run():
@@ -14,15 +10,7 @@ def run():
 
     headers = {'Authorization': f'Token {token}'}
 
-    pytorch = Path(file_name).read_bytes()
-    model = MobileNet.from_file(file_name)
-    model.eval()
-    byte_arr = model.to_onnx()
-
-    json = {
-        "pytorch": base64.b64encode(pytorch).decode('utf-8'),
-        "onnx": base64.b64encode(byte_arr.getvalue()).decode('utf-8')
-    }
+    json = get_upload_json(file_name)
 
     response = requests.post(url, headers=headers, json=json)
 
