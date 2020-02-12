@@ -61,6 +61,7 @@ class Solver:
 
             for i, data in enumerate(self.dataloaders[phase]):
                 inputs, labels = data
+                inputs, labels = inputs.to(self.device), labels.to(self.device)
                 loss, preds = self.iteration(inputs, labels, phase)
 
                 self.log('  {}/{}: Loss: {:.4f}'.format(
@@ -80,9 +81,6 @@ class Solver:
         return epoch_acc
 
     def iteration(self, inputs, labels, phase):
-        inputs = inputs.to(self.device)
-        labels = labels.to(self.device)
-
         self.optimizer.zero_grad()
 
         with torch.set_grad_enabled(phase == 'train'):
