@@ -3,16 +3,16 @@ from django.urls import include, path
 from rest_framework import routers
 from rest_framework.authtoken import views as auth_views
 
-from detext.server import views
+from detext.server.views.classification_model import ClassificationModelView
+from detext.server.views.math_symbol import MathSymbolView
+from detext.server.views.train_image import TrainImageView
 
 router = routers.DefaultRouter()
-router.register(r'symbol', views.MathSymbolView)
-router.register(r'model', views.ClassificationModelView)
-router.register(r'image', views.TrainImageView)
+router.register(r'symbol', MathSymbolView)
+router.register(r'model', ClassificationModelView)
+router.register(r'image', TrainImageView)
 
 
-# Wire up our API using automatic URL routing.
-# Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
