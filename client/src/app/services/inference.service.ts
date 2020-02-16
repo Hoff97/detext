@@ -70,7 +70,9 @@ export class InferenceService {
   private async setupModel() {
     const modelPromise = this.modelService.getRecent().toPromise();
     const model = await modelPromise;
-    await this.setModel(model);
+    if ((model as any).timestamp) {
+      await this.setModel(model as any);
+    }
     this.updating.emit(false);
   }
 

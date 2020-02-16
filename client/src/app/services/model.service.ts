@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { from, Observable } from 'rxjs';
+import { from, Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/internal/operators/catchError';
 import { map } from 'rxjs/internal/operators/map';
 import { flatMap } from 'rxjs/operators';
@@ -32,7 +32,7 @@ export class ModelService {
     });
   }
 
-  getRecent(): Observable<Model> {
+  getRecent(): Observable<Model|{}> {
     return from(this.dbService.getModel()).pipe(flatMap(model => {
         let url = this.urlPrefix + 'api/model/latest/?format=json';
         if (model) {
@@ -45,7 +45,7 @@ export class ModelService {
         return model;
       }),
       catchError((err) => {
-        return this.dbService.getModel();
+        return of({});
     }));
   }
 
