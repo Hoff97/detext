@@ -1,5 +1,4 @@
 import io
-import random
 
 import torch
 import torch.nn as nn
@@ -12,10 +11,6 @@ from detext.server.ml.training.dataloader import DBDataset
 from detext.server.ml.training.train import Solver
 from detext.server.ml.util.util import eval_model, Augmenter
 from detext.server.models import MathSymbol, TrainImage
-
-
-def valid_func(x):
-    return random.random() < 2
 
 
 def open_image(item):
@@ -44,7 +39,7 @@ def run(num_epochs=5, device="cuda"):
     augmenter = Augmenter(approximate=True)
 
     full_dataset = DBDataset(TrainImage, MathSymbol, get_data(augmenter),
-                             get_label, get_class_name, filter=valid_func)
+                             get_label, get_class_name)
 
     full_dataset = BalancedDS(full_dataset)
 
