@@ -1,21 +1,17 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { StartComponent } from './start.component';
-import { CanvasComponent } from '../canvas/canvas.component';
-import { ClassificationComponent } from '../classification/classification.component';
-import { FormsModule } from '@angular/forms';
-import { NewSymbolComponent } from '../new-symbol/new-symbol.component';
-import { ClassSymbolComponent } from '../class-symbol/class-symbol.component';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { SettingsService } from 'src/app/services/settings.service';
-import { DbService } from 'src/app/services/db.service';
-import { InferenceService } from 'src/app/services/inference.service';
-import { TrainImageService } from 'src/app/services/train-image.service';
-import { SymbolService } from 'src/app/services/symbol.service';
-import { EventEmitter, DebugElement, Component, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { of } from 'rxjs';
-import { By } from '@angular/platform-browser';
+import { InferenceService } from 'src/app/services/inference.service';
+import { SymbolService } from 'src/app/services/symbol.service';
+import { TrainImageService } from 'src/app/services/train-image.service';
+import { ClassSymbolComponent } from '../class-symbol/class-symbol.component';
+import { ClassificationComponent } from '../classification/classification.component';
+import { NewSymbolComponent } from '../new-symbol/new-symbol.component';
+import { StartComponent } from './start.component';
+
 
 @Component({
   selector: 'app-canvas',
@@ -43,6 +39,7 @@ describe('StartComponent', () => {
   beforeEach(async(() => {
     inferenceService = jasmine.createSpyObj('InferenceService', ['infer']);
     inferenceService.modelAvailable = new EventEmitter<boolean>();
+    inferenceService.updating = new EventEmitter<boolean>();
     inferenceService.model = false;
 
     trainImageService = jasmine.createSpyObj('TrainImageService', ['create']);
@@ -125,5 +122,11 @@ describe('StartComponent', () => {
     symbolService.getSymbols.and.returnValue(of([]));
 
     component.reloadClasses().then(x => {});
+  });
+
+  it('should react to the model being updated', () => {
+    inferenceService.updating.emit(false);
+
+    expect(component.modelUpdating).toBeFalsy();
   });
 });
