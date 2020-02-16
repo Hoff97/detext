@@ -1,4 +1,4 @@
-import { TestBed } from '@angular/core/testing';
+import { TestBed, tick, fakeAsync } from '@angular/core/testing';
 
 import { ModelService } from './model.service';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
@@ -35,10 +35,12 @@ describe('ModelService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should download symbols on change in settings', () => {
+  it('should download model on change in settings', fakeAsync(() => {
     const service: ModelService = TestBed.get(ModelService);
 
-    spyDb.saveModel.and.returnValue(Promise.resolve());
+    spyDb.getModel.and.returnValue(Promise.resolve({
+      timestamp: '16:16'
+    } as any));
 
     spySettings.dataChange.emit({
       backend: 'cpu',
@@ -46,15 +48,19 @@ describe('ModelService', () => {
       download: true
     });
 
-    const req = httpMock.expectOne('api/model/latest/?format=json');
+    tick();
+
+    const req = httpMock.expectOne('api/model/latest/?format=json&timestamp=16:16');
     expect(req.request.method).toBe('GET');
     req.flush([]);
-  });
+  }));
 
-  it('should load model locally if network is unavailable', () => {
+  it('should use the local model if model was not updated', fakeAsync(() => {
     const service: ModelService = TestBed.get(ModelService);
 
-    spyDb.getModel.and.returnValue(of({}) as any);
+    spyDb.getModel.and.returnValue(Promise.resolve({
+      timestamp: '16:16'
+    } as any));
 
     spySettings.dataChange.emit({
       backend: 'cpu',
@@ -62,10 +68,32 @@ describe('ModelService', () => {
       download: true
     });
 
-    const req = httpMock.expectOne('api/model/latest/?format=json');
+    tick();
+
+    const req = httpMock.expectOne('api/model/latest/?format=json&timestamp=16:16');
+    expect(req.request.method).toBe('GET');
+    req.flush('', { status: 304, statusText: '' });
+  }));
+
+  it('should load model locally if network is unavailable', fakeAsync(() => {
+    const service: ModelService = TestBed.get(ModelService);
+
+    spyDb.getModel.and.returnValue(Promise.resolve({
+      timestamp: '16:17'
+    } as any));
+
+    spySettings.dataChange.emit({
+      backend: 'cpu',
+      backendAuto: true,
+      download: true
+    });
+
+    tick();
+
+    const req = httpMock.expectOne('api/model/latest/?format=json&timestamp=16:17');
     expect(req.request.method).toBe('GET');
     req.flush('', { status: 400, statusText: '' });
-  });
+  }));
 
   it('should allow retraining', () => {
     let success;

@@ -14,6 +14,7 @@ export class StartComponent implements OnInit {
 
   public loading = false;
   public modelLoading = true;
+  public modelUpdating = true;
 
   public predictions = [];
   public classes = [];
@@ -26,6 +27,9 @@ export class StartComponent implements OnInit {
     this.modelLoading = !this.inferenceService.model;
     this.inferenceService.modelAvailable.subscribe(x => {
       this.modelLoading = false;
+    });
+    this.inferenceService.updating.subscribe(x => {
+      this.modelUpdating = false;
     });
   }
 

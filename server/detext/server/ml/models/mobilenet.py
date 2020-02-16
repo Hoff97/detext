@@ -26,23 +26,27 @@ class MobileNet(nn.Module):
                 nn.init.normal_(m.weight, 0, 0.01)
                 nn.init.zeros_(m.bias)
 
+        self.frozen = False
+
     def set_classifier(self, classifier):
         self.classifier = classifier
         self.mobilenet.classifier = self.classifier
 
     def forward(self, x):
-        return self.mobilenet(x)
+        return self.mobilenet.forward(x)
 
     def features(self, x):
         return self.mobilenet.features(x)
 
     def freeze(self):
+        self.frozen = True
         for p in self.mobilenet.parameters():
             p.requires_grad = False
         for p in self.classifier.parameters():
             p.requires_grad = True
 
     def unfreeze(self):
+        self.frozen = True
         for p in self.mobilenet.parameters():
             p.requires_grad = True
 

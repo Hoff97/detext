@@ -1,27 +1,28 @@
 import io
-import random
 
 import torch
 import torch.nn as nn
 from PIL import Image
 from torch.utils.data import DataLoader, random_split
 
-import detext.server.ml.models.mobilenet as mm
+from detext.server.ml.models.mobilenet import MobileNet
 from detext.server.ml.training.balanced_ds import BalancedDS
 from detext.server.ml.training.dataloader import DBDataset
 from detext.server.ml.training.train import Solver
-from detext.server.ml.util.util import augment_image, eval_model
+from detext.server.ml.util.util import eval_model, Augmenter
 from detext.server.models import MathSymbol, TrainImage
 
 
-def valid_func(x):
-    return random.random() < 2
+def open_image(item):
+    return Image.open(io.BytesIO(item.image))
 
 
-def get_data(item):
-    image = Image.open(io.BytesIO(item.image))
+def get_data(augmenter):
+    def load(item):
+        image = open_image(item)
 
-    return augment_image(image)
+        return augmenter.augment_image(image)
+    return load
 
 
 def get_label(item):
@@ -35,8 +36,10 @@ def get_class_name(item):
 def run(num_epochs=5, device="cuda"):
     criterion = nn.CrossEntropyLoss()
 
-    full_dataset = DBDataset(TrainImage, MathSymbol, get_data, get_label,
-                             get_class_name, filter=valid_func)
+    augmenter = Augmenter(approximate=True)
+
+    full_dataset = DBDataset(TrainImage, MathSymbol, get_data(augmenter),
+                             get_label, get_class_name)
 
     full_dataset = BalancedDS(full_dataset)
 
@@ -60,10 +63,15 @@ def run(num_epochs=5, device="cuda"):
     print(dataloaders)
     print(dataset_sizes)
 
-    model = mm.MobileNet(features=len(full_dataset.classes), pretrained=True)
+    model = MobileNet(features=len(full_dataset.classes), pretrained=True)
+    model.freeze()
     model = model.to(device)
 
-    solver = Solver(criterion, dataloaders, model)
+    def unfreeze(x, y):
+        model.unfreeze()
+        augmenter.approximate = False
+
+    solver = Solver(criterion, dataloaders, model, cb=unfreeze)
     model, accuracy = solver.train(device=device,
                                    num_epochs=num_epochs)
 

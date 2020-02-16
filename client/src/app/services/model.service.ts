@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { from, Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/internal/operators/catchError';
 import { map } from 'rxjs/internal/operators/map';
+import { flatMap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { Model } from '../data/types';
 import { DbService } from './db.service';
@@ -31,16 +32,21 @@ export class ModelService {
     });
   }
 
-  getRecent(): Observable<Model> {
-    return this.http.get<Model>(this.urlPrefix + 'api/model/latest/?format=json').pipe(
+  getRecent(): Observable<Model|{}> {
+    return from(this.dbService.getModel()).pipe(flatMap(model => {
+        let url = this.urlPrefix + 'api/model/latest/?format=json';
+        if (model) {
+          url += `&timestamp=${model.timestamp}`;
+        }
+        return this.http.get<Model>(url);
+      }),
       map((model: Model) => {
         this.dbService.saveModel(model);
         return model;
       }),
       catchError((err) => {
-        return this.dbService.getModel();
-      })
-    );
+        return of({});
+    }));
   }
 
   getRecentLocal(): Promise<Model> {

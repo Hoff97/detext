@@ -10,10 +10,6 @@ from torch.utils.data import DataLoader
 from detext.server.models import ClassificationModel, MathSymbol
 
 
-def valid_func(x):
-    return random.random() < 0.1
-
-
 def run():
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 

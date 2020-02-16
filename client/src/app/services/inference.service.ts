@@ -1,4 +1,4 @@
-import { Injectable, EventEmitter } from '@angular/core';
+import { EventEmitter, Injectable } from '@angular/core';
 import ndarray from 'ndarray';
 import ops from 'ndarray-ops';
 import { InferenceSession, Tensor } from 'onnxjs';
@@ -20,6 +20,7 @@ export class InferenceService {
 
   public modelAvailable = new EventEmitter<boolean>();
   public model = false;
+  public updating = new EventEmitter<boolean>();
 
   constructor(private modelService: ModelService,
               private symbolService: SymbolService,
@@ -69,7 +70,10 @@ export class InferenceService {
   private async setupModel() {
     const modelPromise = this.modelService.getRecent().toPromise();
     const model = await modelPromise;
-    await this.setModel(model);
+    if ((model as any).timestamp) {
+      await this.setModel(model as any);
+    }
+    this.updating.emit(false);
   }
 
   private async setModel(model: Model) {

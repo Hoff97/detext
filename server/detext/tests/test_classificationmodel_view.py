@@ -5,6 +5,8 @@ import scripts.train_augment as train_augment
 from detext.server.util.transfer import get_upload_json
 from detext.tests.util.auth import AuthTestCase
 
+from detext.server.models import ClassificationModel
+
 
 class MathSymbolViewTest(AuthTestCase, TestCase):
     def setUp(self):
@@ -16,6 +18,13 @@ class MathSymbolViewTest(AuthTestCase, TestCase):
     def test_can_get_most_recent(self):
         response = self.client.get('/api/model/latest/')
         self.assertEquals(response.status_code, status.HTTP_200_OK)
+
+    def test_most_recent_looks_at_timestamp(self):
+        latest = ClassificationModel.get_latest()
+        formatted = latest.timestamp.strftime("%Y-%m-%dT%H:%M:%S.%f")
+        formatted = f'{formatted}Z'
+        response = self.client.get(f'/api/model/latest/?timestamp={formatted}')
+        self.assertEquals(response.status_code, status.HTTP_304_NOT_MODIFIED)
 
     def test_train_requires_login(self):
         response = self.client.post('/api/model/train/')
