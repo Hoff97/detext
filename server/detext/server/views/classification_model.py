@@ -2,7 +2,8 @@ import base64
 
 from django.conf import settings
 from django.utils import timezone
-from rest_framework import viewsets
+from django.utils.dateparse import parse_datetime
+from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
@@ -20,6 +21,11 @@ class ClassificationModelView(viewsets.ViewSet):
     def latest(self, request):
         latest = ClassificationModel.objects.all()\
             .order_by('-timestamp').first()
+
+        if request.GET.get('timestamp') is not None:
+            ts = parse_datetime(request.GET.get('timestamp'))
+            if ts == latest.timestamp:
+                return Response(status=status.HTTP_304_NOT_MODIFIED)
 
         serializer = ClassificationModelSerializer(latest, many=False)
         return Response(serializer.data)

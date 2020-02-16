@@ -1,4 +1,4 @@
-import { Injectable, EventEmitter } from '@angular/core';
+import { EventEmitter, Injectable } from '@angular/core';
 import ndarray from 'ndarray';
 import ops from 'ndarray-ops';
 import { InferenceSession, Tensor } from 'onnxjs';
