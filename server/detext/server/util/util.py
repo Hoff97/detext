@@ -3,7 +3,7 @@ import io
 import torch
 from PIL import Image
 
-import detext.server.ml.models.mobilenet as mm
+from detext.server.ml.models.mobilenet import MobileNet, preprocess
 from detext.server.models import TrainImage
 
 import time
@@ -11,7 +11,7 @@ import time
 
 def update_train_features(torch_model, num_classes):
     with torch.no_grad():
-        model = mm.MobileNet(features=num_classes, pretrained=False)
+        model = MobileNet(features=num_classes, pretrained=False)
         model.load_state_dict(torch.load(torch_model,
                               map_location=torch.device('cpu')))
         model = model.eval()
@@ -20,7 +20,7 @@ def update_train_features(torch_model, num_classes):
             if i % 10 == 0:
                 print(f'Updating image {i}')
             image = Image.open(io.BytesIO(train_img.image))
-            data = mm.preprocess(image)
+            data = preprocess(image)
             img = data.repeat((3, 1, 1))
             img = img.reshape((1, img.shape[0], img.shape[1], img.shape[2]))
 

@@ -37,29 +37,37 @@ def eval_model(model, test_dl, device, n_classes):
     plt.savefig('conf.png')
 
 
-preprocess = transforms.ToTensor()
+class Augmenter:
+    def __init__(self, approximate=False):
+        self.preprocess = transforms.ToTensor()
 
+        self.elastic = ElasticTransform(alpha=0.5, sigma=20, alpha_affine=20,
+                                        border_mode=cv2.BORDER_CONSTANT,
+                                        value=(255, 255, 255),
+                                        interpolation=cv2.INTER_CUBIC, p=1.0)
+        self.shift_scale = ShiftScaleRotate(rotate_limit=20,
+                                            interpolation=cv2.INTER_CUBIC,
+                                            border_mode=cv2.BORDER_CONSTANT,
+                                            value=(255, 255, 255), p=1.0)
+        self.approximate = approximate
 
-def augment_image(image):
-    p = 0.0
-    if image.size[0] < 224:
-        p = 1.0
+    def augment_image(self, image):
+        p = 0.0
+        if image.size[0] < 224:
+            p = 1.0
+            image = image.resize((224, 224), resample=Image.BICUBIC)
 
-    scale = ShiftScaleRotate(shift_limit=0.0, scale_limit=(-0.5, -0.2),
-                             rotate_limit=0, interpolation=cv2.INTER_CUBIC,
-                             border_mode=cv2.BORDER_CONSTANT,
-                             value=(255, 255, 255), p=p)
-    elastic = ElasticTransform(alpha=0.5, sigma=20, alpha_affine=20,
-                               border_mode=cv2.BORDER_CONSTANT,
-                               value=(255, 255, 255),
-                               interpolation=cv2.INTER_CUBIC, p=1.0)
-    aug = Compose([scale, elastic])
+        scale = ShiftScaleRotate(shift_limit=0.0, scale_limit=(-0.5, -0.2),
+                                 rotate_limit=0, interpolation=cv2.INTER_CUBIC,
+                                 border_mode=cv2.BORDER_CONSTANT,
+                                 value=(255, 255, 255), p=p)
+        aug = Compose([scale, self.elastic])
+        if self.approximate:
+            aug = Compose([scale, self.shift_scale])
 
-    image = image.resize((224, 224), resample=Image.LANCZOS)
+        img = np.array(image.convert('RGB'))
+        img = aug(image=img)['image']
 
-    img = np.array(image.convert('RGB'))
-    img = aug(image=img)['image']
+        img = Image.fromarray(img)
 
-    img = Image.fromarray(img)
-
-    return preprocess(img)
+        return self.preprocess(img)

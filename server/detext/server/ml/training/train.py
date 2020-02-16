@@ -7,7 +7,7 @@ from torch.optim.lr_scheduler import StepLR
 
 
 class Solver:
-    def __init__(self, criterion, dataloaders, model, verbose=True):
+    def __init__(self, criterion, dataloaders, model, cb=None, verbose=True):
         self.criterion = criterion
         self.model = model
 
@@ -18,6 +18,8 @@ class Solver:
         }
 
         self.verbose = verbose
+
+        self.cb = cb
 
     def train(self, device='cpu', num_epochs=25, lr=1e-3, step_size=7):
         self.optimizer = optim.Adam(self.model.parameters(), lr=lr)
@@ -40,6 +42,8 @@ class Solver:
             if epoch_acc > best_acc:
                 best_acc = epoch_acc
                 best_model_wts = copy.deepcopy(self.model.state_dict())
+            if self.cb is not None:
+                self.cb(epoch, epoch_acc)
 
         time_elapsed = time.time() - since
         self.log('Training complete in {:.0f}m {:.0f}s'.format(
@@ -64,11 +68,13 @@ class Solver:
                 inputs, labels = inputs.to(self.device), labels.to(self.device)
                 loss, preds = self.iteration(inputs, labels, phase)
 
-                self.log('  {}/{}: Loss: {:.4f}'.format(
-                    i, len(self.dataloaders[phase]), loss.item()))
+                if i % 5 == 0:
+                    self.log('  {}/{}: Loss: {:.4f}'.format(
+                        i, len(self.dataloaders[phase]), loss.item()))
 
                 running_loss += loss.item() * inputs.size(0)
                 running_corrects += torch.sum(preds == labels.data)
+
             if phase == 'train':
                 self.scheduler.step()
 
