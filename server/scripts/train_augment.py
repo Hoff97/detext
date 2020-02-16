@@ -76,7 +76,7 @@ def run(num_epochs=5, device="cuda"):
                                    num_epochs=num_epochs)
 
     model = model.to('cpu')
-    torch.save(model.state_dict(), "test_augment_v3.pth")
+    torch.save(model.state_dict(), "test_augment.pth")
 
     model = model.to(device)
     eval_model(model, dataloaders["test"], device, len(full_dataset.classes))
