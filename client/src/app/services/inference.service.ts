@@ -21,6 +21,7 @@ export class InferenceService {
   public modelAvailable = new EventEmitter<boolean>();
   public model = false;
   public updating = new EventEmitter<boolean>();
+  public modelUpdating = true;
 
   constructor(private modelService: ModelService,
               private symbolService: SymbolService,
@@ -74,6 +75,7 @@ export class InferenceService {
       await this.setModel(model as any);
     }
     this.updating.emit(false);
+    this.modelUpdating = false;
   }
 
   private async setModel(model: Model) {
