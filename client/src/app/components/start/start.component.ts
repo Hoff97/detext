@@ -25,6 +25,7 @@ export class StartComponent implements OnInit {
               private trainImageService: TrainImageService,
               private symbolService: SymbolService) {
     this.modelLoading = !this.inferenceService.model;
+    this.modelUpdating = this.inferenceService.modelUpdating;
     this.inferenceService.modelAvailable.subscribe(x => {
       this.modelLoading = false;
     });
