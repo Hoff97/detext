@@ -22,6 +22,13 @@ services:
     volumes:
       - static-content:/usr/src/app/public
     restart: on-failure
+  syncify:
+    image: hoff97/syncify
+    volumes:
+      - static-syncify:/usr/src/app/django-syncify
+    depends_on:
+      - db
+    restart: always
   nginx:
     image: hoff97/detext-nginx
     ports:
@@ -41,4 +48,5 @@ volumes:
   postgres_data:
   static-content:
   static-django:
+  static-syncify:
   letsencrypt:
