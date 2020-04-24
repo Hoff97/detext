@@ -29,6 +29,9 @@ services:
     depends_on:
       - db
     restart: always
+  cors:
+    image: hoff97/cors
+    restart: always
   nginx:
     image: hoff97/detext-nginx
     ports:
