@@ -15,3 +15,6 @@ services:
       - ./client:/code
     ports:
       - "4200:4200"
+  tex2svg:
+    image: hoff97/tex2svg
+    restart: always
