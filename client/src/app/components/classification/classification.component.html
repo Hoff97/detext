@@ -33,7 +33,10 @@
           [page]="page"
           (pageChange)="setPage($event)"
           [pageSize]="pageSize"
-          [collectionSize]="this.shown.length"></ngb-pagination>
+          [collectionSize]="this.shown.length"
+          [maxSize]="3"
+          [rotate]="true"
+          [boundaryLinks]="true"></ngb-pagination>
       </td>
     </tr>
   </table>

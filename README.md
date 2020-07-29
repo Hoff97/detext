@@ -5,15 +5,34 @@
 This is a simple app for detecting and classifying math symbols. It displays the class of the input of the user
 and further information (like the latex code) for it.
 
-# TODO
-- [x] Simple classification model for math symbols
-- [x] Incorporate model into client using onnx.js
-- [x] Add backend for:
-  - [x] Adding more training data (by selecting correct classification/new classification)
-  - [x] Getting current classification model + class information
-  - [x] Periodically/On trigger run relearning
-- [x] Make offline usage possible:
-  - [x] Download model
-  - [x] Download all classes + information
-- [ ] Flutter App?
-- [x] CI/CD
+Its run at https://detext.haskai.de
+
+# Running
+
+Start the server
+```
+ $ cd server
+ $ pip install -r requirements.txt
+ $ python manage.py migrate        #This can take a while on the first run
+ $ python manage.py createsuperuser --email admin@example.com --username admin
+ $ python manage.py runserver
+```
+
+Then start the client:
+```
+ $ cd client
+ $ npm install
+ $ npm run dev
+```
+
+And tex2svg (creates SVG's from latex codes)
+
+```
+ $ docker run -p 0.0.0.0:9000:8000 hoff97/tex2svg
+```
+
+Alternatively, you can run
+
+```
+ $ docker-compose -f docker-compose-dev.yml up
+```
