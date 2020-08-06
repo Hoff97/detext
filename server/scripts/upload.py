@@ -10,7 +10,7 @@ def run():
 
     headers = {'Authorization': f'Token {token}'}
 
-    json = get_upload_json(file_name)
+    json = get_upload_json(file_name, estimate_variane=True)
 
     response = requests.post(url, headers=headers, json=json)
 

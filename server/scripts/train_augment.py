@@ -10,7 +10,8 @@ from detext.server.ml.training.balanced_ds import BalancedDS
 from detext.server.ml.training.dataloader import DBDataset
 from detext.server.ml.training.train import Solver
 from detext.server.ml.util.util import eval_model, Augmenter
-from detext.server.models import MathSymbol, TrainImage
+from detext.server.models import MathSymbol, TrainImage, ClassificationModel
+from django.utils import timezone
 
 
 def open_image(item):
@@ -75,8 +76,20 @@ def run(num_epochs=5, device="cuda"):
     model, accuracy = solver.train(device=device,
                                    num_epochs=num_epochs)
 
+    eval_model(model, dataloaders["test"], device, len(full_dataset.classes))
+
     model = model.to('cpu')
     torch.save(model.state_dict(), "test_augment.pth")
 
-    model = model.to(device)
-    eval_model(model, dataloaders["test"], device, len(full_dataset.classes))
+    model.estimate_variane = True
+
+    byteArr = model.to_onnx()
+
+    torchByteArr = io.BytesIO()
+    torch.save(model.state_dict(), torchByteArr)
+
+    model_entity = ClassificationModel(None, model=byteArr.getvalue(),
+                                       timestamp=timezone.now(),
+                                       pytorch=torchByteArr.getvalue(),
+                                       accuracy=accuracy)
+    model_entity.save()

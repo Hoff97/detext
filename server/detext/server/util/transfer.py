@@ -46,9 +46,9 @@ def from_memoryview(data):
     return data
 
 
-def get_upload_json(file_name):
+def get_upload_json(file_name, **kwargs):
     pytorch = Path(file_name).read_bytes()
-    model = MobileNet.from_file(file_name)
+    model = MobileNet.from_file(file_name, **kwargs)
     model.eval()
     byte_arr = model.to_onnx()
 
