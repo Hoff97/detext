@@ -49,11 +49,28 @@ describe('ClassificationComponent', () => {
 
   it('should handle changes', () => {
     component.predictions = [1, 2, -1];
+    component.uncertainties = [0.001, 0.0001, 0.0001];
     component.classes = [getClass('test1'), getClass('test2'),
                          getClass('test3'), getClass('test4')];
 
     fixture.detectChanges();
 
+    component.ngOnChanges({} as any);
+
+    component.uncertainties = [0.001, 0.006, 0.0001];
+    fixture.detectChanges();
+    component.ngOnChanges({} as any);
+
+    component.uncertainties = [0.001, 0.03, 0.0001];
+    fixture.detectChanges();
+    component.ngOnChanges({} as any);
+
+    component.uncertainties = [0.001, 0.075, 0.0001];
+    fixture.detectChanges();
+    component.ngOnChanges({} as any);
+
+    component.uncertainties = [0.001, 0.2, 0.0001];
+    fixture.detectChanges();
     component.ngOnChanges({} as any);
   });
 
