@@ -17,6 +17,7 @@ export class StartComponent implements OnInit {
   public modelUpdating = true;
 
   public predictions = [];
+  public uncertainties = [];
   public classes = [];
 
   private img?: ImageData;
@@ -43,7 +44,9 @@ export class StartComponent implements OnInit {
   async predictClass(image: ImageData) {
     this.loading = true;
     this.img = image;
-    this.predictions = Array.prototype.slice.call(await this.inferenceService.infer(image));
+    const [predictions, uncertainty] = await this.inferenceService.infer(image);
+    this.predictions = Array.prototype.slice.call(predictions);
+    this.uncertainties = Array.prototype.slice.call(uncertainty);
     this.loading = false;
   }
 
@@ -63,6 +66,7 @@ export class StartComponent implements OnInit {
 
   cleared() {
     this.predictions = [];
+    this.uncertainties = [];
   }
 
   async reloadClasses() {

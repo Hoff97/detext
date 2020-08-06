@@ -5,6 +5,11 @@
   <table *ngIf="!loading && predictions.length > 0" class="predictions">
     <tr>
       <td style="width: 100%;">
+        <div class="uncertainty-indicator"
+          [ngStyle]="{'background': uncertaintyBackground}"
+          [ngbTooltip]="uncertaintyTooltip"
+          placement="bottom">
+        </div>
         <div class="btn-group" role="group" aria-label="Basic example">
           <button type="button" [ngClass]="tab=='predicted' ? 'btn btn-primary' : 'btn btn-secondary'"
               (click)="setTab('predicted')">Predicted</button>

@@ -31,3 +31,16 @@ Train (and save) model:
 ```
 (detext) $ python src/train.py
 ```
+
+## Tests
+
+Run all tests with coverage
+```
+(detext) $ coverage run --source='.' manage.py test detext.server detext/tests
+(detext) $ coverage html
+```
+
+Run a single test
+```
+(detext) $ python manage.py test detext.tests.test_ml
+```

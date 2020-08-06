@@ -12,6 +12,7 @@
     <app-classification
       [classes]="classes"
       [predictions]="predictions"
+      [uncertainties]="uncertainties"
       [loading]="loading"
       (correct)="correctSelected($event)"
       (reloadClasses)="reloadClasses()">

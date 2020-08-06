@@ -45,7 +45,9 @@ export class InferenceService {
     const outputMap = await this.session.run([input]);
     const output: Tensor = outputMap.values().next().value;
 
-    return this.softMax(output.data as Float32Array);
+    const numSymbols = output.data.length / 2;
+
+    return [this.softMax(output.data.slice(0, numSymbols) as Float32Array), output.data.slice(numSymbols)];
   }
 
   private softMax(array: Float32Array) {
