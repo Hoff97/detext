@@ -6,7 +6,7 @@
       <img [src]="class.imgDatUri" width="100px" height="100px" *ngIf="class.imgDatUri" class="ml-3"/><br/>
     </div>
     <div class="column ml-2">
-        <font *ngIf="prop !== undefined">Score: {{(prop*100) | number:'1.0-2'}}%<br/></font>
+        <!-- <font *ngIf="prop !== undefined">Score: {{(prop*100) | number:'1.0-2'}}%<br/></font> -->
         <div *ngIf="!latexEdit" class="mt-2">
           <font class="code" *ngIf="class.latex.length > 0">{{class.latex}}</font>
           <font class="code" *ngIf="class.latex.length == 0">No latex code</font>

@@ -15,6 +15,7 @@ interface Prediction {
 export class ClassificationComponent implements OnInit, OnChanges {
 
   @Input() public predictions: number[] = [];
+  @Input() public uncertainties: number[] = [];
   @Input() public classes: ClassSymbol[] = [];
   @Input() public loading: boolean;
 
@@ -30,6 +31,10 @@ export class ClassificationComponent implements OnInit, OnChanges {
   public shown: Prediction[] = [];
   public page = 1;
   public currentPage: Prediction[] = [];
+
+  public uncertainty = 0;
+  public uncertaintyBackground = '';
+  public uncertaintyTooltip;
 
   public pageSize = 5;
 
@@ -53,6 +58,33 @@ export class ClassificationComponent implements OnInit, OnChanges {
     });
     this.setTab(this.tab);
     this.setPage(this.page);
+
+    let maxIx = -1;
+    let maxValue = -1;
+    for (let i = 0; i < this.predictions.length; i++) {
+      if (this.predictions[i] > maxValue) {
+        maxValue = this.predictions[i];
+        maxIx = i;
+      }
+    }
+    this.uncertainty = Math.abs(this.uncertainties[maxIx] / 0.001);
+    if (this.uncertainty < 5) {
+      this.uncertaintyBackground = '#0D0';
+      this.uncertaintyTooltip = 'This prediction is very certain.';
+    } else if (this.uncertainty < 30) {
+      this.uncertaintyBackground = '#bae639';
+      this.uncertaintyTooltip = 'This prediction is relatively certain.';
+    } else if (this.uncertainty < 75) {
+      this.uncertaintyBackground = '#deed34';
+      this.uncertaintyTooltip = 'The model is a little uncertain about the prediction.';
+    } else if (this.uncertainty < 200) {
+      this.uncertaintyBackground = '#edbc34';
+      this.uncertaintyTooltip = 'The model is a very uncertain about the prediction.';
+    } else {
+      this.uncertaintyBackground = '#ed3434';
+      this.uncertaintyTooltip = 'This prediction can likely not be trusted.';
+    }
+    console.log(this.uncertainty);
   }
 
   selectCorrect(cls: ClassSymbol) {

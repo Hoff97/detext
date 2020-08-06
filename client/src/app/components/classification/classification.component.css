@@ -11,3 +11,10 @@
 .large {
   font-size: 30px;
 }
+
+.uncertainty-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  display: block;
+}
