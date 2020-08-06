@@ -36,7 +36,6 @@ class MobileNet(nn.Module):
         self.num_features = features
 
         self.mobilenet = models.mobilenet_v2(pretrained=pretrained, **kwargs)
-        print(self.mobilenet.classifier[1].in_features)
 
         dropout_module = nn.Dropout
         if test_time_dropout:
