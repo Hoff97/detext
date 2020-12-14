@@ -14,11 +14,13 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
     - name: Install SSH key
-      uses: shimataro/ssh-key-action@v2
-      with:
-        key: ${{ secrets.SSH_KEY }}
-        name: id_rsa
-        known_hosts: ${{ secrets.KNOWN_HOSTS }}
+      shell: bash
+      env:
+        SSH_KEY: ${{ secrets.SSH_KEY }}
+        KNOWN_HOSTS: ${{secrets.KNOWN_HOSTS}}
+      run: |
+        echo $SSH_KEY > ~/.ssh/id_rsa
+        echo $KNOWN_HOSTS > ~/.ssh/known_hosts
     - name: Generate public key
       run: |
         ssh-keygen -y -f ~/.ssh/id_rsa > ~/.ssh/id_rsa.pub
