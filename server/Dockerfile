@@ -9,7 +9,7 @@ ENV PYTHONUNBUFFERED 1
 WORKDIR /code
 
 RUN apt-get update
-RUN apt-get install -y libglib2.0-0
+RUN apt-get install -y libglib2.0-0 libsm6 libxrender1 libfontconfig1
 
 # Install dependencies
 COPY requirements.txt /code/
