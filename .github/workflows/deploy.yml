@@ -14,11 +14,12 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
     - name: Install SSH key
-      uses: shimataro/ssh-key-action@v2
+      uses: shimataro/ssh-key-action@v1
       with:
-        key: ${{ secrets.SSH_KEY }}
+        private-key: ${{ secrets.SSH_KEY }}
+        public-key: ${{secrets.SSH_KEY_PUBLIC}}
         name: id_rsa
-        known_hosts: ${{ secrets.KNOWN_HOSTS }}
+        known-hosts: ${{ secrets.KNOWN_HOSTS }}
     - name: Install docker-machine
       run: |
         base=https://github.com/docker/machine/releases/download/v0.16.0 &&
