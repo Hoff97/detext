@@ -34,7 +34,7 @@ jobs:
           --driver generic \
           --generic-ip-address=$DO_IP \
           --generic-ssh-user root \
-          --generic-ssh-key /HOME/.ssh/id_rsa \
+          --generic-ssh-key ~/.ssh/id_rsa \
           detext
         docker-machine ls
 #    - name: Build frontend container
