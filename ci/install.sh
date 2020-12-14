@@ -1,1 +1,0 @@
-bash -c "source ~/.nvm/nvm.sh; nvm install $NODE_JS_VERSION; node --version"

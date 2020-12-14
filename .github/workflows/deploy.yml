@@ -13,6 +13,21 @@ jobs:
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
+    - name: Install SSH key
+      uses: shimataro/ssh-key-action@v2
+      with:
+        key: ${{ secrets.SSH_KEY }}
+        name: id_rsa
+        known_hosts: ${{ secrets.KNOWN_HOSTS }}
+    - name: Add docker machine
+      run: |
+        docker-machine create \
+          --driver generic \
+          --generic-ip-address=$DO_IP \
+          --generic-ssh-user root \
+          --generic-ssh-key /HOME/.ssh/id_rsa \
+          detext
+        docker-machine ls
 #    - name: Build frontend container
 #      run: |
 #        cd client
