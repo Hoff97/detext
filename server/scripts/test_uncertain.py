@@ -67,4 +67,4 @@ def run():
 
         print(m)
         print(stds[m]/0.001)
-        print(variances[m]/0.001
+        print(variances[m]/0.001)
