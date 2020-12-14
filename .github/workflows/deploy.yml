@@ -49,15 +49,15 @@ jobs:
     - name: Build frontend container
       run: |
         cd client
-        docker build -t hoff97/detext-client
+        docker build -t hoff97/detext-client .
     - name: Build backend container
       run: |
         cd server
-        docker build -t hoff97/detext-server
+        docker build -t hoff97/detext-server .
     - name: Build nginx container
       run: |
         cd nginx
-        docker build -t hoff97/detext-nginx
+        docker build -t hoff97/detext-nginx .
     - name: Push the docker images
       run: |
         docker push hoff97/detext-client
