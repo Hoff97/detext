@@ -69,7 +69,7 @@ jobs:
     - name: Restart the server
       shell: bash
       run: |
-        eval $(docker-machine env detext)
+        eval $(docker-machine env --shell bash detext)
         docker-compose -f ci/docker-compose-deploy.yml down
         docker system prune -a -f
         docker-compose -f ci/docker-compose-deploy.yml pull && docker-compose -f ci/docker-compose-deploy.yml up -d
