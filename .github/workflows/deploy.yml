@@ -46,15 +46,26 @@ jobs:
           --generic-ssh-key ~/.ssh/id_rsa \
           detext
         docker-machine ls
-#    - name: Build frontend container
-#      run: |
-#        cd client
-#        docker build -t hoff97/detext-client
-#    - name: Build backend container
-#      run: |
-#        cd server
-#        docker build -t hoff97/detext-server
-#    - name: Build nginx container
-#      run: |
-#        cd nginx
-#        docker build -t hoff97/detext-nginx
+    - name: Build frontend container
+      run: |
+        cd client
+        docker build -t hoff97/detext-client
+    - name: Build backend container
+      run: |
+        cd server
+        docker build -t hoff97/detext-server
+    - name: Build nginx container
+      run: |
+        cd nginx
+        docker build -t hoff97/detext-nginx
+    - name: Push the docker images
+      run: |
+        docker push hoff97/detext-client
+        docker push hoff97/detext-nginx
+        docker push hoff97/detext-server
+    - name: Restart the server
+      run: |
+        eval $(docker-machine env detext)
+        docker-compose -f ci/docker-compose-deploy.yml down
+        docker system prune -a -f
+        docker-compose -f ci/docker-compose-deploy.yml pull && docker-compose -f ci/docker-compose-deploy.yml up -d
