@@ -16,7 +16,7 @@ jobs:
     - name: Install SSH key
       shell: bash
       env:
-        SSH_KEY: ${{ secrets.SSH_KEY }}
+        SSH_KEY: ${{secrets.SSH_KEY}}
         KNOWN_HOSTS: ${{secrets.KNOWN_HOSTS}}
       run: |
         eval "$(ssh-agent -s)"
