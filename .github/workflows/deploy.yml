@@ -19,6 +19,8 @@ jobs:
         SSH_KEY: ${{ secrets.SSH_KEY }}
         KNOWN_HOSTS: ${{secrets.KNOWN_HOSTS}}
       run: |
+        eval "$(ssh-agent -s)"
+        ssh-add - <<< "${SSH_KEY}"
         echo $SSH_KEY > ~/.ssh/id_rsa
         echo $KNOWN_HOSTS > ~/.ssh/known_hosts
     - name: Generate public key
