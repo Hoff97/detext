@@ -67,6 +67,7 @@ jobs:
         docker push hoff97/detext-nginx
         docker push hoff97/detext-server
     - name: Restart the server
+      shell: bash
       run: |
         eval $(docker-machine env detext)
         docker-compose -f ci/docker-compose-deploy.yml down
