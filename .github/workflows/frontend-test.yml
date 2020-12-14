@@ -1,0 +1,26 @@
+name: Test frontend
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v2-beta
+      with:
+        node-version: '12'
+    - name: Install dependencies
+      run: |
+        cd client
+        npm install
+    - name: Test with coverage
+      run: |
+        cd client
+        npm run test -- --no-watch --no-progress --browsers=ChromeHeadlessCI --code-coverage
+    - uses: codecov/codecov-action@v1
+      with:
+        file: ./client/coverage/cobertura-coverage.xml
+        flags: frontend
