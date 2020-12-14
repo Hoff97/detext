@@ -22,7 +22,7 @@ jobs:
         eval "$(ssh-agent -s)"
         ssh-add - <<< "${SSH_KEY}"
         mkdir -p ~/.ssh
-        echo $SSH_KEY > ~/.ssh/id_rsa
+        echo "$SSH_KEY" > ~/.ssh/id_rsa
         echo $KNOWN_HOSTS > ~/.ssh/known_hosts
         chmod 400 ~/.ssh/id_rsa
     - name: Generate public key
