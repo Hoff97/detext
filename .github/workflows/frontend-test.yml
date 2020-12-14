@@ -1,6 +1,6 @@
 name: Test frontend
 
-on: [push]
+on: []
 
 jobs:
   build:
