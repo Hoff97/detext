@@ -26,6 +26,9 @@ jobs:
           sudo mv /tmp/docker-machine /usr/local/bin/docker-machine &&
           chmod +x /usr/local/bin/docker-machine
     - name: Add docker machine
+      shell: bash
+      env:
+        DO_IP: ${{ secrets.DO_IP }}
       run: |
         docker-machine create \
           --driver generic \
