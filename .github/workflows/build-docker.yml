@@ -1,0 +1,25 @@
+name: Build docker containers
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build frontend container
+      run: |
+        cd client
+        docker build -t hoff97/detext-client .
+    - name: Build backend container
+      run: |
+        cd server
+        docker build -t hoff97/detext-server .
+    - name: Build nginx container
+      run: |
+        cd nginx
+        docker build -t hoff97/detext-nginx .

@@ -1,0 +1,75 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+    - name: Install SSH key
+      shell: bash
+      env:
+        SSH_KEY: ${{secrets.SSH_KEY}}
+        KNOWN_HOSTS: ${{secrets.KNOWN_HOSTS}}
+      run: |
+        eval "$(ssh-agent -s)"
+        ssh-add - <<< "${SSH_KEY}"
+        mkdir -p ~/.ssh
+        echo "$SSH_KEY" > ~/.ssh/id_rsa
+        echo $KNOWN_HOSTS > ~/.ssh/known_hosts
+        chmod 400 ~/.ssh/id_rsa
+    - name: Generate public key
+      run: |
+        ssh-keygen -y -f ~/.ssh/id_rsa > ~/.ssh/id_rsa.pub
+    - name: Install docker-machine
+      run: |
+        base=https://github.com/docker/machine/releases/download/v0.16.0 &&
+          curl -L $base/docker-machine-$(uname -s)-$(uname -m) >/tmp/docker-machine &&
+          sudo mv /tmp/docker-machine /usr/local/bin/docker-machine &&
+          chmod +x /usr/local/bin/docker-machine
+    - name: Add docker machine
+      shell: bash
+      env:
+        DO_IP: ${{ secrets.DO_IP }}
+      run: |
+        docker-machine create \
+          --driver generic \
+          --generic-ip-address=$DO_IP \
+          --generic-ssh-user root \
+          --generic-ssh-key ~/.ssh/id_rsa \
+          detext
+        docker-machine ls
+    - name: Build frontend container
+      run: |
+        cd client
+        docker build -t hoff97/detext-client .
+    - name: Build backend container
+      run: |
+        cd server
+        docker build -t hoff97/detext-server .
+    - name: Build nginx container
+      run: |
+        cd nginx
+        docker build -t hoff97/detext-nginx .
+    - name: Push the docker images
+      run: |
+        docker push hoff97/detext-client
+        docker push hoff97/detext-nginx
+        docker push hoff97/detext-server
+    - name: Restart the server
+      shell: bash
+      run: |
+        eval $(docker-machine env detext)
+        docker-compose -f ci/docker-compose-deploy.yml down
+        docker system prune -a -f
+        docker-compose -f ci/docker-compose-deploy.yml pull && docker-compose -f ci/docker-compose-deploy.yml up -d
