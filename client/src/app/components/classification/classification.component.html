@@ -5,11 +5,6 @@
   <table *ngIf="!loading && predictions.length > 0" class="predictions">
     <tr>
       <td style="width: 100%;">
-        <div class="uncertainty-indicator"
-          [ngStyle]="{'background': uncertaintyBackground}"
-          [ngbTooltip]="uncertaintyTooltip"
-          placement="bottom">
-        </div>
         <div class="btn-group" role="group" aria-label="Basic example">
           <button type="button" [ngClass]="tab=='predicted' ? 'btn btn-primary' : 'btn btn-secondary'"
               (click)="setTab('predicted')">Predicted</button>
@@ -22,6 +17,9 @@
       <td style="width: 100%;">
         <app-new-symbol (created)="created($event)"></app-new-symbol>
       </td>
+    </tr>
+    <tr *ngIf="uncertainty >= 30" [ngStyle]="{'color':uncertaintyColor}">
+      <i class="fa fa-exclamation-circle"></i> {{uncertaintyTooltip}}
     </tr>
     <tr *ngFor="let pred of currentPage">
       <td style="width: 100%;">

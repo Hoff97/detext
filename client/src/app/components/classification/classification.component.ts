@@ -33,7 +33,7 @@ export class ClassificationComponent implements OnInit, OnChanges {
   public currentPage: Prediction[] = [];
 
   public uncertainty = 0;
-  public uncertaintyBackground = '';
+  public uncertaintyColor = '';
   public uncertaintyTooltip;
 
   public pageSize = 5;
@@ -69,19 +69,19 @@ export class ClassificationComponent implements OnInit, OnChanges {
     }
     this.uncertainty = Math.abs(this.uncertainties[maxIx] / 0.001);
     if (this.uncertainty < 5) {
-      this.uncertaintyBackground = '#0D0';
+      this.uncertaintyColor = '#0D0';
       this.uncertaintyTooltip = 'This prediction is very certain.';
     } else if (this.uncertainty < 30) {
-      this.uncertaintyBackground = '#bae639';
+      this.uncertaintyColor = '#bae639';
       this.uncertaintyTooltip = 'This prediction is relatively certain.';
     } else if (this.uncertainty < 75) {
-      this.uncertaintyBackground = '#deed34';
+      this.uncertaintyColor = '#deed34';
       this.uncertaintyTooltip = 'The model is a little uncertain about the prediction.';
     } else if (this.uncertainty < 200) {
-      this.uncertaintyBackground = '#edbc34';
+      this.uncertaintyColor = '#edbc34';
       this.uncertaintyTooltip = 'The model is a very uncertain about the prediction.';
     } else {
-      this.uncertaintyBackground = '#ed3434';
+      this.uncertaintyColor = '#ed3434';
       this.uncertaintyTooltip = 'This prediction can likely not be trusted.';
     }
     console.log(this.uncertainty);
