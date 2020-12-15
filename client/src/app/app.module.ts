@@ -17,7 +17,7 @@ import { StartComponent } from './components/start/start.component';
 import { Interceptor } from './util/http';
 import { LoginComponent } from './components/login/login.component';
 import { NewSymbolComponent } from './components/new-symbol/new-symbol.component';
-
+import { CommonModule } from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -37,7 +37,8 @@ import { NewSymbolComponent } from './components/new-symbol/new-symbol.component
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
     NgbModule,
     HttpClientModule,
-    FormsModule
+    FormsModule,
+    CommonModule
   ],
   providers: [
     {
