@@ -15,6 +15,8 @@ RUN apt-get install -y libglib2.0-0 libsm6 libxrender1 libfontconfig1
 COPY requirements.txt /code/
 RUN pip install -r requirements.txt
 
+RUN apt install libxext6
+
 # Copy project
 COPY . /code/
 
