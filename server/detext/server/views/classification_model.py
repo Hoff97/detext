@@ -12,6 +12,8 @@ from detext.server.ml.train_classifier import train_classifier
 from detext.server.models import ClassificationModel
 from detext.server.serializers import ClassificationModelSerializer
 
+from django.http import HttpResponse
+
 
 class ClassificationModelView(viewsets.ViewSet):
     queryset = ClassificationModel.objects.all()
@@ -29,6 +31,21 @@ class ClassificationModelView(viewsets.ViewSet):
 
         serializer = ClassificationModelSerializer(latest, many=False)
         return Response(serializer.data)
+
+    @action(detail=False)
+    def latest_onnx(self, request):
+        latest = ClassificationModel.objects.all()\
+            .order_by('-timestamp').first()
+
+        if request.GET.get('timestamp') is not None:
+            ts = parse_datetime(request.GET.get('timestamp'))
+            if ts == latest.timestamp:
+                return Response(status=status.HTTP_304_NOT_MODIFIED)
+
+        response = HttpResponse(content_type="application/octet-stream")
+        response['Content-Disposition'] = 'attachment; filename=test.onnx'
+        response.write(latest.model)
+        return response
 
     def create(self, request):
         if request.user.id is None:
