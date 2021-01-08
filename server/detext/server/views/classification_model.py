@@ -34,7 +34,7 @@ class ClassificationModelView(viewsets.ViewSet):
 
     @action(detail=False)
     def latest_onnx(self, request):
-        latest = ClassificationModel.objects.all()\
+        latest: ClassificationModel = ClassificationModel.objects.all()\
             .order_by('-timestamp').first()
 
         if request.GET.get('timestamp') is not None:
@@ -44,7 +44,7 @@ class ClassificationModelView(viewsets.ViewSet):
 
         response = HttpResponse(content_type="application/octet-stream")
         response['Content-Disposition'] = 'attachment; filename=test.onnx'
-        response.write(latest.model)
+        response.write(from_memoryview(latest.model))
         return response
 
     def create(self, request):
@@ -83,3 +83,8 @@ class ClassificationModelView(viewsets.ViewSet):
                          num_epochs=epochs)
 
         return Response('Ok')
+
+def from_memoryview(data):
+    if isinstance(data, memoryview):
+        return data.tobytes()
+    return data
