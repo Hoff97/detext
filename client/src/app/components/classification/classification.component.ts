@@ -79,7 +79,7 @@ export class ClassificationComponent implements OnInit, OnChanges {
       this.uncertaintyTooltip = 'The model is a little uncertain about the prediction.';
     } else if (this.uncertainty < 200) {
       this.uncertaintyColor = '#edbc34';
-      this.uncertaintyTooltip = 'The model is a very uncertain about the prediction.';
+      this.uncertaintyTooltip = 'The model is very uncertain about the prediction.';
     } else {
       this.uncertaintyColor = '#ed3434';
       this.uncertaintyTooltip = 'This prediction can likely not be trusted.';
