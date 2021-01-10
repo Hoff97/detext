@@ -1,12 +1,14 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import ndarray from 'ndarray';
 import ops from 'ndarray-ops';
-import { InferenceSession, Tensor } from 'onnxjs';
 import { Model } from '../data/types';
 import { base64ToBinary } from '../util/data';
 import { ModelService } from './model.service';
 import { SettingsService } from './settings.service';
 import { SymbolService } from './symbol.service';
+
+import * as tjs from '@hoff97/tensor-js';
+import { toGPU } from '@hoff97/tensor-js/dist/lib/util/convert';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +18,7 @@ export class InferenceService {
 
   private decodedModel: Uint8Array;
 
-  private session: InferenceSession;
+  private tjsModel: tjs.onnx.model.OnnxModel;
 
   public modelAvailable = new EventEmitter<boolean>();
   public model = false;
@@ -42,12 +44,15 @@ export class InferenceService {
   public async infer(image: ImageData) {
     const input = this.preprocess(image.data, image.width, image.height);
 
-    const outputMap = await this.session.run([input]);
-    const output: Tensor = outputMap.values().next().value;
+    const gpu = await toGPU(input);
 
-    const numSymbols = output.data.length / 2;
+    const pred = this.tjsModel.forward([gpu]);
 
-    return [this.softMax(output.data.slice(0, numSymbols) as Float32Array), output.data.slice(numSymbols)];
+    const data = await pred[0].getValues();
+
+    const numSymbols = data.length / 2;
+
+    return [this.softMax(data.slice(0, numSymbols) as Float32Array), data.slice(numSymbols)];
   }
 
   private softMax(array: Float32Array) {
@@ -83,17 +88,15 @@ export class InferenceService {
   private async setModel(model: Model) {
     this.decodedModel = base64ToBinary(model.model);
 
-    this.session = new InferenceSession({ backendHint: this.backend }) ;
-    await this.session.loadModel(this.decodedModel);
+    this.tjsModel = new tjs.onnx.model.OnnxModel(this.decodedModel);
+    await this.tjsModel.toGPU();
 
     this.modelAvailable.emit(true);
     this.model = true;
   }
 
   private async changeBackend(backend: string) {
-    this.backend = backend;
-    this.session = new InferenceSession({ backendHint: this.backend }) ;
-    await this.session.loadModel(this.decodedModel);
+    // TODO
   }
 
   private preprocess(data, width, height) {
@@ -110,8 +113,6 @@ export class InferenceService {
     ops.assign(dataProcessed.pick(0, 1, null, null), dataFromImage.pick(null, null, 1));
     ops.assign(dataProcessed.pick(0, 2, null, null), dataFromImage.pick(null, null, 2));
 
-    const tensor = new Tensor(new Float32Array(3 * width * height), 'float32', [1, 3, width, height]);
-    (tensor.data as Float32Array).set(dataProcessed.data);
-    return tensor;
+    return new tjs.tensor.cpu.CPUTensor([1, 3, width, height], dataProcessed.data);
   }
 }
