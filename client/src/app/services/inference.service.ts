@@ -43,14 +43,16 @@ export class InferenceService {
 
   public async infer(image: ImageData) {
     const input = this.preprocess(image.data, image.width, image.height);
-
     const gpu = await toGPU(input);
-
     const pred = this.tjsModel.forward([gpu]);
-
     const data = await pred[0].getValues();
 
+    pred[0].delete();
+    gpu.delete();
+
     const numSymbols = data.length / 2;
+
+    console.log(data.slice(0, numSymbols));
 
     return [this.softMax(data.slice(0, numSymbols) as Float32Array), data.slice(numSymbols)];
   }
