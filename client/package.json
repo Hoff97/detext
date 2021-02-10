@@ -24,7 +24,7 @@
     "@angular/pwa": "^0.803.14",
     "@angular/router": "~8.2.0",
     "@angular/service-worker": "~8.2.0",
-    "@hoff97/tensor-js": "^0.1.8",
+    "@hoff97/tensor-js": "^0.1.11",
     "@ng-bootstrap/ng-bootstrap": "^5.1.2",
     "bootstrap": "^4.3.1",
     "comlink": "^4.1.0",
