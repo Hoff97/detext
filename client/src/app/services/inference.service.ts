@@ -43,8 +43,8 @@ export class InferenceService {
 
   public async infer(image: ImageData) {
     const input = this.preprocess(image.data, image.width, image.height);
-    const gpu = await toGPU(input);
-    const pred = this.tjsModel.forward([gpu]);
+    const gpu = await toGPU(input, 32);
+    const pred = await this.tjsModel.forward([gpu]);
     const data = await pred[0].getValues();
 
     pred[0].delete();
